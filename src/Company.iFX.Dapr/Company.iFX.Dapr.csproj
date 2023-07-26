@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Dapr.AspNetCore" Version="1.11.0" />
+		<PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.1.1" />
+		<PackageReference Include="protobuf-net.Grpc.AspNetCore.Reflection" Version="1.1.1" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\Company.iFX.Grpc\Company.iFX.Grpc.csproj" />
+	</ItemGroup>
+	
+</Project>

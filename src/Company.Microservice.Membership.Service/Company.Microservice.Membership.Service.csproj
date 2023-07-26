@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>8c47078a-271b-4197-8f11-5d2949bf2b9e</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Http" Version="7.0.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="5.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+		<PackageReference Include="Zametek.Utility.Logging.AspNetCore" Version="1.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Company.iFX.Api\Company.iFX.Api.csproj" />
+		<ProjectReference Include="..\Company.iFX.Dapr\Company.iFX.Dapr.csproj" />
+		<ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
+		<ProjectReference Include="..\Company.iFX.Proxy\Company.iFX.Proxy.csproj" />
+		<ProjectReference Include="..\Company.Manager.Membership.Interface\Company.Manager.Membership.Interface.csproj" />
+		<ProjectReference Include="..\Company.Microservice.Membership.Data\Company.Microservice.Membership.Data.csproj" />
+	</ItemGroup>
+
+</Project>

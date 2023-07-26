@@ -1,0 +1,33 @@
+# tye application configuration file
+# read all about it at https://github.com/dotnet/tye
+#
+# when you've given us a try, we'd love to know what you think:
+#    https://aka.ms/AA7q20u
+#
+name: company
+extensions:
+
+  # Configuration for dapr goes here.
+- name: dapr
+  log-level: debug
+  services:
+    company-manager-membership-service:
+      app-protocol: grpc
+    company-engine-registration-service:
+      app-protocol: grpc
+
+# Services to run go here.
+services:
+- name: company-manager-membership-service
+  project: src/Company.Manager.Membership.Service/Company.Manager.Membership.Service.csproj
+- name: company-engine-registration-service
+  project: src/Company.Engine.Registration.Service/Company.Engine.Registration.Service.csproj
+- name: company-microservice-membership-service
+  project: src/Company.Microservice.Membership.Service/Company.Microservice.Membership.Service.csproj
+  bindings:
+    - name: http
+      port: 5241
+      protocol: http
+    - name: https
+      port: 7281
+      protocol: https

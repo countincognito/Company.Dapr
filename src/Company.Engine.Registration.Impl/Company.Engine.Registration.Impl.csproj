@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\Company.iFX.Proxy\Company.iFX.Proxy.csproj" />
+	  <ProjectReference Include="..\Company.Engine.Registration.Interface\Company.Engine.Registration.Interface.csproj" />
+  </ItemGroup>
+
+</Project>

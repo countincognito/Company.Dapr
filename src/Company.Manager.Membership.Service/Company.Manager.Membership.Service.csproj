@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3550032a-97db-4090-ba3b-8db0f6cd5324</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+	  <PackageReference Include="Serilog.Sinks.Seq" Version="5.0.0" />
+	  <PackageReference Include="Zametek.Utility.Logging.AspNetCore" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Company.iFX.Dapr\Company.iFX.Dapr.csproj" />
+    <ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
+    <ProjectReference Include="..\Company.Manager.Membership.Impl\Company.Manager.Membership.Impl.csproj" />
+  </ItemGroup>
+
+</Project>
