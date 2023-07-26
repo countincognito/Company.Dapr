@@ -17,7 +17,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
     .ConfigureServices(services =>
     {
         services.AddScoped(_ => TrackingContextDaprClient.Create<IUserAccess>());
-        services.AddTrackingContextInterceptor();
+        services.AddTrackingContextGrpcInterceptor();
 
         services.AddCodeFirstGrpc();
         services.AddCodeFirstGrpcReflection();

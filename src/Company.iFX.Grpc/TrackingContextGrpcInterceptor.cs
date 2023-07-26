@@ -3,14 +3,14 @@ using Grpc.Core.Interceptors;
 
 namespace Company.iFX.Grpc
 {
-    public class TrackingContextInterceptor
+    public class TrackingContextGrpcInterceptor
         : Interceptor
     {
         /// <summary>
         /// Initializes a new instance of the TrackingContextCallInvoker class.
         /// </summary>
         /// <param name="channel">Channel to use.</param>
-        public TrackingContextInterceptor()
+        public TrackingContextGrpcInterceptor()
         {
         }
 

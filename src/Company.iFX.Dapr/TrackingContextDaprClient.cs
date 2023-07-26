@@ -14,7 +14,7 @@ namespace Company.iFX.Dapr
             Debug.Assert(typeof(T).IsInterface);
             return DaprClient
                 .CreateInvocationInvoker(Naming.AppId<T>())
-                .Intercept(new TrackingContextInterceptor())
+                .Intercept(new TrackingContextGrpcInterceptor())
                 .CreateGrpcService<T>();
         }
     }

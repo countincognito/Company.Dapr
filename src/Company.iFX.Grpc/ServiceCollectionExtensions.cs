@@ -6,11 +6,11 @@ namespace Company.iFX.Grpc
     {
         #region Public Members
 
-        public static IServiceCollection AddTrackingContextInterceptor(this IServiceCollection services)
+        public static IServiceCollection AddTrackingContextGrpcInterceptor(this IServiceCollection services)
         {
             services.AddGrpc(options =>
             {
-                options.Interceptors.Add<TrackingContextInterceptor>();
+                options.Interceptors.Add<TrackingContextGrpcInterceptor>();
             });
             return services;
         }
