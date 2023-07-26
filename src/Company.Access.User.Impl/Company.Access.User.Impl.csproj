@@ -8,7 +8,6 @@
 	
   <ItemGroup>
     <ProjectReference Include="..\Company.iFX.Proxy\Company.iFX.Proxy.csproj" />
-	  <ProjectReference Include="..\Company.Engine.Registration.Interface\Company.Engine.Registration.Interface.csproj" />
 	  <ProjectReference Include="..\Company.Access.User.Interface\Company.Access.User.Interface.csproj" />
   </ItemGroup>
 

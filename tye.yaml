@@ -15,6 +15,8 @@ extensions:
       app-protocol: grpc
     company-engine-registration-service:
       app-protocol: grpc
+    company-access-user-service:
+      app-protocol: grpc
 
 # Services to run go here.
 services:
@@ -22,6 +24,8 @@ services:
   project: src/Company.Manager.Membership.Service/Company.Manager.Membership.Service.csproj
 - name: company-engine-registration-service
   project: src/Company.Engine.Registration.Service/Company.Engine.Registration.Service.csproj
+- name: company-access-user-service
+  project: src/Company.Access.User.Service/Company.Access.User.Service.csproj
 - name: company-microservice-membership-service
   project: src/Company.Microservice.Membership.Service/Company.Microservice.Membership.Service.csproj
   bindings:

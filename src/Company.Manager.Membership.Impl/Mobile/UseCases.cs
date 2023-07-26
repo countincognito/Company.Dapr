@@ -26,7 +26,6 @@ namespace Company.Manager.Membership.Impl.Mobile
             m_Logger.Information($"{nameof(RegisterMemberAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterMemberAsync)} {registerRequest.Name}");
 
-
             Engine.Registration.Data.RegisterRequestBase engineRegisterRequest =
                 m_Mapper.Map<Engine.Registration.Data.RegisterRequestBase>(registerRequest);
 

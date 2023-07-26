@@ -1,7 +1,5 @@
-using Company.Access.User.Interface;
-using Company.Engine.Registration.Service;
+using Company.Access.User.Service;
 using Company.iFX.Configuration;
-using Company.iFX.Dapr;
 using Company.iFX.Grpc;
 using Company.iFX.Hosting;
 using Company.iFX.Logging;
@@ -16,7 +14,7 @@ string? BuildVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToStri
 var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
     .ConfigureServices(services =>
     {
-        services.AddScoped(_ => TrackingContextDaprClient.Create<IUserAccess>());
+        //services.AddScoped(_ => TrackingContextDaprClient.Create<IUserAccess>());
         services.AddTrackingContextInterceptor();
 
         services.AddCodeFirstGrpc();
@@ -57,7 +55,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<RegistrationEngineProxy>();
+                endpoints.MapGrpcService<UserAccessProxy>();
                 endpoints.MapCodeFirstGrpcReflectionService();
 
                 endpoints.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");

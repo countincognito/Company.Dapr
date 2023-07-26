@@ -20,6 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Company.Access.User.Impl\Company.Access.User.Impl.csproj" />
 		<ProjectReference Include="..\Company.Engine.Registration.Impl\Company.Engine.Registration.Impl.csproj" />
 		<ProjectReference Include="..\Company.iFX.Api\Company.iFX.Api.csproj" />
 		<ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
