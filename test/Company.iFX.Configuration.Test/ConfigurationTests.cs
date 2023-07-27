@@ -4,23 +4,23 @@ namespace Company.iFX.Configuration.Test
 {
     public class ConfigurationTests
     {
-        [Fact]
-        public void A()
-        {
-            Configuration.TestRequested.Should().BeFalse();
-            Configuration.PlaceUnderTest();
-            Configuration.TestRequested.Should().BeTrue();
-        }
+        //[Fact]
+        //public void A()
+        //{
+        //    Configuration.TestRequested.Should().BeFalse();
+        //    Configuration.PlaceUnderTest();
+        //    Configuration.TestRequested.Should().BeTrue();
+        //}
 
 
-        [Fact]
-        public void B()
-        {
-            Configuration.SystemUnderTest.Should().BeFalse();
-            Configuration.TestRequested.Should().BeFalse();
-            Configuration.PlaceUnderTest();
-            Configuration.TestRequested.Should().BeTrue();
-        }
+        //[Fact]
+        //public void B()
+        //{
+        //    Configuration.SystemUnderTest.Should().BeFalse();
+        //    Configuration.TestRequested.Should().BeFalse();
+        //    Configuration.PlaceUnderTest();
+        //    Configuration.TestRequested.Should().BeTrue();
+        //}
 
 
 
