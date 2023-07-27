@@ -8,19 +8,15 @@
         {
         }
 
-        public ConfigurationMode(ConfigurationState underTest)
+        public ConfigurationMode(ConfigurationState state)
         {
-            m_State = underTest;
+            m_State = state;
         }
 
         public ConfigurationState Mode
         {
             get
             {
-                if (m_State == ConfigurationState.NotSet)
-                {
-                    m_State = ConfigurationState.Standard;
-                }
                 return m_State;
             }
             internal set
