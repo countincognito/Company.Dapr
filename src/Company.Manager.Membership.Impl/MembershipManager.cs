@@ -20,7 +20,7 @@ namespace Company.Manager.Membership.Impl
 
         public async Task<RegisterResponseBase> RegisterMemberAsync(
             RegisterRequestBase registerRequest,
-            CallContext context = default)
+            [DiagnosticLogging(LogActive.Off)] CallContext context = default)
         {
             m_Logger.Information($"{nameof(RegisterMemberAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterMemberAsync)} {registerRequest}");

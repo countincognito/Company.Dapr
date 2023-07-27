@@ -4,6 +4,11 @@ namespace Company.iFX.Configuration.Test
 {
     public class ConfigurationTests
     {
+
+
+
+
+
         //[Fact]
         //public void A()
         //{
@@ -16,9 +21,10 @@ namespace Company.iFX.Configuration.Test
         //[Fact]
         //public void B()
         //{
-        //    Configuration.SystemUnderTest.Should().BeFalse();
         //    Configuration.TestRequested.Should().BeFalse();
+        //    Configuration.SystemUnderTest.Should().BeFalse();
         //    Configuration.PlaceUnderTest();
+        //    Configuration.SystemUnderTest.Should().BeTrue();
         //    Configuration.TestRequested.Should().BeTrue();
         //}
 

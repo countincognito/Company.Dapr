@@ -20,7 +20,7 @@ namespace Company.Access.User.Impl
 
         public async Task<RegisterResponseBase> RegisterAsync(
             RegisterRequestBase registerRequest,
-            CallContext context = default)
+            [DiagnosticLogging(LogActive.Off)] CallContext context = default)
         {
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest}");

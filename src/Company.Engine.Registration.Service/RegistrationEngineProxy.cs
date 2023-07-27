@@ -2,6 +2,7 @@
 using Company.Engine.Registration.Interface;
 using Company.iFX.Proxy;
 using ProtoBuf.Grpc;
+using Zametek.Utility.Logging;
 
 namespace Company.Engine.Registration.Service
 {

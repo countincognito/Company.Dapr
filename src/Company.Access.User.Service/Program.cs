@@ -42,10 +42,10 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(logger));
         services.AddSingleton<Serilog.ILogger>(logger);
 
-        services.IncludeErrorLogging(Configuration.Setting<bool>("Zametek:ErrorLogging"));
-        services.IncludePerformanceLogging(Configuration.Setting<bool>("Zametek:PerformanceLogging"));
-        services.IncludeDiagnosticLogging(Configuration.Setting<bool>("Zametek:DiagnosticLogging"));
-        services.IncludeInvocationLogging(Configuration.Setting<bool>("Zametek:InvocationLogging"));
+        services.IncludeErrorLogging(Configuration.Current.Setting<bool>("Zametek:ErrorLogging"));
+        services.IncludePerformanceLogging(Configuration.Current.Setting<bool>("Zametek:PerformanceLogging"));
+        services.IncludeDiagnosticLogging(Configuration.Current.Setting<bool>("Zametek:DiagnosticLogging"));
+        services.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {

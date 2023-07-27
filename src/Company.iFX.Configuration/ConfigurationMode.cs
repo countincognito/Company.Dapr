@@ -13,15 +13,28 @@
             m_State = state;
         }
 
-        public ConfigurationState Mode
+        public ConfigurationState State
         {
             get
             {
+                ActivateStandard();
                 return m_State;
             }
-            internal set
+        }
+
+        public void ActivateStandard()
+        {
+            if (m_State == ConfigurationState.NotSet)
             {
-                m_State = value;
+                m_State = ConfigurationState.Standard;
+            }
+        }
+
+        public void ActivateTest()
+        {
+            if (m_State == ConfigurationState.NotSet)
+            {
+                m_State = ConfigurationState.Test;
             }
         }
     }

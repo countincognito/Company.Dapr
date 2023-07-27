@@ -4,6 +4,6 @@
     {
         NotSet,
         Standard,
-        UnderTest
+        Test
     }
 }

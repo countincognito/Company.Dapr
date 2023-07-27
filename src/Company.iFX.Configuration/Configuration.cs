@@ -1,80 +1,62 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace Company.iFX.Configuration
 {
-    public static class Configuration
+    public class Configuration
     {
-        private static string? HostingEnvironment => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        private readonly bool m_TestRequested = false;
+        private readonly IConfiguration m_Config;
+        private readonly ConfigurationMode m_ConfigMode;
 
-        private static readonly object s_TestLockObject = new();
-
-        private static readonly Lazy<IConfiguration> s_Config = new(
-            () =>
-            {
-                var configBuilder = new ConfigurationBuilder();
-
-                configBuilder.AddJsonFile(@"appsettings.json", optional: true, reloadOnChange: true);
-
-                string? hostingEnvironment = HostingEnvironment;
-
-                if (hostingEnvironment is not null)
-                {
-                    configBuilder.AddJsonFile($@"appsettings.{hostingEnvironment}.json", optional: true, reloadOnChange: true);
-                }
-
-                configBuilder.AddEnvironmentVariables();
-                return configBuilder.Build();
-            });
-
-        private static readonly Lazy<ConfigurationMode> s_Current = new(
-            () =>
-            {
-                lock (s_TestLockObject)
-                {
-                    return new ConfigurationMode(
-                        TestRequested ? ConfigurationState.UnderTest : ConfigurationState.Standard);
-                }
-            });
-
-        static Configuration()
+        public Configuration(bool testRequested)
         {
-            TestRequested = false;
+            m_TestRequested = testRequested;
+            m_Config = LoadConfiguration();
+            m_ConfigMode = SetConfigurationMode(m_TestRequested);
         }
 
-        public static bool SystemUnderTest => s_Current.Value.Mode == ConfigurationState.UnderTest;
+        public IConfiguration All => m_Config;
 
-        public static IConfiguration All => s_Config.Value;
+        public ConfigurationMode Mode => m_ConfigMode;
 
-        public static bool TestRequested
+        public T? Setting<T>(string key)
         {
-            get;
-            private set;
-        }
-
-        public static T? Setting<T>(string key)
-        {
-            IConfiguration config = s_Config.Value;
+            IConfiguration config = m_Config;
             T? value = config.GetValue<T>(key);
             return value;
         }
 
-        //public static T? SettingOrDefault<T>(string key)
-        //{
+        public T? SettingOrDefault<T>(string key)
+        {
+            return Setting<T>(key) ?? default;
+        }
 
-        //    return Setting<T>(key)
-        //}
+        #region Static
+
+        private static readonly object s_LockObject = new();
+        private static bool s_TestRequested = false;
+
+        private static readonly Lazy<Configuration> s_Current = new(
+            () =>
+            {
+                lock (s_LockObject)
+                {
+                    return new Configuration(s_TestRequested);
+                }
+            });
+
+        public static Configuration Current => s_Current.Value;
 
         public static bool PlaceUnderTest()
         {
-            lock (s_TestLockObject)
+            lock (s_LockObject)
             {
-                TestRequested = true;
+                s_TestRequested = true;
+                return SystemUnderTest;
             }
-            s_Current.Value.PlaceUnderTest();
-            return SystemUnderTest;
         }
+        public static bool SystemUnderTest => Current.Mode.State == ConfigurationState.Test;
 
         public static bool IsDevelopment()
         {
@@ -98,5 +80,30 @@ namespace Company.iFX.Configuration
                 environmentName,
                 StringComparison.OrdinalIgnoreCase);
         }
+
+        private static string? HostingEnvironment => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+        private static IConfiguration LoadConfiguration()
+        {
+            var configBuilder = new ConfigurationBuilder();
+
+            configBuilder.AddJsonFile(@"appsettings.json", optional: true, reloadOnChange: true);
+
+            string? hostingEnvironment = HostingEnvironment;
+
+            if (hostingEnvironment is not null)
+            {
+                configBuilder.AddJsonFile($@"appsettings.{hostingEnvironment}.json", optional: true, reloadOnChange: true);
+            }
+
+            configBuilder.AddEnvironmentVariables();
+            return configBuilder.Build();
+        }
+        private static ConfigurationMode SetConfigurationMode(bool testRequested)
+        {
+            return new ConfigurationMode(testRequested ? ConfigurationState.Test : ConfigurationState.Standard);
+        }
+
+        #endregion
     }
 }
