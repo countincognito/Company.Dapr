@@ -48,7 +48,7 @@ namespace Company.iFX.Configuration
 
         public static Configuration Current => s_Current.Value;
 
-        public static bool PlaceUnderTest()
+        public static bool ActivateTest()
         {
             lock (s_LockObject)
             {

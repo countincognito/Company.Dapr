@@ -1,6 +1,6 @@
 using FluentAssertions;
 
-namespace Company.iFX.Configuration.Test
+namespace Company.iFX.Configuration.Tests
 {
     public class ConfigurationModeTests
     {
