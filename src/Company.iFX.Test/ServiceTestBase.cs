@@ -27,11 +27,10 @@ namespace Company.iFX.Test
         }
 
         public Task TestService<T>(
-            Func<T, Task> callerMock,
+            Func<T, Task> serviceRunner,
             params object[] mocks) where T : class
         {
-            //Guid testCallChainId = Guid.NewGuid();
-            return MockServiceEnvironment(GetServiceType<T>(), callerMock, mocks);
+            return MockServiceEnvironment(GetServiceType<T>(), serviceRunner, mocks);
         }
 
         private Type GetServiceType<T>()
@@ -41,7 +40,7 @@ namespace Company.iFX.Test
 
         private static async Task MockServiceEnvironment<T>(
             Type targetType,
-            Func<T, Task> callerMock,
+            Func<T, Task> serviceRunner,
             params object[] mocks) where T : class
         {
             Container.Container.CreateTestScope(mocks);
@@ -50,7 +49,7 @@ namespace Company.iFX.Test
                 T? instance = default;
                 instance = Activator.CreateInstance(targetType) as T;
                 Debug.Assert(instance is not null);
-                await callerMock.Invoke(instance);
+                await serviceRunner.Invoke(instance);
             }
             finally
             {

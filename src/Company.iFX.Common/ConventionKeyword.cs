@@ -1,10 +1,13 @@
-﻿using Zametek.Utility;
+﻿using System.Collections.ObjectModel;
+using Zametek.Utility;
 
 namespace Company.iFX.Common
 {
     public class ConventionKeyword
         : SafeEnumString<ConventionKeyword>
     {
+        public static readonly ReadOnlyCollection<ConventionKeyword> All;
+
         public static readonly ConventionKeyword Data = new(nameof(Data));
         public static readonly ConventionKeyword Impl = new(nameof(Impl));
         public static readonly ConventionKeyword Interface = new(nameof(Interface));
@@ -14,6 +17,11 @@ namespace Company.iFX.Common
         public ConventionKeyword(string value)
             : base(value)
         {
+        }
+
+        static ConventionKeyword()
+        {
+            All = SafeEnumStringHelper.GetAll<ConventionKeyword>();
         }
     }
 }

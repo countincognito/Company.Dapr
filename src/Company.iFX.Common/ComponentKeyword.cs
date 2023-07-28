@@ -1,10 +1,13 @@
-﻿using Zametek.Utility;
+﻿using System.Collections.ObjectModel;
+using Zametek.Utility;
 
 namespace Company.iFX.Common
 {
     public class ComponentKeyword
         : SafeEnumString<ComponentKeyword>
     {
+        public static readonly ReadOnlyCollection<ComponentKeyword> All;
+
         public static readonly ComponentKeyword Manager = new(nameof(Manager));
         public static readonly ComponentKeyword Engine = new(nameof(Engine));
         public static readonly ComponentKeyword Access = new(nameof(Access));
@@ -15,6 +18,11 @@ namespace Company.iFX.Common
         public ComponentKeyword(string value)
             : base(value)
         {
+        }
+
+        static ComponentKeyword()
+        {
+            All = SafeEnumStringHelper.GetAll<ComponentKeyword>();
         }
     }
 }
