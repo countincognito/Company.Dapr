@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Zametek.Utility.Logging;
+using Zametek.Utility;
 
 namespace Company.iFX.Proxy
 {

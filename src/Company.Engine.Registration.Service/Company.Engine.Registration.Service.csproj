@@ -11,8 +11,8 @@
 
   <ItemGroup>
 	  <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-	  <PackageReference Include="Serilog.Sinks.Seq" Version="5.0.0" />
-	  <PackageReference Include="Zametek.Utility.Logging.AspNetCore" Version="1.2.0" />
+	  <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
+	  <PackageReference Include="Zametek.Utility.Logging.AspNetCore" Version="1.2.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,6 +7,8 @@ using Company.iFX.Proxy;
 using ProtoBuf.Grpc.Server;
 using Serilog;
 using System.Reflection;
+using System.Xml.Linq;
+using Zametek.Utility.Cache;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
 string? BuildVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
@@ -46,6 +48,13 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.IncludePerformanceLogging(Configuration.Current.Setting<bool>("Zametek:PerformanceLogging"));
         services.IncludeDiagnosticLogging(Configuration.Current.Setting<bool>("Zametek:DiagnosticLogging"));
         services.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
+
+        services.AddScoped<ICacheUtility, CacheUtility>();
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = Configuration.Current.Setting<string>("ConnectionStrings:redis");
+        });
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {

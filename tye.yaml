@@ -35,3 +35,11 @@ services:
     - name: https
       port: 7281
       protocol: https
+- name: redis
+  image: redis
+  bindings:
+  - containerPort: 6379
+    connectionString: ${host}:${port}
+- name: redis-cli
+  image: redis
+  args: "redis-cli -h redis MONITOR"

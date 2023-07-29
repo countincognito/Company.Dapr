@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.Reflection;
+using Zametek.Utility.Cache;
 using Zametek.Utility.Logging;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -90,6 +91,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         if (Configuration.IsDevelopment())
         {
             loggerConfiguration.WriteTo.Seq("http://localhost:5341");
+            services.AddDistributedMemoryCache();
         }
 
         Serilog.Core.Logger logger = loggerConfiguration.CreateLogger();
@@ -102,6 +104,8 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.IncludePerformanceLogging(Configuration.Current.Setting<bool>("Zametek:PerformanceLogging"));
         services.IncludeDiagnosticLogging(Configuration.Current.Setting<bool>("Zametek:DiagnosticLogging"));
         services.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
+
+        services.AddScoped<ICacheUtility, CacheUtility>();
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {

@@ -1,7 +1,9 @@
 ﻿using Company.Access.User.Data.Mobile;
 using Company.Access.User.Interface.Mobile;
 using Company.iFX.Proxy;
+using Microsoft.Extensions.Caching.Distributed;
 using Serilog;
+using Zametek.Utility.Cache;
 using Zametek.Utility.Logging;
 
 namespace Company.Access.User.Impl.Mobile
@@ -11,24 +13,59 @@ namespace Company.Access.User.Impl.Mobile
         : IUseCases
     {
         private readonly ILogger m_Logger;
+        private readonly ICacheUtility m_CacheUtility;
+
+        private readonly DistributedCacheEntryOptions m_DefaultDistributedCacheEntryOptions = new()
+        {
+            SlidingExpiration = TimeSpan.FromMinutes(5)
+        };
 
         public UseCases()
         {
             m_Logger = Proxy.CreateLogger<IUseCases>();
+            m_CacheUtility = Proxy.Create<ICacheUtility>(m_Logger);
         }
 
-        public Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
         {
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest.Name}");
 
+            string mobileMessage = string.Empty;
+
+            try
+            {
+                string password = await m_CacheUtility.GetAsync<string>(registerRequest.Name);
+
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    m_Logger.Warning(@"No password currently stored for name: {@Name}", registerRequest.Name);
+                    await m_CacheUtility.SetAsync(
+                        registerRequest.Name,
+                        registerRequest.Password,
+                        m_DefaultDistributedCacheEntryOptions);
+                    password = await m_CacheUtility.GetAsync<string>(registerRequest.Name);
+                }
+                else
+                {
+                    m_Logger.Warning(@"Password already stored for name: {@Name}", registerRequest.Name);
+                }
+
+                mobileMessage = password;
+            }
+            catch (Exception ex)
+            {
+                mobileMessage = "Something weird happened!";
+                m_Logger.Error(ex, @"Unable to cache password for name: {@Name}", registerRequest.Name);
+            }
+
             RegisterResponse response = new()
             {
                 Name = registerRequest.Name,
-                MobileMessage = registerRequest.Password
+                MobileMessage = mobileMessage,
             };
 
-            return Task.FromResult(response);
+            return response;
         }
     }
 }
