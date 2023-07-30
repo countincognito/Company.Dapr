@@ -34,9 +34,11 @@ namespace Company.Manager.Membership.Impl.Tests
         }
 
         [Fact]
-        public async Task MembershipManager_GivenRegisterMember()
+        public async Task MembershipManager_GivenRegisterMember_WhenWebRequest_ThenWebResponseReturned()
         {
             var webUseCasesMock = new Mock<Interface.Web.IUseCases>();
+            string name = ServiceRunner.GenerateRandomString();
+            string webMessage = ServiceRunner.GenerateRandomString();
 
             webUseCasesMock
                 .Setup(x => x.RegisterMemberAsync(It.IsAny<Data.Web.RegisterRequest>()))
@@ -44,8 +46,8 @@ namespace Company.Manager.Membership.Impl.Tests
                 {
                     var response = new Data.Web.RegisterResponse
                     {
-                        Name = "test",
-                        WebMessage = "test"
+                        Name = name,
+                        WebMessage = webMessage
                     };
                     return Task.FromResult(response);
                 });
@@ -55,20 +57,58 @@ namespace Company.Manager.Membership.Impl.Tests
                 var response = await service.RegisterMemberAsync(
                     new Data.Web.RegisterRequest
                     {
-                        Name = ""
+                        Name = ServiceRunner.GenerateRandomString()
                     },
                     default);
                 response.Should().NotBeNull();
-                response.Name.Should().Be("test");
+                var webResponse = response as Data.Web.RegisterResponse;
+                webResponse.Should().NotBeNull();
+                webResponse!.Name.Should().Be(name);
+                webResponse!.WebMessage.Should().Be(webMessage);
             });
-
-            //    var trackingContext = new TrackingContext(Guid.Parse("blah"), DateTime.UtcNow, new Dictionary<string, string>());
-            //    trackingContext.SetAsCurrent();
 
             await m_Harness!.TestService(
                 serviceRunner,
                 webUseCasesMock.Object);
         }
 
+        [Fact]
+        public async Task MembershipManager_GivenRegisterMember_WhenMobileRequest_ThenMobileResponseReturned()
+        {
+            var mobileUseCasesMock = new Mock<Interface.Mobile.IUseCases>();
+            string name = ServiceRunner.GenerateRandomString();
+            string mobileMessage = ServiceRunner.GenerateRandomString();
+
+            mobileUseCasesMock
+                .Setup(x => x.RegisterMemberAsync(It.IsAny<Data.Mobile.RegisterRequest>()))
+                .Returns(() =>
+                {
+                    var response = new Data.Mobile.RegisterResponse
+                    {
+                        Name = name,
+                        MobileMessage = mobileMessage
+                    };
+                    return Task.FromResult(response);
+                });
+
+            Func<IMembershipManager, Task> serviceRunner = ServiceRunner.Create<IMembershipManager>(async service =>
+            {
+                var response = await service.RegisterMemberAsync(
+                    new Data.Mobile.RegisterRequest
+                    {
+                        Name = ServiceRunner.GenerateRandomString()
+                    },
+                    default);
+                response.Should().NotBeNull();
+                var mobileResponse = response as Data.Mobile.RegisterResponse;
+                mobileResponse.Should().NotBeNull();
+                mobileResponse!.Name.Should().Be(name);
+                mobileResponse!.MobileMessage.Should().Be(mobileMessage);
+            });
+
+            await m_Harness!.TestService(
+                serviceRunner,
+                mobileUseCasesMock.Object);
+        }
     }
 }

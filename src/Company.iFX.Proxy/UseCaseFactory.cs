@@ -34,11 +34,11 @@ namespace Company.iFX.Proxy
             string useCaseTypeName = $"{criteriaNamespace.Replace(ConventionKeyword.Data, ConventionKeyword.Interface)}.I{ComponentKeyword.UseCases}";
 
             Type? useCaseInterfaceType = Assembly.GetAssembly(typeof(T))?.GetType(useCaseTypeName);
-            Debug.Assert(useCaseInterfaceType is not null, "You did not follow the rules...");
+            Debug.Assert(useCaseInterfaceType is not null, $@"Could not find the type {useCaseInterfaceType}");
             useCaseInterfaceType.ThrowIfNotInterface();
 
             MethodInfo? methodName = useCaseInterfaceType.GetMethod(callerName);
-            Debug.Assert(methodName is not null, $@"{callerName} not found");
+            Debug.Assert(methodName is not null, $@"{callerName} not found in the type {useCaseInterfaceType}");
 
             Func<object, C, Task<R>> useCaseFunc = ReflectionUtility.CreateCovariantTaskDelegate<C, R>(methodName);
 
@@ -57,6 +57,7 @@ namespace Company.iFX.Proxy
                 return task;
             }
 
+            // Do not await here. Allow the caller to await.
             return useCase(criteria);
         }
     }

@@ -57,5 +57,4 @@ namespace Company.iFX.Test
             }
         }
     }
-
 }
