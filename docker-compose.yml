@@ -15,16 +15,21 @@ services:
 
   company.microservice.membership.service-dapr:
     image: "daprio/daprd:latest"
-    command: [ "./daprd", 
-      "-app-id", "company-microservice-membership-service", 
-      "-app-port", "80", 
-      "-app-protocol", "grpc", 
-      "-log-level", "debug"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "company-microservice-membership-service",
+        "-app-port",
+        "80",
+        "-app-protocol",
+        "grpc",
+        "-log-level",
+        "debug"
       ]
     depends_on:
       - company.microservice.membership.service
     network_mode: "service:company.microservice.membership.service"
-
 
   company.manager.membership.service:
     image: ${DOCKER_REGISTRY-}companymanagermembershipservice
@@ -40,16 +45,21 @@ services:
 
   company.manager.membership.service-dapr:
     image: "daprio/daprd:latest"
-    command: [ "./daprd", 
-      "-app-id", "company-manager-membership-service", 
-      "-app-port", "80", 
-      "-app-protocol", "grpc", 
-      "-log-level", "debug"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "company-manager-membership-service",
+        "-app-port",
+        "80",
+        "-app-protocol",
+        "grpc",
+        "-log-level",
+        "debug"
       ]
     depends_on:
       - company.manager.membership.service
     network_mode: "service:company.manager.membership.service"
-
 
   company.engine.registration.service:
     image: ${DOCKER_REGISTRY-}companyengineregistrationservice
@@ -65,16 +75,21 @@ services:
 
   company.engine.registration.service-dapr:
     image: "daprio/daprd:latest"
-    command: [ "./daprd", 
-      "-app-id", "company-engine-registration-service", 
-      "-app-port", "80", 
-      "-app-protocol", "grpc", 
-      "-log-level", "debug"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "company-engine-registration-service",
+        "-app-port",
+        "80",
+        "-app-protocol",
+        "grpc",
+        "-log-level",
+        "debug"
       ]
     depends_on:
       - company.engine.registration.service
     network_mode: "service:company.engine.registration.service"
-
 
   company.access.user.service:
     image: ${DOCKER_REGISTRY-}companyaccessuserservice
@@ -93,28 +108,32 @@ services:
 
   company.access.user.service-dapr:
     image: "daprio/daprd:latest"
-    command: [ "./daprd", 
-      "-app-id", "company-access-user-service", 
-      "-app-port", "80", 
-      "-app-protocol", "grpc", 
-      "-log-level", "debug"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "company-access-user-service",
+        "-app-port",
+        "80",
+        "-app-protocol",
+        "grpc",
+        "-log-level",
+        "debug"
       ]
     depends_on:
       - company.access.user.service
     network_mode: "service:company.access.user.service"
-
 
   redis.image:
     image: redis:latest
     ports:
       - 6379:6379
 
-
   seq.image:
     #command: --memory=16g --memory-swap=16g
     image: datalust/seq:latest
-    #volumes:
-    #  - /datadrive:/data
+    volumes:
+      - ${SEQ_DATA}:/data
     ports:
       - 5342:5341
       - 81:80
