@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ProtoBuf.Grpc.Server;
 using Serilog;
+using System.Diagnostics;
 using System.Reflection;
 using Zametek.Utility.Logging;
 
@@ -94,10 +95,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
             loggerConfiguration.Enrich.WithProperty(nameof(ServiceName), ServiceName);
         }
 
-        if (Configuration.IsDevelopment())
-        {
-            loggerConfiguration.WriteTo.Seq("http://localhost:5341");
-        }
+        string? seqHost = Configuration.Current.Setting<string>("SeqHost");
+        Debug.Assert(seqHost != null);
+        loggerConfiguration.WriteTo.Seq(seqHost);
 
         Serilog.Core.Logger logger = loggerConfiguration.CreateLogger();
         Log.Logger = logger;

@@ -13,6 +13,7 @@ using Company.Manager.Membership.Interface;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Diagnostics;
 using System.Reflection;
 using Zametek.Utility.Cache;
 using Zametek.Utility.Logging;
@@ -90,9 +91,12 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
 
         if (Configuration.IsDevelopment())
         {
-            loggerConfiguration.WriteTo.Seq("http://localhost:5341");
             services.AddDistributedMemoryCache();
         }
+
+        string? seqHost = Configuration.Current.Setting<string>("SeqHost");
+        Debug.Assert(seqHost != null);
+        loggerConfiguration.WriteTo.Seq(seqHost);
 
         Serilog.Core.Logger logger = loggerConfiguration.CreateLogger();
         Log.Logger = logger;

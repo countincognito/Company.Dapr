@@ -118,12 +118,7 @@ namespace Company.iFX.Container
             {
                 Debug.Assert(assemblyName is not null);
                 builder.RegisterAssemblyTypes(Assembly.LoadFrom(assemblyName))
-                    .Where(type =>
-                        type.Name.EndsWith(ComponentKeyword.Manager)
-                        || type.Name.EndsWith(ComponentKeyword.Engine)
-                        || type.Name.EndsWith(ComponentKeyword.Access)
-                        || type.Name.EndsWith(ComponentKeyword.Utility)
-                        || type.Name.EndsWith(ComponentKeyword.UseCases))
+                    .Where(type => ComponentKeyword.All.Any(keyword => type.Name.EndsWith(keyword)))
                     .As(type => type.GetInterfaces());
             }
         }

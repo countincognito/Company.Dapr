@@ -29,13 +29,12 @@ namespace Company.iFX.Common
             Debug.Assert(typeof(I).IsInterface);
             string[] namespaceSegments = NamespaceSegments<I>();
             string componentKeyword = namespaceSegments[Constant.ComponentIndex];
-            componentKeyword.ValueSwitchOn()
-                .Case(ComponentKeyword.Manager, x => componentKeyword = x)
-                .Case(ComponentKeyword.Engine, x => componentKeyword = x)
-                .Case(ComponentKeyword.Access, x => componentKeyword = x)
-                .Case(ComponentKeyword.Resource, x => componentKeyword = x)
-                .Case(ComponentKeyword.Utility, x => componentKeyword = x)
-                .Default(version => throw new InvalidOperationException($@"Cannot process component keyword: {componentKeyword}"));
+
+            if (!ComponentKeyword.All.Any(keyword => componentKeyword == keyword))
+            {
+                throw new InvalidOperationException($@"Cannot process component keyword: {componentKeyword}");
+            }
+
             return new ComponentKeyword(componentKeyword);
         }
 

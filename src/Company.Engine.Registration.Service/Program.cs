@@ -8,6 +8,7 @@ using Company.iFX.Logging;
 using Company.iFX.Proxy;
 using ProtoBuf.Grpc.Server;
 using Serilog;
+using System.Diagnostics;
 using System.Reflection;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -33,10 +34,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
             loggerConfiguration.Enrich.WithProperty(nameof(ServiceName), ServiceName);
         }
 
-        if (Configuration.IsDevelopment())
-        {
-            loggerConfiguration.WriteTo.Seq("http://localhost:5341");
-        }
+        string? seqHost = Configuration.Current.Setting<string>("SeqHost");
+        Debug.Assert(seqHost != null);
+        loggerConfiguration.WriteTo.Seq(seqHost);
 
         Serilog.Core.Logger logger = loggerConfiguration.CreateLogger();
         Log.Logger = logger;
