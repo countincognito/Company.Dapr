@@ -12,7 +12,7 @@ namespace Company.iFX.Container
     public static class Container
     {
         private static ILifetimeScope? s_Scope;
-        private static ILifetimeScope? s_MainTestScope;
+        private static ILifetimeScope? s_TestScope;
 
         public static TService GetService<TService>()
             where TService : notnull
@@ -72,7 +72,7 @@ namespace Company.iFX.Container
                 return;
             }
 
-            ILifetimeScope? testScope = s_MainTestScope?.BeginLifetimeScope(configuration =>
+            ILifetimeScope? testScope = s_TestScope?.BeginLifetimeScope(configuration =>
             {
                 foreach (object mock in mocks)
                 {
@@ -182,7 +182,7 @@ namespace Company.iFX.Container
             var builder = new ContainerBuilder();
             builder.RegisterInstance(logger).As(logger.GetType().GetInterfaces());
             builder.RegisterTypes(types).As(t => t.GetInterfaces());
-            s_MainTestScope = builder.Build().BeginLifetimeScope();
+            s_TestScope = builder.Build().BeginLifetimeScope();
         }
     }
 }
