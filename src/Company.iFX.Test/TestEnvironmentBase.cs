@@ -2,7 +2,7 @@
 
 namespace Company.iFX.Test
 {
-    public abstract class ServiceTestBase
+    public abstract class TestEnvironmentBase
     {
         Type[] m_ServicesUnderTest = Array.Empty<Type>();
 
@@ -12,7 +12,7 @@ namespace Company.iFX.Test
 
             if (!Configuration.Configuration.SystemUnderTest)
             {
-                throw new InvalidOperationException("Configuration must be in test mode to run UnitTests");
+                throw new InvalidOperationException("Configuration must be in test mode to run a test environment");
             }
 
             m_ServicesUnderTest = types;
@@ -53,7 +53,7 @@ namespace Company.iFX.Test
             }
             finally
             {
-                Container.Container.EndScope();
+                Container.Container.EndTestScope();
             }
         }
     }

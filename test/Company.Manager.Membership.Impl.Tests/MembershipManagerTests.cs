@@ -8,12 +8,12 @@ namespace Company.Manager.Membership.Impl.Tests
     public class MembershipManagerTests
         : IDisposable
     {
-        private readonly UnitTestHarness? m_Harness = null;
+        private readonly UnitTestEnvironment? m_TestEnvironment = null;
 
         public MembershipManagerTests()
         {
-            m_Harness = new UnitTestHarness();
-            m_Harness.Setup(typeof(MembershipManager));
+            m_TestEnvironment = new UnitTestEnvironment();
+            m_TestEnvironment.Setup(typeof(MembershipManager));
         }
 
         public void Dispose()
@@ -26,9 +26,9 @@ namespace Company.Manager.Membership.Impl.Tests
         {
             if (disposing)
             {
-                if (m_Harness != null)
+                if (m_TestEnvironment != null)
                 {
-                    m_Harness!.Cleanup();
+                    m_TestEnvironment!.Cleanup();
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace Company.Manager.Membership.Impl.Tests
                 webResponse!.WebMessage.Should().Be(webMessage);
             });
 
-            await m_Harness!.TestService(
+            await m_TestEnvironment!.TestService(
                 serviceRunner,
                 webUseCasesMock.Object);
         }
@@ -106,7 +106,7 @@ namespace Company.Manager.Membership.Impl.Tests
                 mobileResponse!.MobileMessage.Should().Be(mobileMessage);
             });
 
-            await m_Harness!.TestService(
+            await m_TestEnvironment!.TestService(
                 serviceRunner,
                 mobileUseCasesMock.Object);
         }
