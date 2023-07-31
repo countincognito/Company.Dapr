@@ -5,13 +5,13 @@ using Zametek.Utility;
 
 namespace Company.iFX.Grpc
 {
-    public partial class TrackingHelper
+    public partial class TrackingContextHelper
     {
         [GeneratedRegex(@"[^a-z0-9_-]")]
         private static partial Regex InvalidHeaderKeyCharacterRegex();
         private static readonly string s_TrackingContextKeyName;
 
-        static TrackingHelper()
+        static TrackingContextHelper()
         {
             s_TrackingContextKeyName = string.Concat(
                 InvalidHeaderKeyCharacterRegex().Replace(TrackingContext.FullName.ToLowerInvariant(), "-"),

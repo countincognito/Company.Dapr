@@ -137,14 +137,14 @@ namespace Company.iFX.Grpc
             where TResponse : class
         {
             Metadata headers = context.Options.Headers ?? new Metadata();
-            CallOptions updatedOptions = context.Options.WithHeaders(TrackingHelper.ProcessHeaders(headers));
+            CallOptions updatedOptions = context.Options.WithHeaders(TrackingContextHelper.ProcessHeaders(headers));
             context = new ClientInterceptorContext<TRequest, TResponse>(context.Method, context.Host, updatedOptions);
         }
 
         private static void AddCallerMetadata(ref ServerCallContext context)
         {
             Metadata headers = context.RequestHeaders ?? new Metadata();
-            Metadata updatedHeaders = TrackingHelper.ProcessHeaders(headers);
+            Metadata updatedHeaders = TrackingContextHelper.ProcessHeaders(headers);
             context.WriteResponseHeadersAsync(updatedHeaders);
         }
     }
