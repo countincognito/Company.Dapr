@@ -11,7 +11,7 @@ services:
     links:
       - seq.image
     environment:
-      - SEQHOST=http://seq.image
+      - CONNECTIONSTRINGS__SEQ=http://seq.image
 
   company.microservice.membership.service-dapr:
     image: "daprio/daprd:latest"
@@ -25,7 +25,9 @@ services:
         "-app-protocol",
         "grpc",
         "-log-level",
-        "debug"
+        "debug",
+        "dapr.io/config",
+        "tracing"
       ]
     depends_on:
       - company.microservice.membership.service
@@ -41,7 +43,7 @@ services:
     links:
       - seq.image
     environment:
-      - SEQHOST=http://seq.image
+      - CONNECTIONSTRINGS__SEQ=http://seq.image
 
   company.manager.membership.service-dapr:
     image: "daprio/daprd:latest"
@@ -55,7 +57,9 @@ services:
         "-app-protocol",
         "grpc",
         "-log-level",
-        "debug"
+        "debug",
+        "dapr.io/config",
+        "tracing"
       ]
     depends_on:
       - company.manager.membership.service
@@ -71,7 +75,7 @@ services:
     links:
       - seq.image
     environment:
-      - SEQHOST=http://seq.image
+      - CONNECTIONSTRINGS__SEQ=http://seq.image
 
   company.engine.registration.service-dapr:
     image: "daprio/daprd:latest"
@@ -85,7 +89,9 @@ services:
         "-app-protocol",
         "grpc",
         "-log-level",
-        "debug"
+        "debug",
+        "dapr.io/config",
+        "tracing"
       ]
     depends_on:
       - company.engine.registration.service
@@ -98,13 +104,16 @@ services:
       dockerfile: src/Company.Access.User.Service/Dockerfile
     depends_on:
       - redis.image
+      - postgres.image
       - seq.image
     links:
       - redis.image
+      - postgres.image
       - seq.image
     environment:
       - CONNECTIONSTRINGS__REDIS=redis.image
-      - SEQHOST=http://seq.image
+      - CONNECTIONSTRINGS__POSTGRES=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Integrated Security=true;Pooling=true;
+      - CONNECTIONSTRINGS__SEQ=http://seq.image
 
   company.access.user.service-dapr:
     image: "daprio/daprd:latest"
@@ -118,7 +127,9 @@ services:
         "-app-protocol",
         "grpc",
         "-log-level",
-        "debug"
+        "debug",
+        "dapr.io/config",
+        "tracing"
       ]
     depends_on:
       - company.access.user.service
@@ -139,3 +150,14 @@ services:
       - 81:80
     environment:
       - ACCEPT_EULA=Y
+
+  postgres.image:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5433:${POSTGRES_PORT}
+    volumes:
+      - ${POSTGRES_DATA}:/var/lib/postgresql/data

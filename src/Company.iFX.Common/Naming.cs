@@ -10,9 +10,9 @@ namespace Company.iFX.Common
             Debug.Assert(typeof(I).IsInterface);
             string[] namespaceSegments = typeof(I)?.Namespace?.Split('.') ?? Array.Empty<string>();
 
-            if (namespaceSegments.Length < Constant.NamespaceMinimumSize)
+            if (namespaceSegments.Length != Constant.NamespaceSize)
             {
-                throw new FormatException(@"Namespace is an invalid format.");
+                throw new FormatException($@"Namespace is an invalid format for type {typeof(I).FullName}.");
             }
 
             return namespaceSegments;

@@ -1,9 +1,11 @@
-﻿using Company.Access.User.Data.Web;
+﻿using Company.Access.User.Data.Db;
+using Company.Access.User.Data.Web;
 using Company.Access.User.Interface.Web;
 using Company.iFX.Proxy;
-using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Zametek.Utility.Cache;
+using System.Diagnostics;
+using Zametek.Utility;
 using Zametek.Utility.Logging;
 
 namespace Company.Access.User.Impl.Web
@@ -13,17 +15,15 @@ namespace Company.Access.User.Impl.Web
         : IUseCases
     {
         private readonly ILogger m_Logger;
-        private readonly ICacheUtility m_CacheUtility;
-
-        private readonly DistributedCacheEntryOptions m_DefaultDistributedCacheEntryOptions = new()
-        {
-            SlidingExpiration = TimeSpan.FromMinutes(5)
-        };
+        private readonly IDbContextFactory<UserContext> m_CtxFactory;
 
         public UseCases()
         {
             m_Logger = Proxy.CreateLogger<IUseCases>();
-            m_CacheUtility = Proxy.Create<ICacheUtility>(m_Logger);
+            m_CtxFactory = iFX.Container.Container.GetService<IDbContextFactory<UserContext>>();
+
+            using var ctx = m_CtxFactory.CreateDbContext();
+            ctx.Database.Migrate();
         }
 
         public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
@@ -35,33 +35,58 @@ namespace Company.Access.User.Impl.Web
 
             try
             {
-                DateTime? responseDob = await m_CacheUtility.GetAsync<DateTime?>(registerRequest.Name);
+                using var ctx = await m_CtxFactory.CreateDbContextAsync();
 
-                if (responseDob is null)
+                NameValuePair? result = await ctx.NameValuePairs
+                    .Where(x => x.Name == registerRequest.Name)
+                    .SingleOrDefaultAsync();
+
+                if (result is null)
                 {
-                    m_Logger.Warning(@"No DOB currently stored for name: {@Name}", registerRequest.Name);
-                    await m_CacheUtility.SetAsync(
-                        registerRequest.Name,
-                        registerRequest.DateOfBirth,
-                        m_DefaultDistributedCacheEntryOptions);
-                    responseDob = await m_CacheUtility.GetAsync<DateTime?>(registerRequest.Name);
+                    Debug.Assert(registerRequest is not null);
+                    m_Logger.Warning(@"No DOB currently stored for name: {@Name}", registerRequest?.Name);
+
+                    var input = new NameValuePair
+                    {
+                        Name = registerRequest?.Name ?? string.Empty,
+                        Value = registerRequest.ObjectToByteArray(),
+                    };
+
+                    using (var transaction = await ctx.Database.BeginTransactionAsync())
+                    {
+                        try
+                        {
+                            await ctx.NameValuePairs.AddAsync(input);
+                            await ctx.SaveChangesAsync();
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            m_Logger.Error(ex, @"Failed to record a new NameValuePair in database for: {@RegisterRequest}.", registerRequest);
+                            transaction.Rollback();
+                        }
+                    }
+
+                    result = await ctx.NameValuePairs
+                        .Where(x => x.Name == input.Name)
+                        .SingleOrDefaultAsync();
                 }
                 else
                 {
-                    m_Logger.Warning(@"Email already stored for name: {@Name}", registerRequest.Name);
+                    m_Logger.Warning(@"DOB already stored for name: {@Name}", registerRequest.Name);
                 }
 
-                webMessage = responseDob?.ToString() ?? @"No DOB";
+                webMessage = result?.Value.ByteArrayToObject<RegisterRequest>()?.DateOfBirth.ToString() ?? @"No DOB";
             }
             catch (Exception ex)
             {
                 webMessage = "Something weird happened!";
-                m_Logger.Error(ex, @"Unable to cache email for name: {@Name}", registerRequest.Name);
+                m_Logger.Error(ex, @"Unable to cache DOB for name: {@Name}", registerRequest.Name);
             }
 
             RegisterResponse response = new()
             {
-                Name = registerRequest.Name,
+                Name = registerRequest?.Name,
                 WebMessage = webMessage,
             };
 

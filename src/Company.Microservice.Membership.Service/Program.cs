@@ -95,7 +95,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
             loggerConfiguration.Enrich.WithProperty(nameof(ServiceName), ServiceName);
         }
 
-        string? seqHost = Configuration.Current.Setting<string>("SeqHost");
+        string? seqHost = Configuration.Current.Setting<string>("ConnectionStrings:seq");
         Debug.Assert(seqHost != null);
         loggerConfiguration.WriteTo.Seq(seqHost);
 

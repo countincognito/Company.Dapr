@@ -1,14 +1,15 @@
+using Company.Access.User.Impl;
 using Company.Access.User.Service;
 using Company.iFX.Configuration;
 using Company.iFX.Grpc;
 using Company.iFX.Hosting;
 using Company.iFX.Logging;
 using Company.iFX.Proxy;
+using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Grpc.Server;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
-using System.Xml.Linq;
 using Zametek.Utility.Cache;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -34,7 +35,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
             loggerConfiguration.Enrich.WithProperty(nameof(ServiceName), ServiceName);
         }
 
-        string? seqHost = Configuration.Current.Setting<string>("SeqHost");
+        string? seqHost = Configuration.Current.Setting<string>("ConnectionStrings:seq");
         Debug.Assert(seqHost != null);
         loggerConfiguration.WriteTo.Seq(seqHost);
 
@@ -55,6 +56,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         {
             options.Configuration = Configuration.Current.Setting<string>("ConnectionStrings:redis");
         });
+
+        services.AddPooledDbContextFactory<UserContext>(
+            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres")));
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {

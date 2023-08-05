@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Asp.Versioning.Builder;
 using Asp.Versioning.Conventions;
 using AutoMapper;
+using Company.Access.User.Impl;
 using Company.iFX.Api;
 using Company.iFX.Common;
 using Company.iFX.Configuration;
@@ -12,6 +13,7 @@ using Company.Manager.Membership.Data;
 using Company.Manager.Membership.Interface;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
@@ -94,7 +96,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
             services.AddDistributedMemoryCache();
         }
 
-        string? seqHost = Configuration.Current.Setting<string>("SeqHost");
+        string? seqHost = Configuration.Current.Setting<string>("ConnectionStrings:seq");
         Debug.Assert(seqHost != null);
         loggerConfiguration.WriteTo.Seq(seqHost);
 
@@ -110,6 +112,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
 
         services.AddScoped<ICacheUtility, CacheUtility>();
+
+        services.AddPooledDbContextFactory<UserContext>(
+            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres")));
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
