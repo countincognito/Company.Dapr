@@ -6,17 +6,15 @@ using Zametek.Utility;
 
 namespace Company.iFX.Proxy
 {
-    public static class UseCaseFactory<T, C1, C2, R>
-        where T : class
-        where C1 : class
-        where C2 : struct
-        where R : class
+    public static class UseCaseFactory<TService, TParamBase, TContext, TResultBase>
+        where TService : class
+        where TParamBase : class
+        where TContext : struct
+        where TResultBase : class
     {
-        private delegate Task<R> UseCase(C1 criteria, C2 context);
-
-        public static Task<R> CallAsync(
-            C1 criteria,
-            C2 context,
+        public static Task<TResultBase> CallAsync(
+            TParamBase paramBase,
+            TContext context,
             [CallerMemberName] string? callerName = null)
         {
             // DESIGN NOTE: Do not await in the strategy. Let the caller await.
@@ -27,40 +25,40 @@ namespace Company.iFX.Proxy
             // DESIGN NOTE: Default convention.
             // Evolve your factories to allow consumers to inject a 'contextual' convention.
 
-            typeof(T).ThrowIfNotInterface();
+            typeof(TService).ThrowIfNotInterface();
             Debug.Assert(callerName is not null);
 
-            string? criteriaNamespace = criteria.GetType().Namespace;
+            string? criteriaNamespace = paramBase.GetType().Namespace;
             Debug.Assert(criteriaNamespace is not null);
 
             string useCaseTypeName = $"{criteriaNamespace.Replace(ConventionKeyword.Data, ConventionKeyword.Interface)}.I{ComponentKeyword.UseCases}";
 
-            Type? useCaseInterfaceType = Assembly.GetAssembly(typeof(T))?.GetType(useCaseTypeName);
+            Type? useCaseInterfaceType = Assembly.GetAssembly(typeof(TService))?.GetType(useCaseTypeName);
             Debug.Assert(useCaseInterfaceType is not null, $@"Could not find the type {useCaseInterfaceType}");
             useCaseInterfaceType.ThrowIfNotInterface();
 
             MethodInfo? methodName = useCaseInterfaceType.GetMethod(callerName);
             Debug.Assert(methodName is not null, $@"{callerName} not found in the type {useCaseInterfaceType}");
 
-            Func<object, C1, C2, Task<R>> useCaseFunc = ReflectionUtility.CreateCovariantTaskDelegate<C1, C2, R>(methodName);
+            Func<object, TParamBase, TContext, Task<TResultBase>> useCaseFunc = ReflectionUtility.CreateCovariantTaskDelegate<TParamBase, TContext, TResultBase>(methodName);
 
-            Task<R> useCase(C1 criteria, C2 context)
+            Task<TResultBase> ConvertUseCaseMethod(TParamBase paramBase, TContext context)
             {
                 object instance = Proxy.Create(useCaseInterfaceType);
                 Debug.Assert(instance is not null);
 
-                Task<R> func()
+                Task<TResultBase> func()
                 {
-                    Task<R> task = useCaseFunc(instance, criteria, context);
+                    Task<TResultBase> task = useCaseFunc(instance, paramBase, context);
                     return task;
                 }
 
-                Task<R> task = Task.Run(func);
+                Task<TResultBase> task = Task.Run(func);
                 return task;
             }
 
-            // Do not await here. Allow the caller to await.
-            return useCase(criteria, context);
+            // Do not await here. Let the caller do the awaiting.
+            return ConvertUseCaseMethod(paramBase, context);
         }
     }
 }

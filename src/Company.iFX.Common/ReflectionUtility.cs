@@ -14,10 +14,12 @@ namespace Company.iFX.Common
             bool returnsTaskOfResult =
                 method.ReturnType.GetGenericTypeDefinition() == taskOfResultType
                 && method.ReturnType.GetTypeInfo().IsConstructedGenericType;
+
             Debug.Assert(returnsTaskOfResult, $@"{method.Name} does not return a Task<{typeof(TResultBase)}>");
 
             string resultPropertyName = nameof(Task<TResultBase>.Result);
             PropertyInfo? resultProperty = method.ReturnType.GetProperty(resultPropertyName);
+
             Debug.Assert(resultProperty is not null);
             Debug.Assert(resultProperty.GetMethod is not null);
 
@@ -40,9 +42,11 @@ namespace Company.iFX.Common
             Type reflectionUtilityType = typeof(ReflectionUtility);
             MethodInfo? genericHelper = reflectionUtilityType
                 .GetMethod(nameof(CreateDelegateUnknownTargetDowncastParamUpcastResultHelper), BindingFlags.Static | BindingFlags.NonPublic);
+            
             Debug.Assert(genericHelper is not null);
 
             ParameterInfo[] parameters = method.GetParameters();
+
             Debug.Assert(parameters.Length == 2);
             Debug.Assert(parameters[0].ParameterType.IsClass);
             Debug.Assert(parameters[1].ParameterType.IsValueType);
@@ -52,11 +56,19 @@ namespace Company.iFX.Common
 
             Debug.Assert(method.ReflectedType is not null);
             Debug.Assert(method.ReflectedType.IsClass || method.ReflectedType.IsInterface);
-            MethodInfo constructedHelper = genericHelper
-                .MakeGenericMethod(method.ReflectedType, parameters[0].ParameterType, parameters[1].ParameterType, method.ReturnType, paramBaseType, resultBaseType);
+
+            MethodInfo constructedHelper = genericHelper.MakeGenericMethod(
+                method.ReflectedType,
+                parameters[0].ParameterType,
+                parameters[1].ParameterType,
+                method.ReturnType,
+                paramBaseType,
+                resultBaseType);
 
             object[] arguments = new object[] { method };
-            Func<object, TParamBase, TContext, TResultBase>? func = constructedHelper.Invoke(null, arguments) as Func<object, TParamBase, TContext, TResultBase>;
+            Func<object, TParamBase, TContext, TResultBase>? func =
+                constructedHelper.Invoke(null, arguments) as Func<object, TParamBase, TContext, TResultBase>;
+
             Debug.Assert(func is not null);
             return func;
         }
@@ -88,6 +100,7 @@ namespace Company.iFX.Common
         {
             Type reflectionUtilType = typeof(ReflectionUtility);
             MethodInfo? genericHelper = reflectionUtilType.GetMethod(nameof(CreateDelegateDowncastTargetHelper), BindingFlags.Static | BindingFlags.NonPublic);
+            
             Debug.Assert(genericHelper is not null);
             Debug.Assert(method.ReflectedType is not null);
             Debug.Assert(method.ReflectedType.IsClass);
