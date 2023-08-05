@@ -24,7 +24,7 @@ namespace Company.Manager.Membership.Impl
         {
             m_Logger.Information($"{nameof(RegisterMemberAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterMemberAsync)} {registerRequest}");
-            return await UseCaseFactory<IMembershipManager, RegisterRequestBase, RegisterResponseBase>.CallAsync(registerRequest);
+            return await UseCaseFactory<IMembershipManager, RegisterRequestBase, CallContext, RegisterResponseBase>.CallAsync(registerRequest, context);
         }
     }
 }

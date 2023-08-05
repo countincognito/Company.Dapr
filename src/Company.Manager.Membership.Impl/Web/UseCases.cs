@@ -3,6 +3,7 @@ using Company.Engine.Registration.Interface;
 using Company.iFX.Proxy;
 using Company.Manager.Membership.Data.Web;
 using Company.Manager.Membership.Interface.Web;
+using ProtoBuf.Grpc;
 using Serilog;
 using Zametek.Utility.Logging;
 
@@ -21,7 +22,9 @@ namespace Company.Manager.Membership.Impl.Web
             m_Mapper = iFX.Container.Container.GetService<IMapper>();
         }
 
-        public async Task<RegisterResponse> RegisterMemberAsync(RegisterRequest registerRequest)
+        public async Task<RegisterResponse> RegisterMemberAsync(
+            RegisterRequest registerRequest,
+            CallContext context = default)
         {
             m_Logger.Information($"{nameof(RegisterMemberAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterMemberAsync)} {registerRequest.Name}");
@@ -30,7 +33,7 @@ namespace Company.Manager.Membership.Impl.Web
                 m_Mapper.Map<Engine.Registration.Data.RegisterRequestBase>(registerRequest);
 
             IRegistrationEngine registrationEngine = Proxy.Create<IRegistrationEngine>();
-            Engine.Registration.Data.RegisterResponseBase engineResponse = await registrationEngine.RegisterAsync(engineRegisterRequest);
+            Engine.Registration.Data.RegisterResponseBase engineResponse = await registrationEngine.RegisterAsync(engineRegisterRequest, context.CancellationToken);
 
             RegisterResponse registerResponse = m_Mapper.Map<RegisterResponse>(engineResponse);
 

@@ -138,7 +138,7 @@ services:
   redis.image:
     image: redis:latest
     ports:
-      - 6379:6379
+      - 6385:6379
 
   seq.image:
     #command: --memory=16g --memory-swap=16g

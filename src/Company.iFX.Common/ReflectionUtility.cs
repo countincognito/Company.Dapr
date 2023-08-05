@@ -5,8 +5,9 @@ namespace Company.iFX.Common
 {
     public static class ReflectionUtility
     {
-        public static Func<object, TParamBase, Task<TResultBase>> CreateCovariantTaskDelegate<TParamBase, TResultBase>(MethodInfo method)
+        public static Func<object, TParamBase, TContext, Task<TResultBase>> CreateCovariantTaskDelegate<TParamBase, TContext, TResultBase>(MethodInfo method)
             where TParamBase : class
+            where TContext : struct
             where TResultBase : class
         {
             Type taskOfResultType = typeof(Task<>);
@@ -20,12 +21,12 @@ namespace Company.iFX.Common
             Debug.Assert(resultProperty is not null);
             Debug.Assert(resultProperty.GetMethod is not null);
 
-            Func<object, TParamBase, Task> taskFunc = CreateDelegateUnknownTargetDowncastParamUpcastResult<TParamBase, Task>(method);
+            Func<object, TParamBase, TContext, Task> taskFunc = CreateDelegateUnknownTargetDowncastParamUpcastResult<TParamBase, TContext, Task>(method);
             Func<Task, TResultBase> resultFunc = CreateDelegateDowncastTarget<Task, TResultBase>(resultProperty.GetMethod);
 
-            Task<TResultBase> func(object instance, TParamBase param)
+            Task<TResultBase> func(object instance, TParamBase param, TContext context)
             {
-                Task task = taskFunc(instance, param);
+                Task task = taskFunc(instance, param, context);
                 TaskScheduler scheduler = TaskScheduler.Default;
                 Task<TResultBase> resultTask = task.ContinueWith(resultFunc, scheduler);
                 return resultTask;
@@ -34,7 +35,7 @@ namespace Company.iFX.Common
             return func;
         }
 
-        private static Func<object, TParamBase, TResultBase> CreateDelegateUnknownTargetDowncastParamUpcastResult<TParamBase, TResultBase>(MethodInfo method)
+        private static Func<object, TParamBase, TContext, TResultBase> CreateDelegateUnknownTargetDowncastParamUpcastResult<TParamBase, TContext, TResultBase>(MethodInfo method)
         {
             Type reflectionUtilityType = typeof(ReflectionUtility);
             MethodInfo? genericHelper = reflectionUtilityType
@@ -42,8 +43,9 @@ namespace Company.iFX.Common
             Debug.Assert(genericHelper is not null);
 
             ParameterInfo[] parameters = method.GetParameters();
-            Debug.Assert(parameters.Length == 1);
+            Debug.Assert(parameters.Length == 2);
             Debug.Assert(parameters[0].ParameterType.IsClass);
+            Debug.Assert(parameters[1].ParameterType.IsValueType);
 
             Type paramBaseType = typeof(TParamBase);
             Type resultBaseType = typeof(TResultBase);
@@ -51,22 +53,23 @@ namespace Company.iFX.Common
             Debug.Assert(method.ReflectedType is not null);
             Debug.Assert(method.ReflectedType.IsClass || method.ReflectedType.IsInterface);
             MethodInfo constructedHelper = genericHelper
-                .MakeGenericMethod(method.ReflectedType, parameters[0].ParameterType, method.ReturnType, paramBaseType, resultBaseType);
+                .MakeGenericMethod(method.ReflectedType, parameters[0].ParameterType, parameters[1].ParameterType, method.ReturnType, paramBaseType, resultBaseType);
 
             object[] arguments = new object[] { method };
-            Func<object, TParamBase, TResultBase>? func = constructedHelper.Invoke(null, arguments) as Func<object, TParamBase, TResultBase>;
+            Func<object, TParamBase, TContext, TResultBase>? func = constructedHelper.Invoke(null, arguments) as Func<object, TParamBase, TContext, TResultBase>;
             Debug.Assert(func is not null);
             return func;
         }
 
-        private static Func<object, TParamBase, TResultBase> CreateDelegateUnknownTargetDowncastParamUpcastResultHelper<TTarget, TParam, TResult, TParamBase, TResultBase>(MethodInfo method)
+        private static Func<object, TParamBase, TContext, TResultBase> CreateDelegateUnknownTargetDowncastParamUpcastResultHelper<TTarget, TParam, TContext, TResult, TParamBase, TResultBase>(MethodInfo method)
             where TParam : class, TParamBase
+            where TContext : struct
             where TResult : TResultBase
             where TTarget : class
         {
-            Func<TTarget, TParam, TResult> func = method.CreateDelegate<Func<TTarget, TParam, TResult>>();
+            Func<TTarget, TParam, TContext, TResult> func = method.CreateDelegate<Func<TTarget, TParam, TContext, TResult>>();
 
-            TResultBase resultFunc(object unknownTarget, TParamBase param)
+            TResultBase resultFunc(object unknownTarget, TParamBase param, TContext context)
             {
                 TTarget? target = unknownTarget as TTarget;
                 Debug.Assert(target is not null);
@@ -74,7 +77,7 @@ namespace Company.iFX.Common
                 TParam? downcastParam = param as TParam;
                 Debug.Assert(downcastParam is not null);
 
-                TResultBase upcastResult = func(target, downcastParam);
+                TResultBase upcastResult = func(target, downcastParam, context);
                 return upcastResult;
             }
 

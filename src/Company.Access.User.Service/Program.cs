@@ -18,7 +18,6 @@ string? BuildVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToStri
 var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
     .ConfigureServices(services =>
     {
-        //services.AddScoped(_ => TrackingContextDaprClient.Create<IUserAccess>());
         services.AddTrackingContextGrpcInterceptor();
 
         services.AddCodeFirstGrpc();

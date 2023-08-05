@@ -24,7 +24,7 @@ namespace Company.Access.User.Impl
         {
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest}");
-            return await UseCaseFactory<IUserAccess, RegisterRequestBase, RegisterResponseBase>.CallAsync(registerRequest);
+            return await UseCaseFactory<IUserAccess, RegisterRequestBase, CallContext, RegisterResponseBase>.CallAsync(registerRequest, context);
         }
     }
 }

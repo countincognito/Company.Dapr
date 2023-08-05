@@ -2,6 +2,7 @@ using Company.iFX.Test;
 using Company.Manager.Membership.Interface;
 using FluentAssertions;
 using Moq;
+using ProtoBuf.Grpc;
 
 namespace Company.Manager.Membership.Impl.Tests
 {
@@ -41,7 +42,7 @@ namespace Company.Manager.Membership.Impl.Tests
             string webMessage = ServiceRunner.GenerateRandomString();
 
             webUseCasesMock
-                .Setup(x => x.RegisterMemberAsync(It.IsAny<Data.Web.RegisterRequest>()))
+                .Setup(x => x.RegisterMemberAsync(It.IsAny<Data.Web.RegisterRequest>(), It.IsAny<CallContext>()))
                 .Returns(() =>
                 {
                     var response = new Data.Web.RegisterResponse
@@ -80,7 +81,7 @@ namespace Company.Manager.Membership.Impl.Tests
             string mobileMessage = ServiceRunner.GenerateRandomString();
 
             mobileUseCasesMock
-                .Setup(x => x.RegisterMemberAsync(It.IsAny<Data.Mobile.RegisterRequest>()))
+                .Setup(x => x.RegisterMemberAsync(It.IsAny<Data.Mobile.RegisterRequest>(), It.IsAny<CallContext>()))
                 .Returns(() =>
                 {
                     var response = new Data.Mobile.RegisterResponse

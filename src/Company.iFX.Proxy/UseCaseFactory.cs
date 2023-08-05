@@ -6,15 +6,17 @@ using Zametek.Utility;
 
 namespace Company.iFX.Proxy
 {
-    public static class UseCaseFactory<T, C, R>
+    public static class UseCaseFactory<T, C1, C2, R>
         where T : class
-        where C : class
+        where C1 : class
+        where C2 : struct
         where R : class
     {
-        private delegate Task<R> UseCase(C criteria);
+        private delegate Task<R> UseCase(C1 criteria, C2 context);
 
         public static Task<R> CallAsync(
-            C criteria,
+            C1 criteria,
+            C2 context,
             [CallerMemberName] string? callerName = null)
         {
             // DESIGN NOTE: Do not await in the strategy. Let the caller await.
@@ -40,16 +42,16 @@ namespace Company.iFX.Proxy
             MethodInfo? methodName = useCaseInterfaceType.GetMethod(callerName);
             Debug.Assert(methodName is not null, $@"{callerName} not found in the type {useCaseInterfaceType}");
 
-            Func<object, C, Task<R>> useCaseFunc = ReflectionUtility.CreateCovariantTaskDelegate<C, R>(methodName);
+            Func<object, C1, C2, Task<R>> useCaseFunc = ReflectionUtility.CreateCovariantTaskDelegate<C1, C2, R>(methodName);
 
-            Task<R> useCase(C criteria)
+            Task<R> useCase(C1 criteria, C2 context)
             {
                 object instance = Proxy.Create(useCaseInterfaceType);
                 Debug.Assert(instance is not null);
 
                 Task<R> func()
                 {
-                    Task<R> task = useCaseFunc(instance, criteria);
+                    Task<R> task = useCaseFunc(instance, criteria, context);
                     return task;
                 }
 
@@ -58,7 +60,7 @@ namespace Company.iFX.Proxy
             }
 
             // Do not await here. Allow the caller to await.
-            return useCase(criteria);
+            return useCase(criteria, context);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Company.Access.User.Interface.Mobile;
 using Company.iFX.Proxy;
 using Microsoft.Extensions.Caching.Distributed;
+using ProtoBuf.Grpc;
 using Serilog;
 using Zametek.Utility.Cache;
 using Zametek.Utility.Logging;
@@ -26,7 +27,9 @@ namespace Company.Access.User.Impl.Mobile
             m_CacheUtility = Proxy.Create<ICacheUtility>(m_Logger);
         }
 
-        public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<RegisterResponse> RegisterAsync(
+            RegisterRequest registerRequest,
+            CallContext context = default)
         {
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest.Name}");

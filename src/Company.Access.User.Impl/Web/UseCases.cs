@@ -3,6 +3,7 @@ using Company.Access.User.Data.Web;
 using Company.Access.User.Interface.Web;
 using Company.iFX.Proxy;
 using Microsoft.EntityFrameworkCore;
+using ProtoBuf.Grpc;
 using Serilog;
 using System.Diagnostics;
 using Zametek.Utility;
@@ -26,7 +27,9 @@ namespace Company.Access.User.Impl.Web
             ctx.Database.Migrate();
         }
 
-        public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<RegisterResponse> RegisterAsync(
+            RegisterRequest registerRequest,
+            CallContext context = default)
         {
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest.Name}");
