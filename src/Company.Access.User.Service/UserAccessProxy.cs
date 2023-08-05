@@ -2,7 +2,6 @@
 using Company.Access.User.Interface;
 using Company.iFX.Proxy;
 using ProtoBuf.Grpc;
-using Zametek.Utility.Logging;
 
 namespace Company.Access.User.Service
 {
