@@ -38,11 +38,11 @@ namespace Company.Access.User.Impl.Web
 
             try
             {
-                using var ctx = await m_CtxFactory.CreateDbContextAsync();
+                using var ctx = await m_CtxFactory.CreateDbContextAsync(context.CancellationToken);
 
                 NameValuePair? result = await ctx.NameValuePairs
                     .Where(x => x.Name == registerRequest.Name)
-                    .SingleOrDefaultAsync();
+                    .SingleOrDefaultAsync(context.CancellationToken);
 
                 if (result is null)
                 {
@@ -55,12 +55,12 @@ namespace Company.Access.User.Impl.Web
                         Value = registerRequest.ObjectToByteArray(),
                     };
 
-                    using (var transaction = await ctx.Database.BeginTransactionAsync())
+                    using (var transaction = await ctx.Database.BeginTransactionAsync(context.CancellationToken))
                     {
                         try
                         {
-                            await ctx.NameValuePairs.AddAsync(input);
-                            await ctx.SaveChangesAsync();
+                            await ctx.NameValuePairs.AddAsync(input, context.CancellationToken);
+                            await ctx.SaveChangesAsync(context.CancellationToken);
                             transaction.Commit();
                         }
                         catch (Exception ex)
@@ -72,7 +72,7 @@ namespace Company.Access.User.Impl.Web
 
                     result = await ctx.NameValuePairs
                         .Where(x => x.Name == input.Name)
-                        .SingleOrDefaultAsync();
+                        .SingleOrDefaultAsync(context.CancellationToken);
                 }
                 else
                 {

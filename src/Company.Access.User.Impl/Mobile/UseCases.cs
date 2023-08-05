@@ -38,7 +38,7 @@ namespace Company.Access.User.Impl.Mobile
 
             try
             {
-                string password = await m_CacheUtility.GetAsync<string>(registerRequest.Name);
+                string password = await m_CacheUtility.GetAsync<string>(registerRequest.Name, context.CancellationToken);
 
                 if (string.IsNullOrWhiteSpace(password))
                 {
@@ -46,8 +46,9 @@ namespace Company.Access.User.Impl.Mobile
                     await m_CacheUtility.SetAsync(
                         registerRequest.Name,
                         registerRequest.Password,
-                        m_DefaultDistributedCacheEntryOptions);
-                    password = await m_CacheUtility.GetAsync<string>(registerRequest.Name);
+                        m_DefaultDistributedCacheEntryOptions,
+                        context.CancellationToken);
+                    password = await m_CacheUtility.GetAsync<string>(registerRequest.Name, context.CancellationToken);
                 }
                 else
                 {
