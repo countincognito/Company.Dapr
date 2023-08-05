@@ -18,14 +18,30 @@ extensions:
     company-access-user-service:
       app-protocol: grpc
 
+  # config allows you to pass additional configuration into the dapr sidecar
+  # config will be interpreted as a named k8s resource when deployed, and will be interpreted as
+  # a file on disk when running locally at `./components/myconfig.yaml`
+  #
+  # config: myconfig
+
+  # components-path configures the components path of the dapr sidecar
+  #components-path: "./components/"
+
+  # If not using the default Dapr placement service or otherwise using a placement service on a nonstandard port,
+  # you can configure the Dapr sidecar to use an explicit port.
+  # placement-port: 6050
+
 # Services to run go here.
 services:
 - name: company-manager-membership-service
   project: src/Company.Manager.Membership.Service/Company.Manager.Membership.Service.csproj
+
 - name: company-engine-registration-service
   project: src/Company.Engine.Registration.Service/Company.Engine.Registration.Service.csproj
+
 - name: company-access-user-service
   project: src/Company.Access.User.Service/Company.Access.User.Service.csproj
+
 - name: company-microservice-membership-service
   project: src/Company.Microservice.Membership.Service/Company.Microservice.Membership.Service.csproj
   bindings:
@@ -35,11 +51,24 @@ services:
     - name: https
       port: 7281
       protocol: https
+
 - name: redis
-  image: redis
+  image: redis:latest
   bindings:
   - containerPort: 6379
     connectionString: ${host}:${port}
+
 - name: redis-cli
   image: redis
   args: "redis-cli -h redis MONITOR"
+
+- name: postgres
+  image: postgres:latest
+  env:
+  - name: POSTGRES_USER
+    value: postgres
+  - name: POSTGRES_PASSWORD
+    value: p@55w0rd1
+  bindings:
+  - containerPort: 5432
+    connectionString: Server=${host};Port=${port};User Id=${env:POSTGRES_USER};Password=${env:POSTGRES_PASSWORD};Database=Users;Integrated Security=true;Pooling=true;
