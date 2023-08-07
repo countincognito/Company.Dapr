@@ -109,6 +109,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.IncludePerformanceLogging(Configuration.Current.Setting<bool>("Zametek:PerformanceLogging"));
         services.IncludeDiagnosticLogging(Configuration.Current.Setting<bool>("Zametek:DiagnosticLogging"));
         services.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
+        services.AddTrackingContextToOpenTelemetry();
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {

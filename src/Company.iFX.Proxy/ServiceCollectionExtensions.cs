@@ -8,6 +8,13 @@ namespace Company.iFX.Proxy
     {
         #region Public Members
 
+        public static IServiceCollection AddTrackingContextToOpenTelemetry(this IServiceCollection services)
+        {
+            services.AddProxyInterceptor(
+                new AsyncTrackingContextToOpenTelemetryInterceptor().ToInterceptor);
+            return services;
+        }
+
         public static IServiceCollection IncludeErrorLogging(
             this IServiceCollection services,
             bool includeErrorLogging)
