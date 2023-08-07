@@ -97,7 +97,9 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Architecture.Tests", "test\Company.Architecture.Tests\Company.Architecture.Tests.csproj", "{011ED549-A8ED-4E04-B4FE-3E9D462E53F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.Access.User.Data.Db", "src\Company.Access.User.Data.Db\Company.Access.User.Data.Db.csproj", "{8984DEBC-6147-4587-B068-A85788F6296C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Access.User.Data.Db", "src\Company.Access.User.Data.Db\Company.Access.User.Data.Db.csproj", "{8984DEBC-6147-4587-B068-A85788F6296C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dapr", "dapr", "{728F3C29-2757-45A5-8FA9-E9E6BF1AB10F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

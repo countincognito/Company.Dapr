@@ -10,10 +10,15 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include=".env" />
+    <None Include="dapr\config\config.yml.compose" />
+    <None Include="dapr\Dockerfile" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dapr\components\" />
   </ItemGroup>
 </Project>
