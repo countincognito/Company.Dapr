@@ -1,9 +1,7 @@
 ﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
 using Company.iFX.Common;
-using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -33,24 +31,6 @@ namespace Company.iFX.Container
             }
 
             return s_Scope.Resolve(serviceType);
-        }
-
-        public static IHostBuilder UseiFX(
-            this IHostBuilder hostBuilder,
-            string companyName = "*")
-        {
-            if (Configuration.Configuration.SystemUnderTest)
-            {
-                throw new InvalidOperationException("Cannot use iFX when system is under test");
-            }
-
-            var factoryProvider = new AutofacServiceProviderFactory(builder =>
-            {
-                builder.RegisterBuildCallback(scope => s_Scope = scope);
-                LoadAssemblies(companyName, builder);
-                LoadMapper(companyName, builder);
-            });
-            return hostBuilder.UseServiceProviderFactory(factoryProvider);
         }
 
         public static void ConfigureTesting(
@@ -104,7 +84,7 @@ namespace Company.iFX.Container
             s_Scope = scope;
         }
 
-        private static void LoadAssemblies(
+        public static void LoadAssemblies(
             string companyName,
             ContainerBuilder builder)
         {
@@ -123,7 +103,7 @@ namespace Company.iFX.Container
             }
         }
 
-        private static void LoadMapper(
+        public static void LoadMapper(
             string companyName,
             ContainerBuilder builder)
         {

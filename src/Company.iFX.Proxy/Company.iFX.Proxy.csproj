@@ -9,6 +9,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Company.iFX.Container\Company.iFX.Container.csproj" />
 	  <ProjectReference Include="..\Company.iFX.Logging\Company.iFX.Logging.csproj" />
+	  <ProjectReference Include="..\Company.iFX.Telemetry\Company.iFX.Telemetry.csproj" />
 	</ItemGroup>
 
 </Project>

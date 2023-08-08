@@ -25,6 +25,7 @@
 		<ProjectReference Include="..\Company.Engine.Registration.Impl\Company.Engine.Registration.Impl.csproj" />
 		<ProjectReference Include="..\Company.iFX.Api\Company.iFX.Api.csproj" />
 		<ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
+		<ProjectReference Include="..\Company.iFX.Telemetry\Company.iFX.Telemetry.csproj" />
 		<ProjectReference Include="..\Company.Manager.Membership.Impl\Company.Manager.Membership.Impl.csproj" />
 		<ProjectReference Include="..\Company.Microservice.Membership.Data\Company.Microservice.Membership.Data.csproj" />
 	</ItemGroup>

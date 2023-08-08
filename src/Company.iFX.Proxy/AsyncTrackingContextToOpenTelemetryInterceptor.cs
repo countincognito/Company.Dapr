@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Company.iFX.Telemetry;
 using System.Diagnostics;
 using Zametek.Utility;
 
@@ -25,7 +26,22 @@ namespace Company.iFX.Proxy
                 throw new ArgumentNullException(nameof(proceed));
             }
 
-            AddCallChainIdToActivity();
+            TrackingContext.NewCurrentIfEmpty();
+            using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(invocation.Method.Name);
+
+            activity?.SetTag(
+                nameof(TrackingContext.CallChainId),
+                TrackingContext.Current.CallChainId.ToDashedString());
+            activity?.SetTag(
+                nameof(invocation.TargetType.Namespace),
+                invocation.TargetType?.Namespace);
+            activity?.SetTag(
+                nameof(invocation.TargetType),
+                invocation.TargetType?.Name);
+            activity?.SetTag(
+                nameof(invocation.Method),
+                invocation.Method?.Name);
+
             await proceed(invocation, proceedInfo);
         }
 
@@ -47,17 +63,23 @@ namespace Company.iFX.Proxy
                 throw new ArgumentNullException(nameof(proceed));
             }
 
-            AddCallChainIdToActivity();
-            return await proceed(invocation, proceedInfo);
-        }
-
-        private static void AddCallChainIdToActivity()
-        {
             TrackingContext.NewCurrentIfEmpty();
-            var activity = Activity.Current;
+            using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(invocation.Method.Name);
+
             activity?.SetTag(
                 nameof(TrackingContext.CallChainId),
                 TrackingContext.Current.CallChainId.ToDashedString());
+            activity?.SetTag(
+                nameof(invocation.TargetType.Namespace),
+                invocation.TargetType?.Namespace);
+            activity?.SetTag(
+                nameof(invocation.TargetType),
+                invocation.TargetType?.Name);
+            activity?.SetTag(
+                nameof(invocation.Method),
+                invocation.Method?.Name);
+
+            return await proceed(invocation, proceedInfo);
         }
     }
 }

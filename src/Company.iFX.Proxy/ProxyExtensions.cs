@@ -1,23 +1,18 @@
 ﻿using Castle.DynamicProxy;
-using Microsoft.Extensions.DependencyInjection;
 using Zametek.Utility.Logging;
 
 namespace Company.iFX.Proxy
 {
-    public static class ServiceCollectionExtensions
+    public static class ProxyExtensions
     {
         #region Public Members
 
-        public static IServiceCollection AddTrackingContextToOpenTelemetry(this IServiceCollection services)
+        public static void AddTrackingContextToOpenTelemetry()
         {
-            services.AddProxyInterceptor(
-                new AsyncTrackingContextToOpenTelemetryInterceptor().ToInterceptor);
-            return services;
+            AddInterceptor(new AsyncTrackingContextToOpenTelemetryInterceptor().ToInterceptor);
         }
 
-        public static IServiceCollection IncludeErrorLogging(
-            this IServiceCollection services,
-            bool includeErrorLogging)
+        public static void IncludeErrorLogging(bool includeErrorLogging)
         {
             if (includeErrorLogging)
             {
@@ -27,13 +22,9 @@ namespace Company.iFX.Proxy
             {
                 Proxy.s_DefaultLogTypes &= ~LogTypes.Error;
             }
-
-            return services;
         }
 
-        public static IServiceCollection IncludePerformanceLogging(
-            this IServiceCollection services,
-            bool includePerformanceLogging)
+        public static void IncludePerformanceLogging(bool includePerformanceLogging)
         {
             if (includePerformanceLogging)
             {
@@ -43,13 +34,9 @@ namespace Company.iFX.Proxy
             {
                 Proxy.s_DefaultLogTypes &= ~LogTypes.Performance;
             }
-
-            return services;
         }
 
-        public static IServiceCollection IncludeDiagnosticLogging(
-            this IServiceCollection services,
-            bool includeDiagnosticLogging)
+        public static void IncludeDiagnosticLogging(bool includeDiagnosticLogging)
         {
             if (includeDiagnosticLogging)
             {
@@ -59,13 +46,9 @@ namespace Company.iFX.Proxy
             {
                 Proxy.s_DefaultLogTypes &= ~LogTypes.Diagnostic;
             }
-
-            return services;
         }
 
-        public static IServiceCollection IncludeInvocationLogging(
-            this IServiceCollection services,
-            bool includeInvocationcLogging)
+        public static void IncludeInvocationLogging(bool includeInvocationcLogging)
         {
             if (includeInvocationcLogging)
             {
@@ -75,16 +58,11 @@ namespace Company.iFX.Proxy
             {
                 Proxy.s_DefaultLogTypes &= ~LogTypes.Invocation;
             }
-
-            return services;
         }
 
-        public static IServiceCollection AddProxyInterceptor(
-            this IServiceCollection services,
-            Func<IInterceptor> interceptorProvider)
+        public static void AddInterceptor(Func<IInterceptor> interceptorProvider)
         {
             Proxy.s_ExtraInterceptorProviders.Add(interceptorProvider);
-            return services;
         }
 
         #endregion

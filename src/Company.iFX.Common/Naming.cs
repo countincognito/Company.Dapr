@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Zametek.Utility;
 
 namespace Company.iFX.Common
 {

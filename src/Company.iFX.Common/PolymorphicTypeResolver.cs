@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace Company.iFX.Api
+namespace Company.iFX.Common
 {
     public class PolymorphicTypeResolver
         : DefaultJsonTypeInfoResolver

@@ -9,11 +9,12 @@ using Company.iFX.Configuration;
 using Company.iFX.Hosting;
 using Company.iFX.Logging;
 using Company.iFX.Proxy;
+using Company.iFX.Telemetry;
 using Company.Manager.Membership.Data;
 using Company.Manager.Membership.Interface;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Trace;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
@@ -23,7 +24,12 @@ using Zametek.Utility.Logging;
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
 string? BuildVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
+Debug.Assert(!string.IsNullOrWhiteSpace(ServiceName));
+Debug.Assert(!string.IsNullOrWhiteSpace(BuildVersion));
+
 var apiV1_0 = new ApiVersion(1, 0);
+
+//DiagnosticsConfig.NewCurrentIfEmpty(ServiceName);
 
 var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
     .ConfigureServices(services =>
@@ -60,7 +66,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.AddSwaggerGen(options =>
         {
             options.UseOneOfForPolymorphism();
-            options.SelectDiscriminatorNameUsing(type => "$type");
+            options.SelectDiscriminatorNameUsing(type => Constant.DiscriminatorName);
             options.SelectDiscriminatorValueUsing(type => type.FullName);
             options.CustomSchemaIds(type => type.FullName);
         });
@@ -76,20 +82,25 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
             options.ReportApiVersions = true;
             options.AssumeDefaultVersionWhenUnspecified = true;
             ApiVersionReader.Combine(
-               //new HeaderApiVersionReader("Api-Version"),
-               new QueryStringApiVersionReader("Api-Version"));
+               //new HeaderApiVersionReader(Constant.ApiVersionString),
+               new QueryStringApiVersionReader(Constant.ApiVersionString));
         });
 
-        LoggerConfiguration loggerConfiguration = Logging.CreateConfiguration().WriteTo.Console();
+        services.UseiFXTelemetry(ServiceName)
+            .WithTracing(tracerProviderBuilder =>
+            {
+                tracerProviderBuilder.AddConsoleExporter();
 
-        if (BuildVersion is not null)
-        {
-            loggerConfiguration.Enrich.WithProperty(nameof(BuildVersion), BuildVersion);
-        }
-        if (ServiceName is not null)
-        {
-            loggerConfiguration.Enrich.WithProperty(nameof(ServiceName), ServiceName);
-        }
+                string? zipkinHost = Configuration.Current.Setting<string>("ConnectionStrings:zipkin");
+                if (!string.IsNullOrWhiteSpace(zipkinHost))
+                {
+                    tracerProviderBuilder.AddZipkinExporter(options => options.Endpoint = new Uri(zipkinHost));
+                }
+            });
+
+        LoggerConfiguration loggerConfiguration = Logging.CreateConfiguration().WriteTo.Console();
+        loggerConfiguration.Enrich.WithProperty(nameof(BuildVersion), BuildVersion);
+        loggerConfiguration.Enrich.WithProperty(nameof(ServiceName), ServiceName);
 
         if (Configuration.IsDevelopment())
         {
@@ -106,10 +117,11 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(logger));
         services.AddSingleton<Serilog.ILogger>(logger);
 
-        services.IncludeErrorLogging(Configuration.Current.Setting<bool>("Zametek:ErrorLogging"));
-        services.IncludePerformanceLogging(Configuration.Current.Setting<bool>("Zametek:PerformanceLogging"));
-        services.IncludeDiagnosticLogging(Configuration.Current.Setting<bool>("Zametek:DiagnosticLogging"));
-        services.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
+        ProxyExtensions.IncludeErrorLogging(Configuration.Current.Setting<bool>("Zametek:ErrorLogging"));
+        ProxyExtensions.IncludePerformanceLogging(Configuration.Current.Setting<bool>("Zametek:PerformanceLogging"));
+        ProxyExtensions.IncludeDiagnosticLogging(Configuration.Current.Setting<bool>("Zametek:DiagnosticLogging"));
+        ProxyExtensions.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
+        ProxyExtensions.AddTrackingContextToOpenTelemetry();
 
         services.AddScoped<ICacheUtility, CacheUtility>();
 
@@ -144,7 +156,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseExceptionHandler(ExceptionHandler);
+            app.UseExceptionHandler(Handlers.ExceptionHandler);
             //app.UseCors(Configuration.Current.SettingOrDefault("CorsPolicy", "DevPolicy"));
             //app.UseAuthentication();
             //app.UseAuthorization();
@@ -180,18 +192,3 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
     });
 
 await hostBuilder.RunAsync();
-
-static void ExceptionHandler(IApplicationBuilder applicationBuilder)
-{
-    applicationBuilder.Run(async context =>
-    {
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        IExceptionHandlerPathFeature? exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-        Exception? exception = exceptionHandlerPathFeature?.Error;
-        if (exception?.InnerException is AggregateException
-            && exception.InnerException?.InnerException is HttpRequestException)
-        {
-            await context.Response.WriteAsync("Network or server error calling down stream service");
-        };
-    });
-}

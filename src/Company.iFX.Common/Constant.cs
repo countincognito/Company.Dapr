@@ -7,5 +7,8 @@
         public const int ComponentIndex = 1;
         public const int VolatilityIndex = 2;
         public const int TypeIndex = 3;
+
+        public const string DiscriminatorName = @"$type";
+        public const string ApiVersionString = @"Api-Version";
     }
 }

@@ -11,6 +11,7 @@ COPY ["src/Company.Access.User.Impl/Company.Access.User.Impl.csproj", "src/Compa
 COPY ["src/Company.Engine.Registration.Impl/Company.Engine.Registration.Impl.csproj", "src/Company.Engine.Registration.Impl/"]
 COPY ["src/Company.iFX.Api/Company.iFX.Api.csproj", "src/Company.iFX.Api/"]
 COPY ["src/Company.iFX.Hosting/Company.iFX.Hosting.csproj", "src/Company.iFX.Hosting/"]
+COPY ["src/Company.iFX.Telemetry/Company.iFX.Telemetry.csproj", "src/Company.iFX.Telemetry/"]
 COPY ["src/Company.Manager.Membership.Impl/Company.Manager.Membership.Impl.csproj", "src/Company.Manager.Membership.Impl/"]
 COPY ["src/Company.Microservice.Membership.Data/Company.Microservice.Membership.Data.csproj", "src/Company.Microservice.Membership.Data/"]
 COPY ["src/Company.Microservice.Membership/Company.Microservice.Membership.csproj", "src/Company.Microservice.Membership/"]

@@ -19,7 +19,7 @@ namespace Company.iFX.Hosting
             Debug.Assert(contentRoot is not null);
 
             return Host.CreateDefaultBuilder(args)
-                .UseiFX(companyName)
+                .UseiFXContainer(companyName)
                 .UseContentRoot(contentRoot);
         }
 
