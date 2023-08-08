@@ -12,7 +12,7 @@ services:
   #  image: redis:6-alpine
 
   dtc-zipkin:
-    image: openzipkin/zipkin-slim:latest
+    image: openzipkin/zipkin:latest
     ports:
       - 6499:9411
 
@@ -36,7 +36,7 @@ services:
       - seq.image
     environment:
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
-      - CONNECTIONSTRINGS__ZIPKIN=http://dtc-zipkin:9411/api/v2/spans
+      - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
     #networks:
     #  - company-dapr
 
@@ -71,7 +71,7 @@ services:
       - seq.image
     environment:
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
-      - CONNECTIONSTRINGS__ZIPKIN=http://dtc-zipkin:9411/api/v2/spans
+      - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
     #networks:
     #  - company-dapr
 
@@ -106,7 +106,7 @@ services:
       - seq.image
     environment:
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
-      - CONNECTIONSTRINGS__ZIPKIN=http://dtc-zipkin:9411/api/v2/spans
+      - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
     #networks:
     #  - company-dapr
 
@@ -145,7 +145,7 @@ services:
       - CONNECTIONSTRINGS__REDIS=redis.image
       - CONNECTIONSTRINGS__POSTGRES=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Integrated Security=true;Pooling=true;
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
-      - CONNECTIONSTRINGS__ZIPKIN=http://dtc-zipkin:9411/api/v2/spans
+      - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
     #networks:
     #  - company-dapr
 
@@ -209,3 +209,22 @@ services:
       - ${POSTGRES_DATA}:/var/lib/postgresql/data
     #networks:
     #  - company-dapr
+
+  ############################
+  # OpenTelemetry Collector
+  ############################
+  
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ${OTEL_DATA}/output:/etc/output:rw # Store the logs
+    ports:
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "4317:4317"   # OTLP gRPC receiver
+    depends_on:
+      - dtc-zipkin
+      - seq.image
+    

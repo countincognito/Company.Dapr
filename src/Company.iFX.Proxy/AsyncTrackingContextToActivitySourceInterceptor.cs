@@ -5,7 +5,7 @@ using Zametek.Utility;
 
 namespace Company.iFX.Proxy
 {
-    public class AsyncTrackingContextToOpenTelemetryInterceptor
+    public class AsyncTrackingContextToActivitySourceInterceptor
         : AsyncInterceptorBase
     {
         protected override async Task InterceptAsync(

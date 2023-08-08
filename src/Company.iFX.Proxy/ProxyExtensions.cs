@@ -7,9 +7,9 @@ namespace Company.iFX.Proxy
     {
         #region Public Members
 
-        public static void AddTrackingContextToOpenTelemetry()
+        public static void AddTrackingContextToActivitySource()
         {
-            AddInterceptor(new AsyncTrackingContextToOpenTelemetryInterceptor().ToInterceptor);
+            AddInterceptor(new AsyncTrackingContextToActivitySourceInterceptor().ToInterceptor);
         }
 
         public static void IncludeErrorLogging(bool includeErrorLogging)

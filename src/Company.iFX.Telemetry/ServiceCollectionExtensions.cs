@@ -2,6 +2,7 @@
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
 
 namespace Company.iFX.Telemetry
 {
@@ -16,11 +17,19 @@ namespace Company.iFX.Telemetry
             return services.AddOpenTelemetry()
                 .WithTracing(tracerProviderBuilder => tracerProviderBuilder
                     .AddSource(DiagnosticsConfig.Current.ActivitySource.Name)
-                    .ConfigureResource(resource => resource
+                    .ConfigureResource(resourceBuilder => resourceBuilder
                         .AddService(DiagnosticsConfig.Current.ServiceName))
                     .AddAspNetCoreInstrumentation()
                     .AddGrpcClientInstrumentation()
-                    .AddHttpClientInstrumentation());
+                    .AddHttpClientInstrumentation())
+                .WithMetrics(meterProviderBuilder => meterProviderBuilder
+                    .ConfigureResource(resourceBuilder => resourceBuilder
+                        .AddService(DiagnosticsConfig.Current.ServiceName))
+                    //.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(DiagnosticsConfig.Current.ServiceName))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddProcessInstrumentation()
+                    .AddRuntimeInstrumentation());
         }
     }
 }

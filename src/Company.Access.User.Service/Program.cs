@@ -7,6 +7,8 @@ using Company.iFX.Logging;
 using Company.iFX.Proxy;
 using Company.iFX.Telemetry;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using ProtoBuf.Grpc.Server;
 using Serilog;
@@ -30,15 +32,25 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         services.AddCodeFirstGrpc();
         services.AddCodeFirstGrpcReflection();
 
+        string? otelHost = Configuration.Current.Setting<string>("ConnectionStrings:otel");
+
         services.UseiFXTelemetry(ServiceName)
             .WithTracing(tracerProviderBuilder =>
             {
                 tracerProviderBuilder.AddConsoleExporter();
 
-                string? zipkinHost = Configuration.Current.Setting<string>("ConnectionStrings:zipkin");
-                if (!string.IsNullOrWhiteSpace(zipkinHost))
+                if (!string.IsNullOrWhiteSpace(otelHost))
                 {
-                    tracerProviderBuilder.AddZipkinExporter(options => options.Endpoint = new Uri(zipkinHost));
+                    tracerProviderBuilder.AddOtlpExporter(options => options.Endpoint = new Uri(otelHost));
+                }
+            })
+            .WithMetrics(meterProviderBuilder =>
+            {
+                meterProviderBuilder.AddConsoleExporter();
+
+                if (!string.IsNullOrWhiteSpace(otelHost))
+                {
+                    meterProviderBuilder.AddOtlpExporter(options => options.Endpoint = new Uri(otelHost));
                 }
             });
 
@@ -53,14 +65,30 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         Serilog.Core.Logger logger = loggerConfiguration.CreateLogger();
         Log.Logger = logger;
 
-        services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(logger));
+        services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.AddSerilog(logger);
+            loggingBuilder.AddOpenTelemetry(otelBuilder =>
+            {
+                otelBuilder.IncludeFormattedMessage = true;
+                otelBuilder.IncludeScopes = true;
+                otelBuilder.ParseStateValues = true;
+
+                otelBuilder.AddConsoleExporter();
+
+                if (!string.IsNullOrWhiteSpace(otelHost))
+                {
+                    otelBuilder.AddOtlpExporter(options => options.Endpoint = new Uri(otelHost));
+                }
+            });
+        });
         services.AddSingleton<Serilog.ILogger>(logger);
 
         ProxyExtensions.IncludeErrorLogging(Configuration.Current.Setting<bool>("Zametek:ErrorLogging"));
         ProxyExtensions.IncludePerformanceLogging(Configuration.Current.Setting<bool>("Zametek:PerformanceLogging"));
         ProxyExtensions.IncludeDiagnosticLogging(Configuration.Current.Setting<bool>("Zametek:DiagnosticLogging"));
         ProxyExtensions.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
-        ProxyExtensions.AddTrackingContextToOpenTelemetry();
+        ProxyExtensions.AddTrackingContextToActivitySource();
 
         services.AddScoped<ICacheUtility, CacheUtility>();
 

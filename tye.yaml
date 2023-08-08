@@ -52,13 +52,6 @@ services:
       port: 7281
       protocol: https
 
-- name: zipkin
-  image: openzipkin/zipkin-slim:latest
-  bindings:
-  - containerPort: 9411
-    protocol: http
-    connectionString: ${protocol}://${host}:${port}/api/v2/spans
-
 - name: redis
   image: redis:latest
   bindings:
