@@ -39,10 +39,23 @@ Check the Tye dashboard to see the links for containerized Seq and Postgres.
 
 **Note**: you may need to reinitialize dapr if the dapr containers (`dapr_redis`, `dapr_zipkin`, and `dapr_placement`) are accidentally deleted.
 
-## Set up (Docker-Compose)
+## Set up (Docker-Compose with Visual Studio)
 
 To run the solution in Docker-Compose, simply run debug on the `docker-compose` project from Visual Studio.
 
-The docker-compose solution includes all component, framework and configuration projects. It also includes Dapr, Redis, and Seq as docker containers within the cluster.
+The docker-compose solution includes all component, framework and configuration projects. It also includes Dapr, Redis, Zipkin, and Seq as docker containers within the cluster.
 
-The API should now be visible via Swagger and monitoring can be done from Seq via [http://localhost:81/](http://localhost:81/).
+The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
+
+## Set up (Docker-Compose without Visual Studio)
+
+To run the solution in Docker-Compose without Visual Studio, perform the following steps:
+
+1. Run Docker Desktop.
+1. From powershell (in the root directory) run `create_certs.ps1` to install the development certificates for the service containers.
+1. From powershell build the entire solution from the root directory using `docker compose build`.
+1. From powershell run the solution from the root directory using `docker compose up`.
+
+The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
+
+**Note**: you can find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard. Use the link that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/Swagger` (neither of these will be set by default).
