@@ -22,9 +22,6 @@ namespace Company.Access.User.Impl.Web
         {
             m_Logger = Proxy.CreateLogger<IUseCases>();
             m_CtxFactory = iFX.Container.Container.GetService<IDbContextFactory<UserContext>>();
-
-            using var ctx = m_CtxFactory.CreateDbContext();
-            ctx.Database.Migrate();
         }
 
         public async Task<RegisterResponse> RegisterAsync(

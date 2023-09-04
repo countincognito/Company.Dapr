@@ -53,7 +53,7 @@ services:
       protocol: https
 
 - name: redis
-  image: redis:latest
+  image: redis:7.2.0
   bindings:
   - containerPort: 6379
     connectionString: ${host}:${port}
@@ -63,7 +63,7 @@ services:
   args: "redis-cli -h redis MONITOR"
 
 - name: seq
-  image: datalust/seq:latest
+  image: datalust/seq:2023.3
   env:
   - name: ACCEPT_EULA
     value: Y
@@ -73,7 +73,7 @@ services:
     connectionString: ${protocol}://${host}:${port}
 
 - name: postgres
-  image: postgres:latest
+  image: postgres:15.4
   env:
   - name: POSTGRES_USER
     value: postgres

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Polly;
 using ProtoBuf.Grpc.Server;
 using Serilog;
 using System.Diagnostics;
@@ -99,6 +100,20 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
 
         services.AddPooledDbContextFactory<UserContext>(
             options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres")));
+
+        var migrateDbPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+
+        IServiceProvider serverServices = services.BuildServiceProvider();
+
+        migrateDbPolicy.Execute(async () =>
+        {
+            IDbContextFactory<UserContext> ctxFactory = serverServices.GetRequiredService<IDbContextFactory<UserContext>>();
+            using UserContext ctx = await ctxFactory.CreateDbContextAsync();
+            await ctx.Database.MigrateAsync();
+        });
+
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
