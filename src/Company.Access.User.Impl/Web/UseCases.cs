@@ -61,9 +61,9 @@ namespace Company.Access.User.Impl.Web
                     CreateKeysResponse createKeyResponse = await encryptionUtility
                         .CreateKeysAsync(createKeysRequest, context.CancellationToken);
 
-                    SymmetricKeyDefinition? symmetricKeyDefinition = createKeyResponse.SymmetricKeyDefinition;
+                    SymmetricKeyDefinition symmetricKeyDefinition = createKeyResponse.SymmetricKeyDefinition!;
 
-                    m_Logger.Information(@"Creating new Symmetric Key ID: {@ID}", symmetricKeyDefinition?.Id);
+                    m_Logger.Information(@"Creating new Symmetric Key ID: {@ID}", symmetricKeyDefinition.Id);
 
                     var encryptRequest = new EncryptRequest
                     {
