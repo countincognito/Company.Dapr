@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Zametek.Access.Encryption.Npgsql" Version="0.2.1" />
+	<PackageReference Include="Zametek.Utility.Encryption.AzureKeyVault" Version="0.2.1" />
+    <PackageReference Include="Zametek.Utility.Encryption.Impl" Version="0.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Company.iFX.Proxy\Company.iFX.Proxy.csproj" />
+    <ProjectReference Include="..\Company.Utility.Encryption.Interface\Company.Utility.Encryption.Interface.csproj" />
+  </ItemGroup>
+
+</Project>

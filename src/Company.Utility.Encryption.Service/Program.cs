@@ -1,5 +1,3 @@
-using Company.Access.User.Impl;
-using Company.Access.User.Service;
 using Company.iFX.Configuration;
 using Company.iFX.Dapr;
 using Company.iFX.Grpc;
@@ -8,6 +6,7 @@ using Company.iFX.Logging;
 using Company.iFX.Proxy;
 using Company.iFX.Telemetry;
 using Company.Utility.Encryption.Interface;
+using Company.Utility.Encryption.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using OpenTelemetry.Logs;
@@ -19,6 +18,8 @@ using ProtoBuf.Meta;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
+using Zametek.Access.Encryption;
+using Zametek.Access.Encryption.Migrations;
 using Zametek.Utility.Cache;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -34,7 +35,6 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
     {
         // Protobuf-net cannot serialize DateTimeOffset
         RuntimeTypeModel.Default.Add(typeof(DateTimeOffset), false).SetSurrogate(typeof(DateTimeOffsetSurrogate));
-        services.AddScoped(_ => TrackingContextDaprClient.Create<IEncryptionUtility>());
         services.AddTrackingContextGrpcInterceptor();
 
         services.AddCodeFirstGrpc();
@@ -99,14 +99,26 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         ProxyExtensions.AddTrackingContextToActivitySource();
 
         services.AddScoped<ICacheUtility, CacheUtility>();
+        services.Configure<CacheOptions>(Configuration.Current.All.GetRequiredSection("CacheOptions"));
 
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = Configuration.Current.Setting<string>("ConnectionStrings:redis");
         });
 
-        services.AddPooledDbContextFactory<UserContext>(
-            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
+        // Encryption.
+        services.AddPooledDbContextFactory<EncryptionDbContext>(
+            options => options.UseNpgsql(
+                Configuration.Current.Setting<string>("ConnectionStrings:postgres_encryption"),
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NpgsqlInitialCreate).Assembly.FullName)
+            ));
+
+        services.AddScoped<Zametek.Utility.Encryption.IEncryptionUtility, Zametek.Utility.Encryption.EncryptionUtility>();
+        services.AddScoped<Zametek.Utility.Encryption.ISymmetricKeyEncryption, Zametek.Utility.Encryption.AesEncryption>();
+        services.AddScoped<IEncryptionAccess, EncryptionAccess>();
+
+        // Could replace this with the real implementation if necessary.
+        services.AddSingleton<Zametek.Utility.Encryption.IAsymmetricKeyVault>(new Zametek.Utility.Encryption.FakeKeyVault());
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
@@ -118,17 +130,17 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
 
             migrateDbPolicy.Execute(async () =>
             {
-                IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
-                using UserContext userCtx = await userCtxFactory.CreateDbContextAsync();
-                DatabaseFacade userDb = userCtx.Database;
-                await userDb.MigrateAsync();
+                IDbContextFactory<EncryptionDbContext> encryptionCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<EncryptionDbContext>>();
+                using EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
+                DatabaseFacade encryptionDb = encryptionCtx.Database;
+                await encryptionDb.MigrateAsync();
             });
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<UserAccessProxy>();
+                endpoints.MapGrpcService<EncryptionUtilityProxy>();
                 endpoints.MapCodeFirstGrpcReflectionService();
 
                 endpoints.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");

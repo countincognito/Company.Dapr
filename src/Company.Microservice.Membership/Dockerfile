@@ -14,6 +14,7 @@ COPY ["src/Company.iFX.Hosting/Company.iFX.Hosting.csproj", "src/Company.iFX.Hos
 COPY ["src/Company.iFX.Telemetry/Company.iFX.Telemetry.csproj", "src/Company.iFX.Telemetry/"]
 COPY ["src/Company.Manager.Membership.Impl/Company.Manager.Membership.Impl.csproj", "src/Company.Manager.Membership.Impl/"]
 COPY ["src/Company.Microservice.Membership.Data/Company.Microservice.Membership.Data.csproj", "src/Company.Microservice.Membership.Data/"]
+COPY ["src/Company.Utility.Encryption.Impl/Company.Utility.Encryption.Impl.csproj", "src/Company.Utility.Encryption.Impl/"]
 COPY ["src/Company.Microservice.Membership/Company.Microservice.Membership.csproj", "src/Company.Microservice.Membership/"]
 RUN dotnet restore "src/Company.Microservice.Membership/Company.Microservice.Membership.csproj"
 COPY . .

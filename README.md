@@ -11,7 +11,6 @@ It requires a local installation of:
 - [PostgreSQL](https://www.postgresql.org/download/)
 - [Docker Desktop](https://community.chocolatey.org/packages/docker-desktop)
 - [Dapr](https://docs.dapr.io/getting-started/install-dapr-cli/)
-- [Project Tye](https://github.com/dotnet/tye)
 
 ## Set up (InProc)
 
@@ -22,22 +21,6 @@ The InProc solution includes only the component interfaces and implementations -
 The API should now be visible via Swagger and monitoring can be done from Seq via [http://localhost:5341/](http://localhost:5341/).
 
 Calls made with the Web.RegisterRequest will be persisted in Postgres and can be viewed via pgAdmin.
-
-## Set up (Dapr)
-
-To run the solution in dapr, perform the following steps:
-
-1. Run Docker Desktop.
-1. From powershell run `dapr init` to initialize dapr.
-1. From powershell build the entire solution from the root directory using `dotnet build`.
-1. From powershell run `tye run` to run the individual services using dapr sidecars.
-1. The API should now be visible via Swagger and monitoring can be done from Seq and the Tye Dashboard via [http://localhost:8000/](http://localhost:8000/).
-
-The dapr-oriented solution includes all component, framework and configuration projects.
-
-Check the Tye dashboard to see the links for containerized Seq and Postgres.
-
-**Note**: you may need to reinitialize dapr if the dapr containers (`dapr_redis`, `dapr_zipkin`, and `dapr_placement`) are accidentally deleted.
 
 ## Set up (Docker-Compose with Visual Studio)
 

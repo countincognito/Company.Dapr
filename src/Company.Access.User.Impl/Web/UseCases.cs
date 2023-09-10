@@ -2,12 +2,13 @@
 using Company.Access.User.Data.Web;
 using Company.Access.User.Interface.Web;
 using Company.iFX.Proxy;
+using Company.Utility.Encryption.Data;
+using Company.Utility.Encryption.Interface;
 using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Grpc;
 using Serilog;
 using System.Diagnostics;
 using Zametek.Utility;
-using Zametek.Utility.Encryption;
 using Zametek.Utility.Logging;
 
 namespace Company.Access.User.Impl.Web
@@ -18,13 +19,11 @@ namespace Company.Access.User.Impl.Web
     {
         private readonly ILogger m_Logger;
         private readonly IDbContextFactory<UserContext> m_CtxFactory;
-        private readonly IEncryptionUtility m_EncryptionUtility;
 
         public UseCases()
         {
             m_Logger = Proxy.CreateLogger<IUseCases>();
             m_CtxFactory = iFX.Container.Container.GetService<IDbContextFactory<UserContext>>();
-            m_EncryptionUtility = Proxy.Create<IEncryptionUtility>(m_Logger);
         }
 
         public async Task<RegisterResponse> RegisterAsync(
@@ -44,26 +43,43 @@ namespace Company.Access.User.Impl.Web
                     .Where(x => x.Name == registerRequest.Name)
                     .SingleOrDefaultAsync(context.CancellationToken);
 
+                var encryptionUtility = Proxy.Create<IEncryptionUtility>();
+
                 if (result is null)
                 {
                     Debug.Assert(registerRequest is not null);
                     m_Logger.Warning(@"No DOB currently stored for name: {@Name}", registerRequest?.Name);
 
-                    (SymmetricKeyDefinition symmetricKeyDefinition, AsymmetricKeyDefinition asymmetricKeyDefinition) =
-                        await m_EncryptionUtility.CreateSymmetricKeyIdAsync(
-                            registerRequest?.Name ?? Guid.NewGuid().ToDashedString(),
-                            context.CancellationToken);
+                    m_Logger.Information(@"Encrypting data");
 
-                    m_Logger.Information(@"Creating new Symmetric Key ID: {@ID}", symmetricKeyDefinition.Id);
+                    var createKeysRequest = new CreateKeysRequest
+                    {
+                        SymmetricKeyName = registerRequest?.Name ?? Guid.NewGuid().ToDashedString(),
+                        AsymmetricKeyName = Guid.NewGuid().ToDashedString(),
+                    };
 
-                    EncryptionContext.NewCurrent(symmetricKeyDefinition.Id);
+                    CreateKeysResponse createKeyResponse = await encryptionUtility
+                        .CreateKeysAsync(createKeysRequest, context.CancellationToken);
+
+                    SymmetricKeyDefinition? symmetricKeyDefinition = createKeyResponse.SymmetricKeyDefinition;
+
+                    m_Logger.Information(@"Creating new Symmetric Key ID: {@ID}", symmetricKeyDefinition?.Id);
+
+                    var encryptRequest = new EncryptRequest
+                    {
+                        SymmetricKeyId = symmetricKeyDefinition.Id,
+                        Data = registerRequest.ObjectToByteArray(),
+                    };
+
+                    EncryptResponse encryptResponse = await encryptionUtility
+                        .EncryptAsync(encryptRequest, context.CancellationToken);
 
                     var input = new NameValueSet
                     {
                         Name = registerRequest?.Name ?? string.Empty,
                         Value = registerRequest?.DateOfBirth?.ToString("u") ?? string.Empty,
                         SymmetricKeyId = symmetricKeyDefinition.Id,
-                        EncryptedValue = await m_EncryptionUtility.EncryptObjectAsync(registerRequest, context.CancellationToken)
+                        EncryptedValue = encryptResponse.EncryptedData,
                     };
 
                     using (var transaction = await ctx.Database.BeginTransactionAsync(context.CancellationToken))
@@ -87,13 +103,19 @@ namespace Company.Access.User.Impl.Web
                 }
                 else
                 {
-                    EncryptionContext.NewCurrent(result!.SymmetricKeyId);
-
                     m_Logger.Warning(@"DOB already stored for name: {@Name}", registerRequest.Name);
                 }
 
-                RegisterRequest output = await m_EncryptionUtility
-                    .DecryptObjectAsync<RegisterRequest>(result!.EncryptedValue, context.CancellationToken);
+                var decryptRequest = new DecryptRequest
+                {
+                    SymmetricKeyId = result!.SymmetricKeyId,
+                    EncryptedData = result!.EncryptedValue ?? Array.Empty<byte>(),
+                };
+
+                DecryptResponse decryptResponse = await encryptionUtility
+                    .DecryptAsync(decryptRequest, context.CancellationToken);
+
+                RegisterRequest output = decryptResponse.Data.ByteArrayToObject<RegisterRequest>();
 
                 webMessage = output?.DateOfBirth?.ToString("u") ?? @"No DOB";
             }

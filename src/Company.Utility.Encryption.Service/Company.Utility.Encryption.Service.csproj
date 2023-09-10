@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>86c1b3cc-a727-42d9-919e-80ee9d982399</UserSecretsId>
+    <UserSecretsId>ec5f741f-fe01-40f1-93a2-a5a1b151f58e</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
@@ -20,18 +20,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Company.Access.User.Impl\Company.Access.User.Impl.csproj" />
+		<ProjectReference Include="..\Company.Utility.Encryption.Impl\Company.Utility.Encryption.Impl.csproj" />
 		<ProjectReference Include="..\Company.iFX.Dapr\Company.iFX.Dapr.csproj" />
 		<ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="appsettings.Development.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+		<Content Update="appsettings.Development.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>

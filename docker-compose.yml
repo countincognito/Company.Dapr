@@ -165,7 +165,6 @@ services:
     environment:
       - CONNECTIONSTRINGS__REDIS=redis.image
       - CONNECTIONSTRINGS__POSTGRES_USERS=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Integrated Security=true;Pooling=true;
-      - CONNECTIONSTRINGS__POSTGRES_ENCRYPTION=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Encryption;Integrated Security=true;Pooling=true;
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
     #networks:
@@ -196,6 +195,52 @@ services:
     depends_on:
       - company.access.user.service
     network_mode: "service:company.access.user.service"
+
+  ############################
+  # ENCRYPTION UTILITY
+  ############################
+  company.utility.encryption.service:
+    image: ${DOCKER_REGISTRY-}companyutilityencryptionservice
+    build:
+      context: .
+      dockerfile: src/Company.Utility.Encryption.Service/Dockerfile
+    depends_on:
+      - redis.image
+      - postgres.image
+      - seq.image
+    environment:
+      - CONNECTIONSTRINGS__REDIS=redis.image
+      - CONNECTIONSTRINGS__POSTGRES_ENCRYPTION=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Encryption;Integrated Security=true;Pooling=true;
+      - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
+      - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
+    #networks:
+    #  - company-dapr
+
+  company.utility.encryption.service-dapr:
+    image: "daprio/daprd:1.11.2"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "company-utility-encryption-service",
+        "-app-port",
+        "80",
+        "-app-protocol",
+        "grpc",
+        "-log-level",
+        "debug",
+        "-components-path",
+        "/components",
+        "-config",
+        "/config/config.yml",
+        "dapr.io/config",
+        "daprConfig"
+      ]
+    volumes_from:
+      - dapr-config
+    depends_on:
+      - company.utility.encryption.service
+    network_mode: "service:company.utility.encryption.service"
 
   ############################
   # Redis cache
