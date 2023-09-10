@@ -7,7 +7,7 @@ namespace Company.iFX.Container
     {
         public static IHostBuilder UseiFXContainer(
             this IHostBuilder hostBuilder,
-            string companyName = "*")
+            params string[] companyNames)
         {
             if (Configuration.Configuration.SystemUnderTest)
             {
@@ -17,8 +17,12 @@ namespace Company.iFX.Container
             var factoryProvider = new AutofacServiceProviderFactory(builder =>
             {
                 builder.RegisterBuildCallback(scope => Container.OverrideScope(scope));
-                Container.LoadAssemblies(companyName, builder);
-                Container.LoadMapper(companyName, builder);
+
+                foreach (string companyName in companyNames)
+                {
+                    Container.LoadAssemblies(companyName, builder);
+                    Container.LoadMapper(companyName, builder);
+                }
             });
             return hostBuilder.UseServiceProviderFactory(factoryProvider);
         }

@@ -10,7 +10,7 @@ namespace Company.iFX.Hosting
     {
         public static IHostBuilder CreateGenericBuilder(
             string[] args,
-            string companyName = "*")
+            params string[] companyNames)
         {
             string assemblyLocation = Assembly.GetExecutingAssembly().Location;
             Debug.Assert(assemblyLocation is not null);
@@ -19,7 +19,7 @@ namespace Company.iFX.Hosting
             Debug.Assert(contentRoot is not null);
 
             return Host.CreateDefaultBuilder(args)
-                .UseiFXContainer(companyName)
+                .UseiFXContainer(companyNames)
                 .UseContentRoot(contentRoot);
         }
 

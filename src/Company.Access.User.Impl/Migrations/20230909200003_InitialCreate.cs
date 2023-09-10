@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,15 +12,17 @@ namespace Company.Access.User.Impl.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "NameValuePairs",
+                name: "NameValueSets",
                 columns: table => new
                 {
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<byte[]>(type: "bytea", nullable: false)
+                    Value = table.Column<string>(type: "text", nullable: true),
+                    SymmetricKeyId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EncryptedValue = table.Column<byte[]>(type: "bytea", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NameValuePairs", x => x.Name);
+                    table.PrimaryKey("PK_NameValueSets", x => x.Name);
                 });
         }
 
@@ -27,7 +30,7 @@ namespace Company.Access.User.Impl.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "NameValuePairs");
+                name: "NameValueSets");
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Company.Access.User.Impl
         public UserContext CreateDbContext(string[] args)
         {
             var builder = new DbContextOptionsBuilder<UserContext>();
-            builder.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres"));
+            builder.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users"));
             return new UserContext(builder.Options);
         }
     }

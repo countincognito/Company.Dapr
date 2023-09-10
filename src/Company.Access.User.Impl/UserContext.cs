@@ -6,7 +6,7 @@ namespace Company.Access.User.Impl
     public class UserContext
         : DbContext
     {
-        public DbSet<NameValuePair> NameValuePairs { get; set; }
+        public DbSet<NameValueSet> NameValueSets { get; set; }
 
         public UserContext(DbContextOptions<UserContext> options)
             : base(options)
@@ -15,7 +15,7 @@ namespace Company.Access.User.Impl
 
         private static void ModelUsers(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<NameValuePair>()
+            modelBuilder.Entity<NameValueSet>()
                 .HasKey(x => x.Name);
         }
 

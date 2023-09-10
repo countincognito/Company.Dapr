@@ -7,6 +7,7 @@ using Company.iFX.Logging;
 using Company.iFX.Proxy;
 using Company.iFX.Telemetry;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -15,7 +16,10 @@ using ProtoBuf.Grpc.Server;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
+using Zametek.Access.Encryption;
+using Zametek.Access.Encryption.Migrations;
 using Zametek.Utility.Cache;
+using Zametek.Utility.Encryption;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
 string? BuildVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
@@ -25,7 +29,7 @@ Debug.Assert(!string.IsNullOrWhiteSpace(BuildVersion));
 
 //DiagnosticsConfig.NewCurrentIfEmpty(ServiceName);
 
-var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
+var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
     .ConfigureServices(services =>
     {
         services.AddTrackingContextGrpcInterceptor();
@@ -92,6 +96,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         ProxyExtensions.AddTrackingContextToActivitySource();
 
         services.AddScoped<ICacheUtility, CacheUtility>();
+        services.Configure<CacheOptions>(Configuration.Current.All.GetRequiredSection("CacheOptions"));
 
         services.AddStackExchangeRedisCache(options =>
         {
@@ -99,26 +104,43 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         });
 
         services.AddPooledDbContextFactory<UserContext>(
-            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres")));
+            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
 
-        var migrateDbPolicy = Policy
-                .Handle<Exception>()
-                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+        // Encryption.
+        services.AddPooledDbContextFactory<EncryptionDbContext>(
+            options => options.UseNpgsql(
+                Configuration.Current.Setting<string>("ConnectionStrings:postgres_encryption"),
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NpgsqlInitialCreate).Assembly.FullName)
+            ));
 
-        IServiceProvider serverServices = services.BuildServiceProvider();
+        services.AddScoped<IEncryptionUtility, EncryptionUtility>();
+        services.AddScoped<ISymmetricKeyEncryption, AesEncryption>();
+        services.AddScoped<IEncryptionAccess, EncryptionAccess>();
 
-        migrateDbPolicy.Execute(async () =>
-        {
-            IDbContextFactory<UserContext> ctxFactory = serverServices.GetRequiredService<IDbContextFactory<UserContext>>();
-            using UserContext ctx = await ctxFactory.CreateDbContextAsync();
-            await ctx.Database.MigrateAsync();
-        });
-
+        // Could replace this with the real implementation if necessary.
+        services.AddSingleton<IAsymmetricKeyVault>(new FakeKeyVault());
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
         webBuilder.Configure((ctx, app) =>
         {
+            var migrateDbPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+
+            migrateDbPolicy.Execute(async () =>
+            {
+                IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
+                using UserContext userCtx = await userCtxFactory.CreateDbContextAsync();
+                DatabaseFacade userDb = userCtx.Database;
+                await userDb.MigrateAsync();
+
+                IDbContextFactory<EncryptionDbContext> encryptionCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<EncryptionDbContext>>();
+                using EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
+                DatabaseFacade encryptionDb = encryptionCtx.Database;
+                await encryptionDb.MigrateAsync();
+            });
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

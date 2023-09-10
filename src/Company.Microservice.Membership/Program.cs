@@ -14,13 +14,18 @@ using Company.Manager.Membership.Data;
 using Company.Manager.Membership.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Polly;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
+using Zametek.Access.Encryption;
+using Zametek.Access.Encryption.Migrations;
 using Zametek.Utility.Cache;
+using Zametek.Utility.Encryption;
 using Zametek.Utility.Logging;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -33,7 +38,7 @@ var apiV1_0 = new ApiVersion(1, 0);
 
 //DiagnosticsConfig.NewCurrentIfEmpty(ServiceName);
 
-var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
+var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
     .ConfigureServices(services =>
     {
         services.AddRazorPages();
@@ -152,14 +157,46 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         ProxyExtensions.AddTrackingContextToActivitySource();
 
         services.AddScoped<ICacheUtility, CacheUtility>();
+        services.Configure<CacheOptions>(Configuration.Current.All.GetRequiredSection("CacheOptions"));
 
         services.AddPooledDbContextFactory<UserContext>(
-            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres")));
+            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
+
+        // Encryption.
+        services.AddPooledDbContextFactory<EncryptionDbContext>(
+            options => options.UseNpgsql(
+                Configuration.Current.Setting<string>("ConnectionStrings:postgres_encryption"),
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NpgsqlInitialCreate).Assembly.FullName)
+            ));
+
+        services.AddScoped<IEncryptionUtility, EncryptionUtility>();
+        services.AddScoped<ISymmetricKeyEncryption, AesEncryption>();
+        services.AddScoped<IEncryptionAccess, EncryptionAccess>();
+
+        // Could replace this with the real implementation if necessary.
+        services.AddSingleton<IAsymmetricKeyVault>(new FakeKeyVault());
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
         webBuilder.Configure((ctx, app) =>
         {
+            var migrateDbPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+
+            migrateDbPolicy.Execute(async () =>
+            {
+                IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
+                using UserContext userCtx = await userCtxFactory.CreateDbContextAsync();
+                DatabaseFacade userDb = userCtx.Database;
+                await userDb.MigrateAsync();
+
+                IDbContextFactory<EncryptionDbContext> encryptionCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<EncryptionDbContext>>();
+                using EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
+                DatabaseFacade encryptionDb = encryptionCtx.Database;
+                await encryptionDb.MigrateAsync();
+            });
+
             if (!ctx.HostingEnvironment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Error");

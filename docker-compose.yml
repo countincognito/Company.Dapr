@@ -164,7 +164,8 @@ services:
       - seq.image
     environment:
       - CONNECTIONSTRINGS__REDIS=redis.image
-      - CONNECTIONSTRINGS__POSTGRES=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Integrated Security=true;Pooling=true;
+      - CONNECTIONSTRINGS__POSTGRES_USERS=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Integrated Security=true;Pooling=true;
+      - CONNECTIONSTRINGS__POSTGRES_ENCRYPTION=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Encryption;Integrated Security=true;Pooling=true;
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
     #networks:
@@ -233,8 +234,8 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - 5433:${POSTGRES_PORT}
-    volumes:
-      - ${POSTGRES_DATA}:/var/lib/postgresql/data
+    #volumes:
+    #  - ${POSTGRES_DATA}:/var/lib/postgresql/data
     #networks:
     #  - company-dapr
 
