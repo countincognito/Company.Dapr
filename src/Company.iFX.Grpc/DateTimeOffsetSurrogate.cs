@@ -7,6 +7,7 @@ namespace Company.iFX.Grpc
     {
         [ProtoMember(1)]
         public long DateTimeTicks { get; set; }
+
         [ProtoMember(2)]
         public short OffsetMinutes { get; set; }
 
