@@ -27,6 +27,8 @@
     <ProjectReference Include="..\..\src\Company.Access.User.Service\Company.Access.User.Service.csproj" />
     <ProjectReference Include="..\..\src\Company.Engine.Registration.Service\Company.Engine.Registration.Service.csproj" />
     <ProjectReference Include="..\..\src\Company.Manager.Membership.Service\Company.Manager.Membership.Service.csproj" />
+    <ProjectReference Include="..\..\src\Company.Utility.Cache.Service\Company.Utility.Cache.Service.csproj" />
+    <ProjectReference Include="..\..\src\Company.Utility.Encryption.Service\Company.Utility.Encryption.Service.csproj" />
   </ItemGroup>
 
 </Project>

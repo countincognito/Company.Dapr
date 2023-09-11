@@ -8,14 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
-    <PackageReference Include="Zametek.Utility.Cache.Extra" Version="0.1.3" />
   </ItemGroup>
 	
   <ItemGroup>
     <ProjectReference Include="..\Company.Access.User.Data.Db\Company.Access.User.Data.Db.csproj" />
     <ProjectReference Include="..\Company.iFX.Proxy\Company.iFX.Proxy.csproj" />
-	  <ProjectReference Include="..\Company.Access.User.Interface\Company.Access.User.Interface.csproj" />
-	  <ProjectReference Include="..\Company.Utility.Encryption.Interface\Company.Utility.Encryption.Interface.csproj" />
+	<ProjectReference Include="..\Company.Access.User.Interface\Company.Access.User.Interface.csproj" />
+	<ProjectReference Include="..\Company.Utility.Cache.Interface\Company.Utility.Cache.Interface.csproj" />
+	<ProjectReference Include="..\Company.Utility.Encryption.Interface\Company.Utility.Encryption.Interface.csproj" />
   </ItemGroup>
 
 </Project>

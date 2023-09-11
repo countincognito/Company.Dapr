@@ -33,6 +33,7 @@
 		<ProjectReference Include="..\Company.iFX.Telemetry\Company.iFX.Telemetry.csproj" />
 		<ProjectReference Include="..\Company.Manager.Membership.Impl\Company.Manager.Membership.Impl.csproj" />
 		<ProjectReference Include="..\Company.Microservice.Membership.Data\Company.Microservice.Membership.Data.csproj" />
+		<ProjectReference Include="..\Company.Utility.Cache.Impl\Company.Utility.Cache.Impl.csproj" />
 		<ProjectReference Include="..\Company.Utility.Encryption.Impl\Company.Utility.Encryption.Impl.csproj" />
 	</ItemGroup>
 

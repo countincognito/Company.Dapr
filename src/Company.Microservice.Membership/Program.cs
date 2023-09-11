@@ -12,6 +12,7 @@ using Company.iFX.Proxy;
 using Company.iFX.Telemetry;
 using Company.Manager.Membership.Data;
 using Company.Manager.Membership.Interface;
+using Company.Utility.Cache.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -22,10 +23,6 @@ using Polly;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
-using Zametek.Access.Encryption;
-using Zametek.Access.Encryption.Migrations;
-using Zametek.Utility.Cache;
-using Zametek.Utility.Encryption;
 using Zametek.Utility.Logging;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -156,25 +153,28 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         ProxyExtensions.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
         ProxyExtensions.AddTrackingContextToActivitySource();
 
-        services.AddScoped<ICacheUtility, CacheUtility>();
-        services.Configure<CacheOptions>(Configuration.Current.All.GetRequiredSection("CacheOptions"));
+        services.AddScoped<Zametek.Utility.Cache.ICacheUtility, Zametek.Utility.Cache.CacheUtility>();
+        services.Configure<Zametek.Access.Encryption.CacheOptions>(Configuration.Current.All.GetRequiredSection("Zametek:CacheOptions"));
 
         services.AddPooledDbContextFactory<UserContext>(
             options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
 
+        // Cache.
+        services.Configure<CacheOptions>(Configuration.Current.All.GetRequiredSection("CacheOptions"));
+
         // Encryption.
-        services.AddPooledDbContextFactory<EncryptionDbContext>(
+        services.AddPooledDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>(
             options => options.UseNpgsql(
                 Configuration.Current.Setting<string>("ConnectionStrings:postgres_encryption"),
-                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NpgsqlInitialCreate).Assembly.FullName)
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(Zametek.Access.Encryption.Migrations.NpgsqlInitialCreate).Assembly.FullName)
             ));
 
-        services.AddScoped<IEncryptionUtility, EncryptionUtility>();
-        services.AddScoped<ISymmetricKeyEncryption, AesEncryption>();
-        services.AddScoped<IEncryptionAccess, EncryptionAccess>();
+        services.AddScoped<Zametek.Utility.Encryption.IEncryptionUtility, Zametek.Utility.Encryption.EncryptionUtility>();
+        services.AddScoped<Zametek.Utility.Encryption.ISymmetricKeyEncryption, Zametek.Utility.Encryption.AesEncryption>();
+        services.AddScoped<Zametek.Access.Encryption.IEncryptionAccess, Zametek.Access.Encryption.EncryptionAccess>();
 
         // Could replace this with the real implementation if necessary.
-        services.AddSingleton<IAsymmetricKeyVault>(new FakeKeyVault());
+        services.AddSingleton<Zametek.Utility.Encryption.IAsymmetricKeyVault>(new Zametek.Utility.Encryption.FakeKeyVault());
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
@@ -191,8 +191,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
                 DatabaseFacade userDb = userCtx.Database;
                 await userDb.MigrateAsync();
 
-                IDbContextFactory<EncryptionDbContext> encryptionCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<EncryptionDbContext>>();
-                using EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
+                IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext> encryptionCtxFactory =
+                    app.ApplicationServices.GetRequiredService<IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>>();
+                using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
                 DatabaseFacade encryptionDb = encryptionCtx.Database;
                 await encryptionDb.MigrateAsync();
             });

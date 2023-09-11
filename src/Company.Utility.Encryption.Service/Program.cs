@@ -1,11 +1,9 @@
 using Company.iFX.Configuration;
-using Company.iFX.Dapr;
 using Company.iFX.Grpc;
 using Company.iFX.Hosting;
 using Company.iFX.Logging;
 using Company.iFX.Proxy;
 using Company.iFX.Telemetry;
-using Company.Utility.Encryption.Interface;
 using Company.Utility.Encryption.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -18,9 +16,6 @@ using ProtoBuf.Meta;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
-using Zametek.Access.Encryption;
-using Zametek.Access.Encryption.Migrations;
-using Zametek.Utility.Cache;
 
 string? ServiceName = Assembly.GetExecutingAssembly().GetName().Name;
 string? BuildVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
@@ -98,8 +93,8 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         ProxyExtensions.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
         ProxyExtensions.AddTrackingContextToActivitySource();
 
-        services.AddScoped<ICacheUtility, CacheUtility>();
-        services.Configure<CacheOptions>(Configuration.Current.All.GetRequiredSection("CacheOptions"));
+        services.AddScoped<Zametek.Utility.Cache.ICacheUtility, Zametek.Utility.Cache.CacheUtility>();
+        services.Configure<Zametek.Access.Encryption.CacheOptions>(Configuration.Current.All.GetRequiredSection("Zametek:CacheOptions"));
 
         services.AddStackExchangeRedisCache(options =>
         {
@@ -107,15 +102,15 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         });
 
         // Encryption.
-        services.AddPooledDbContextFactory<EncryptionDbContext>(
+        services.AddPooledDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>(
             options => options.UseNpgsql(
                 Configuration.Current.Setting<string>("ConnectionStrings:postgres_encryption"),
-                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NpgsqlInitialCreate).Assembly.FullName)
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(Zametek.Access.Encryption.Migrations.NpgsqlInitialCreate).Assembly.FullName)
             ));
 
         services.AddScoped<Zametek.Utility.Encryption.IEncryptionUtility, Zametek.Utility.Encryption.EncryptionUtility>();
         services.AddScoped<Zametek.Utility.Encryption.ISymmetricKeyEncryption, Zametek.Utility.Encryption.AesEncryption>();
-        services.AddScoped<IEncryptionAccess, EncryptionAccess>();
+        services.AddScoped<Zametek.Access.Encryption.IEncryptionAccess, Zametek.Access.Encryption.EncryptionAccess>();
 
         // Could replace this with the real implementation if necessary.
         services.AddSingleton<Zametek.Utility.Encryption.IAsymmetricKeyVault>(new Zametek.Utility.Encryption.FakeKeyVault());
@@ -130,8 +125,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
 
             migrateDbPolicy.Execute(async () =>
             {
-                IDbContextFactory<EncryptionDbContext> encryptionCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<EncryptionDbContext>>();
-                using EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
+                IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext> encryptionCtxFactory =
+                    app.ApplicationServices.GetRequiredService<IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>>();
+                using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
                 DatabaseFacade encryptionDb = encryptionCtx.Database;
                 await encryptionDb.MigrateAsync();
             });

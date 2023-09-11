@@ -1,10 +1,11 @@
 ﻿using Company.Access.User.Data.Mobile;
 using Company.Access.User.Interface.Mobile;
 using Company.iFX.Proxy;
-using Microsoft.Extensions.Caching.Distributed;
+using Company.Utility.Cache.Data;
+using Company.Utility.Cache.Interface;
 using ProtoBuf.Grpc;
 using Serilog;
-using Zametek.Utility.Cache;
+using Zametek.Utility;
 using Zametek.Utility.Logging;
 
 namespace Company.Access.User.Impl.Mobile
@@ -15,11 +16,6 @@ namespace Company.Access.User.Impl.Mobile
     {
         private readonly ILogger m_Logger;
         private readonly ICacheUtility m_CacheUtility;
-
-        private readonly DistributedCacheEntryOptions m_DefaultDistributedCacheEntryOptions = new()
-        {
-            SlidingExpiration = TimeSpan.FromMinutes(5)
-        };
 
         public UseCases()
         {
@@ -38,17 +34,33 @@ namespace Company.Access.User.Impl.Mobile
 
             try
             {
-                string password = await m_CacheUtility.GetAsync<string>(registerRequest.Name, context.CancellationToken);
+                var getRequest = new GetCachedValueRequest
+                {
+                    Key = registerRequest.Name,
+                };
+
+                GetCachedValueResponse getResponse = await m_CacheUtility.GetCachedValueAsync(getRequest, context.CancellationToken);
+                string password = getResponse?.Data?.ByteArrayToObject<string>() ?? string.Empty;
 
                 if (string.IsNullOrWhiteSpace(password))
                 {
                     m_Logger.Warning(@"No password currently stored for name: {@Name}", registerRequest.Name);
-                    await m_CacheUtility.SetAsync(
-                        registerRequest.Name,
-                        registerRequest.Password,
-                        m_DefaultDistributedCacheEntryOptions,
-                        context.CancellationToken);
-                    password = await m_CacheUtility.GetAsync<string>(registerRequest.Name, context.CancellationToken);
+
+                    var setRequest = new SetCachedValueRequest
+                    {
+                        Key = registerRequest.Name,
+                        Data = registerRequest.Password.ObjectToByteArray(),
+                    };
+
+                    await m_CacheUtility.SetCachedValueAsync(setRequest, context.CancellationToken);
+
+                    getRequest = new GetCachedValueRequest
+                    {
+                        Key = registerRequest.Name,
+                    };
+
+                    getResponse = await m_CacheUtility.GetCachedValueAsync(getRequest, context.CancellationToken);
+                    password = getResponse?.Data?.ByteArrayToObject<string>() ?? string.Empty;
                 }
                 else
                 {

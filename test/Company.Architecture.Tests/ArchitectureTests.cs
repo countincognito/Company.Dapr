@@ -15,6 +15,8 @@ namespace Company.Architecture.Tests
         private static readonly string s_Membership = @"Membership";
         private static readonly string s_Registration = @"Registration";
         private static readonly string s_User = @"User";
+        private static readonly string s_Encryption = @"Encryption";
+        private static readonly string s_Cache = @"Cache";
 
         private static readonly ArchUnitNET.Domain.Architecture s_Architecture;
 
@@ -48,10 +50,20 @@ namespace Company.Architecture.Tests
             .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Access}\.{s_User}\..+", true)
             .As($@"{s_User}{ComponentKeyword.Access} Layer");
 
-        //private static readonly IObjectProvider<IType> s_UtilityLayer =
-        //    Types().That()
-        //    .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Utility}\..+", true)
-        //    .As($@"{ComponentKeyword.Utility} Layer");
+        private static readonly IObjectProvider<IType> s_UtilityLayer =
+            Types().That()
+            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Utility}\..+", true)
+            .As($@"{ComponentKeyword.Utility} Layer");
+
+        private static readonly IObjectProvider<IType> s_EncryptionUtilityLayer =
+            Types().That()
+            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Utility}\.{s_Encryption}\..+", true)
+            .As($@"{s_Encryption}{ComponentKeyword.Utility} Layer");
+
+        private static readonly IObjectProvider<IType> s_CacheUtilityLayer =
+            Types().That()
+            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Utility}\.{s_Cache}\..+", true)
+            .As($@"{s_Cache}{ComponentKeyword.Utility} Layer");
 
         //private static readonly IObjectProvider<IType> s_iFXLayer =
         //    Types().That()
@@ -192,6 +204,84 @@ namespace Company.Architecture.Tests
                 Types().That().Are(allAccessTypes).Should()
                 .NotDependOnAny(allEngineTypes)
                 .Because($@"{ComponentKeyword.Access} should not reference {ComponentKeyword.Engine}.");
+
+            IArchRule combinedRule = rule;
+
+            combinedRule.Check(s_Architecture);
+        }
+
+        // Utility
+
+        [Fact]
+        public void ArchitectureTests_GivenUtilityLayer_ThenMustNotReferenceOtherUtilities()
+        {
+            IEnumerable<IType> allUtilityTypes = s_UtilityLayer.GetObjects(s_Architecture);
+
+            IEnumerable<IType> encryptionUtilityTypes = s_EncryptionUtilityLayer.GetObjects(s_Architecture);
+            IEnumerable<IType> utilityTypesOtherThanEncryption = allUtilityTypes.Except(encryptionUtilityTypes);
+
+            IEnumerable<IType> cacheUtilityTypes = s_CacheUtilityLayer.GetObjects(s_Architecture);
+            IEnumerable<IType> utilityTypesOtherThanCache = allUtilityTypes.Except(cacheUtilityTypes);
+
+            IArchRule rule1 =
+                Types().That().Are(encryptionUtilityTypes).Should()
+                .NotDependOnAny(utilityTypesOtherThanEncryption)
+                .Because($@"{s_Encryption}{ComponentKeyword.Utility} should not reference another {ComponentKeyword.Utility}.");
+
+            IArchRule rule2 =
+                Types().That().Are(cacheUtilityTypes).Should()
+                .NotDependOnAny(utilityTypesOtherThanCache)
+                .Because($@"{s_Cache}{ComponentKeyword.Utility} should not reference another {ComponentKeyword.Utility}.");
+
+            // TODO add more access types when they exist
+
+            IArchRule combinedRule = rule1.And(rule2);
+
+            combinedRule.Check(s_Architecture);
+        }
+
+        [Fact]
+        public void ArchitectureTests_GivenUtilityLayer_ThenMustNotReferenceManagers()
+        {
+            IEnumerable<IType> allUtilityTypes = s_UtilityLayer.GetObjects(s_Architecture);
+            IEnumerable<IType> allManagerTypes = s_ManagerLayer.GetObjects(s_Architecture);
+
+            IArchRule rule =
+                Types().That().Are(allUtilityTypes).Should()
+                .NotDependOnAny(allManagerTypes)
+                .Because($@"{ComponentKeyword.Utility} should not reference {ComponentKeyword.Manager}.");
+
+            IArchRule combinedRule = rule;
+
+            combinedRule.Check(s_Architecture);
+        }
+
+        [Fact]
+        public void ArchitectureTests_GivenUtilityLayer_ThenMustNotReferenceEngines()
+        {
+            IEnumerable<IType> allUtilityTypes = s_UtilityLayer.GetObjects(s_Architecture);
+            IEnumerable<IType> allEngineTypes = s_EngineLayer.GetObjects(s_Architecture);
+
+            IArchRule rule =
+                Types().That().Are(allUtilityTypes).Should()
+                .NotDependOnAny(allEngineTypes)
+                .Because($@"{ComponentKeyword.Utility} should not reference {ComponentKeyword.Engine}.");
+
+            IArchRule combinedRule = rule;
+
+            combinedRule.Check(s_Architecture);
+        }
+
+        [Fact]
+        public void ArchitectureTests_GivenUtilityLayer_ThenMustNotReferenceAccesses()
+        {
+            IEnumerable<IType> allUtilityTypes = s_UtilityLayer.GetObjects(s_Architecture);
+            IEnumerable<IType> allAccessTypes = s_AccessLayer.GetObjects(s_Architecture);
+
+            IArchRule rule =
+                Types().That().Are(allUtilityTypes).Should()
+                .NotDependOnAny(allAccessTypes)
+                .Because($@"{ComponentKeyword.Utility} should not reference {ComponentKeyword.Access}.");
 
             IArchRule combinedRule = rule;
 

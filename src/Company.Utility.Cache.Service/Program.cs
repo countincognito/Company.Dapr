@@ -1,22 +1,15 @@
-using Company.Access.User.Impl;
-using Company.Access.User.Service;
 using Company.iFX.Configuration;
-using Company.iFX.Dapr;
 using Company.iFX.Grpc;
 using Company.iFX.Hosting;
 using Company.iFX.Logging;
 using Company.iFX.Proxy;
 using Company.iFX.Telemetry;
-using Company.Utility.Cache.Interface;
-using Company.Utility.Encryption.Interface;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Company.Utility.Cache.Data;
+using Company.Utility.Cache.Service;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using Polly;
 using ProtoBuf.Grpc.Server;
-using ProtoBuf.Meta;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
@@ -32,10 +25,6 @@ Debug.Assert(!string.IsNullOrWhiteSpace(BuildVersion));
 var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
     .ConfigureServices(services =>
     {
-        // Protobuf-net cannot serialize DateTimeOffset
-        RuntimeTypeModel.Default.Add(typeof(DateTimeOffset), false).SetSurrogate(typeof(DateTimeOffsetSurrogate));
-        services.AddScoped(_ => TrackingContextDaprClient.Create<IEncryptionUtility>());
-        services.AddScoped(_ => TrackingContextDaprClient.Create<ICacheUtility>());
         services.AddTrackingContextGrpcInterceptor();
 
         services.AddCodeFirstGrpc();
@@ -99,30 +88,23 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         ProxyExtensions.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
         ProxyExtensions.AddTrackingContextToActivitySource();
 
-        services.AddPooledDbContextFactory<UserContext>(
-            options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
+        services.AddScoped<Zametek.Utility.Cache.ICacheUtility, Zametek.Utility.Cache.CacheUtility>();
+        services.Configure<CacheOptions>(Configuration.Current.All.GetRequiredSection("CacheOptions"));
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = Configuration.Current.Setting<string>("ConnectionStrings:redis");
+        });
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
         webBuilder.Configure((ctx, app) =>
         {
-            var migrateDbPolicy = Policy
-                .Handle<Exception>()
-                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
-
-            migrateDbPolicy.Execute(async () =>
-            {
-                IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
-                using UserContext userCtx = await userCtxFactory.CreateDbContextAsync();
-                DatabaseFacade userDb = userCtx.Database;
-                await userDb.MigrateAsync();
-            });
-
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<UserAccessProxy>();
+                endpoints.MapGrpcService<CacheUtilityProxy>();
                 endpoints.MapCodeFirstGrpcReflectionService();
 
                 endpoints.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");

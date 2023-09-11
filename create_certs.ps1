@@ -25,3 +25,7 @@ dotnet user-secrets -p src\Company.Access.User.Service\Company.Access.User.Servi
 Write-Output "Generating certificate and password for Company.Utility.Encryption.Service"
 dotnet dev-certs https -ep $env:APPDATA\ASP.NET\https\company.utility.encryption.service.pfx -p $CrtPassword
 dotnet user-secrets -p src\Company.Utility.Encryption.Service\Company.Utility.Encryption.Service.csproj set "Kestrel:Certificates:Development:Password" "$CrtPassword"
+
+Write-Output "Generating certificate and password for Company.Utility.Cache.Service"
+dotnet dev-certs https -ep $env:APPDATA\ASP.NET\https\company.utility.cache.service.pfx -p $CrtPassword
+dotnet user-secrets -p src\Company.Utility.Cache.Service\Company.Utility.Cache.Service.csproj set "Kestrel:Certificates:Development:Password" "$CrtPassword"
