@@ -9,6 +9,6 @@ namespace Company.Utility.Cache.Data
     {
         [NotLogged]
         [ProtoMember(1)]
-        public byte[]? Data { get; set; }
+        public required byte[] Data { get; set; }
     }
 }

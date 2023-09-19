@@ -9,6 +9,6 @@ namespace Company.Utility.Encryption.Data
     {
         [NoLogging]
         [ProtoMember(1)]
-        public byte[]? EncryptedData { get; set; }
+        public required byte[] EncryptedData { get; set; }
     }
 }

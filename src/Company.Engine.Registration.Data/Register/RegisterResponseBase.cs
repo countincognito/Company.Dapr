@@ -11,6 +11,6 @@ namespace Company.Engine.Registration.Data
         : Response
     {
         [ProtoMember(1)]
-        public string? Name { get; set; }
+        public required string Name { get; set; }
     }
 }

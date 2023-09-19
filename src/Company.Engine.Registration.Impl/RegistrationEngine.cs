@@ -22,6 +22,11 @@ namespace Company.Engine.Registration.Impl
             RegisterRequestBase registerRequest,
             [DiagnosticLogging(LogActive.Off)] CallContext context = default)
         {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest}");
             return await UseCaseFactory<IRegistrationEngine, RegisterRequestBase, CallContext, RegisterResponseBase>.CallAsync(registerRequest, context);

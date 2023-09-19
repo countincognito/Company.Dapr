@@ -9,7 +9,7 @@ namespace Company.Manager.Membership.Impl.Tests
     public class MembershipManagerTests
         : IDisposable
     {
-        private readonly UnitTestEnvironment? m_TestEnvironment = null;
+        private readonly UnitTestEnvironment m_TestEnvironment;
 
         public MembershipManagerTests()
         {
@@ -27,9 +27,9 @@ namespace Company.Manager.Membership.Impl.Tests
         {
             if (disposing)
             {
-                if (m_TestEnvironment != null)
+                if (m_TestEnvironment is not null)
                 {
-                    m_TestEnvironment!.Cleanup();
+                    m_TestEnvironment.Cleanup();
                 }
             }
         }
@@ -58,7 +58,9 @@ namespace Company.Manager.Membership.Impl.Tests
                 var response = await service.RegisterMemberAsync(
                     new Data.Web.RegisterRequest
                     {
-                        Name = ServiceRunner.GenerateRandomString()
+                        Name = ServiceRunner.GenerateRandomString(),
+                        Email = ServiceRunner.GenerateRandomString(),
+                        DateOfBirth = ServiceRunner.GenerateRandomDateTime(),
                     },
                     default);
                 response.Should().NotBeNull();
@@ -68,7 +70,7 @@ namespace Company.Manager.Membership.Impl.Tests
                 webResponse!.WebMessage.Should().Be(webMessage);
             });
 
-            await m_TestEnvironment!.TestService(
+            await m_TestEnvironment.TestService(
                 serviceRunner,
                 webUseCasesMock.Object);
         }
@@ -97,7 +99,9 @@ namespace Company.Manager.Membership.Impl.Tests
                 var response = await service.RegisterMemberAsync(
                     new Data.Mobile.RegisterRequest
                     {
-                        Name = ServiceRunner.GenerateRandomString()
+                        Name = ServiceRunner.GenerateRandomString(),
+                        Email = ServiceRunner.GenerateRandomString(),
+                        Password = ServiceRunner.GenerateRandomString()
                     },
                     default);
                 response.Should().NotBeNull();
@@ -107,7 +111,7 @@ namespace Company.Manager.Membership.Impl.Tests
                 mobileResponse!.MobileMessage.Should().Be(mobileMessage);
             });
 
-            await m_TestEnvironment!.TestService(
+            await m_TestEnvironment.TestService(
                 serviceRunner,
                 mobileUseCasesMock.Object);
         }

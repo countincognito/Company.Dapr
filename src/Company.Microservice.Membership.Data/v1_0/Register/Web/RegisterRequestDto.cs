@@ -4,6 +4,6 @@
     public class RegisterRequestDto
         : RegisterRequestDtoBase
     {
-        public DateTime? DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 }

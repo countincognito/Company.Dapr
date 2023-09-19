@@ -8,10 +8,10 @@ namespace Company.Utility.Cache.Data
     public class SetCachedValueRequest
     {
         [ProtoMember(1)]
-        public string? Key { get; set; }
+        public required string Key { get; set; }
 
         [NotLogged]
         [ProtoMember(2)]
-        public byte[]? Data { get; set; }
+        public required byte[] Data { get; set; }
     }
 }

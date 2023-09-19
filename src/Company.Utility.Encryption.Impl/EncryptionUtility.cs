@@ -27,6 +27,11 @@ namespace Company.Utility.Encryption.Impl
             CreateKeysRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(CreateKeysAsync)} Invoked");
 
             Zametek.Utility.Encryption.CreateKeysResponse response = await m_EncryptionUtility.CreateKeysAsync(
@@ -40,6 +45,11 @@ namespace Company.Utility.Encryption.Impl
             EncryptRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(EncryptAsync)} Invoked");
 
             Zametek.Utility.Encryption.EncryptResponse response = await m_EncryptionUtility.EncryptAsync(
@@ -53,6 +63,11 @@ namespace Company.Utility.Encryption.Impl
             DecryptRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(DecryptAsync)} Invoked");
 
             Zametek.Utility.Encryption.DecryptResponse response = await m_EncryptionUtility.DecryptAsync(
@@ -66,6 +81,11 @@ namespace Company.Utility.Encryption.Impl
             RotateAsymmetricKeyRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(RotateAsymmetricKeyAsync)} Invoked");
 
             Zametek.Utility.Encryption.RotateAsymmetricKeyResponse response = await m_EncryptionUtility.RotateAsymmetricKeyAsync(
@@ -79,6 +99,11 @@ namespace Company.Utility.Encryption.Impl
             ViewSymmetricKeyDefinitionRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(ViewSymmetricKeyDefinitionAsync)} Invoked");
 
             Zametek.Utility.Encryption.ViewSymmetricKeyDefinitionResponse response = await m_EncryptionUtility.ViewSymmetricKeyDefinitionAsync(
@@ -92,6 +117,11 @@ namespace Company.Utility.Encryption.Impl
             ViewAsymmetricKeyDefinitionRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(ViewAsymmetricKeyDefinitionAsync)} Invoked");
 
             Zametek.Utility.Encryption.ViewAsymmetricKeyDefinitionResponse response = await m_EncryptionUtility.ViewAsymmetricKeyDefinitionAsync(

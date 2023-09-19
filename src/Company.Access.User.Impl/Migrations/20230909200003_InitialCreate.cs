@@ -16,9 +16,9 @@ namespace Company.Access.User.Impl.Migrations
                 columns: table => new
                 {
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true),
+                    Value = table.Column<string>(type: "text", nullable: false),
                     SymmetricKeyId = table.Column<Guid>(type: "uuid", nullable: false),
-                    EncryptedValue = table.Column<byte[]>(type: "bytea", nullable: true)
+                    EncryptedValue = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -7,6 +7,6 @@ namespace Company.Microservice.Membership.Data.v1_0.Mobile
         : RegisterRequestDtoBase
     {
         [NotLogged]
-        public string? Password { get; set; }
+        public required string Password { get; set; }
     }
 }

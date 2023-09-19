@@ -9,9 +9,9 @@ namespace Company.Access.User.Data
     public abstract class RegisterRequestBase
     {
         [ProtoMember(1)]
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
         [ProtoMember(2)]
-        public string? Email { get; set; }
+        public required string Email { get; set; }
     }
 }

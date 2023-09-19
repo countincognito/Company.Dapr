@@ -4,6 +4,6 @@
     public class RegisterResponseDto
         : RegisterResponseDtoBase
     {
-        public string? WebMessage { get; set; }
+        public required string WebMessage { get; set; }
     }
 }

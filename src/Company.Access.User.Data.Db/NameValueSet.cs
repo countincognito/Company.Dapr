@@ -3,12 +3,12 @@
     [Serializable]
     public class NameValueSet
     {
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
-        public string? Value { get; set; }
+        public required string Value { get; set; }
 
         public Guid SymmetricKeyId { get; set; }
 
-        public byte[]? EncryptedValue { get; set; }
+        public required byte[] EncryptedValue { get; set; }
     }
 }

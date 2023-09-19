@@ -4,6 +4,6 @@
     public class RegisterResponseDto
         : RegisterResponseDtoBase
     {
-        public string? MobileMessage { get; set; }
+        public required string MobileMessage { get; set; }
     }
 }

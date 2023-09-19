@@ -8,6 +8,6 @@ namespace Company.Manager.Membership.Data.Web
         : RegisterRequestBase
     {
         [ProtoMember(1)]
-        public DateTime? DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 }

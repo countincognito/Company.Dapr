@@ -12,6 +12,6 @@ namespace Company.Utility.Encryption.Data
 
         [NoLogging]
         [ProtoMember(2)]
-        public byte[]? EncryptedData { get; set; }
+        public required byte[] EncryptedData { get; set; }
     }
 }

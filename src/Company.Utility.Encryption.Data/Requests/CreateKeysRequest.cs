@@ -7,9 +7,9 @@ namespace Company.Utility.Encryption.Data
     public class CreateKeysRequest
     {
         [ProtoMember(1)]
-        public string? SymmetricKeyName { get; set; }
+        public required string SymmetricKeyName { get; set; }
 
         [ProtoMember(2)]
-        public string? AsymmetricKeyName { get; set; }
+        public required string AsymmetricKeyName { get; set; }
     }
 }

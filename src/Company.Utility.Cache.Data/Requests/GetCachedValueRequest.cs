@@ -7,6 +7,6 @@ namespace Company.Utility.Cache.Data
     public class GetCachedValueRequest
     {
         [ProtoMember(1)]
-        public string? Key { get; set; }
+        public required string Key { get; set; }
     }
 }

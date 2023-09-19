@@ -19,6 +19,11 @@ namespace Company.Utility.Cache.Service
             DeleteCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             await m_Proxy.DeleteCachedValueAsync(request, context);
         }
 
@@ -26,6 +31,11 @@ namespace Company.Utility.Cache.Service
             GetCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             return await m_Proxy.GetCachedValueAsync(request, context);
         }
 
@@ -33,6 +43,11 @@ namespace Company.Utility.Cache.Service
             RefreshCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             await m_Proxy.RefreshCachedValueAsync(request, context);
         }
 
@@ -40,6 +55,11 @@ namespace Company.Utility.Cache.Service
             SetCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             await m_Proxy.SetCachedValueAsync(request, context);
         }
     }

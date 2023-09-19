@@ -8,6 +8,6 @@ namespace Company.Manager.Membership.Data.Mobile
         : RegisterResponseBase
     {
         [ProtoMember(1)]
-        public string? MobileMessage { get; set; }
+        public required string MobileMessage { get; set; }
     }
 }

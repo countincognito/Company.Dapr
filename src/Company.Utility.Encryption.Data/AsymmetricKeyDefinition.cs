@@ -10,10 +10,10 @@ namespace Company.Utility.Encryption.Data
         public string? Id { get; set; }
 
         [ProtoMember(2)]
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
         [ProtoMember(3)]
-        public string? Version { get; set; }
+        public required string Version { get; set; }
 
         [ProtoMember(4)]
         public bool? IsEnabled { get; set; }

@@ -7,9 +7,9 @@ namespace Company.Utility.Encryption.Data
     public class ViewAsymmetricKeyDefinitionRequest
     {
         [ProtoMember(1)]
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
         [ProtoMember(2)]
-        public string? Version { get; set; }
+        public required string Version { get; set; }
     }
 }

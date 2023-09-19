@@ -31,6 +31,11 @@ namespace Company.Utility.Cache.Impl
             GetCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(GetCachedValueAsync)} Invoked");
 
             Zametek.Utility.Cache.GetCachedValueResponse response = await m_CacheUtility.GetCachedValueAsync(
@@ -52,6 +57,11 @@ namespace Company.Utility.Cache.Impl
             RefreshCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(RefreshCachedValueAsync)} Invoked");
 
             await m_CacheUtility.RefreshCachedValueAsync(
@@ -63,6 +73,11 @@ namespace Company.Utility.Cache.Impl
             DeleteCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(DeleteCachedValueAsync)} Invoked");
 
             await m_CacheUtility.DeleteCachedValueAsync(
@@ -74,6 +89,11 @@ namespace Company.Utility.Cache.Impl
             SetCachedValueRequest request,
             CallContext context = default)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             m_Logger.Information($"{nameof(SetCachedValueAsync)} Invoked");
 
             var setCacheValueRequest = m_Mapper.Map<Zametek.Utility.Cache.SetCachedValueRequest>(request);

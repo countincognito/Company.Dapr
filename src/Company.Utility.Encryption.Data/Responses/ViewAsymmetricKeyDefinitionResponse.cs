@@ -7,6 +7,6 @@ namespace Company.Utility.Encryption.Data
     public class ViewAsymmetricKeyDefinitionResponse
     {
         [ProtoMember(1)]
-        public AsymmetricKeyDefinition? AsymmetricKeyDefinition { get; set; }
+        public required AsymmetricKeyDefinition AsymmetricKeyDefinition { get; set; }
     }
 }

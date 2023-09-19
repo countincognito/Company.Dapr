@@ -7,9 +7,9 @@ namespace Company.Utility.Encryption.Data
     public class CreateKeysResponse
     {
         [ProtoMember(1)]
-        public SymmetricKeyDefinition? SymmetricKeyDefinition { get; set; }
+        public required SymmetricKeyDefinition SymmetricKeyDefinition { get; set; }
 
         [ProtoMember(2)]
-        public AsymmetricKeyDefinition? AsymmetricKeyDefinition { get; set; }
+        public required AsymmetricKeyDefinition AsymmetricKeyDefinition { get; set; }
     }
 }

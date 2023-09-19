@@ -33,47 +33,6 @@ namespace Company.iFX.Container
             return s_Scope.Resolve(serviceType);
         }
 
-        public static void ConfigureTesting(
-            object logger,
-            Type[] types)
-        {
-            if (!Configuration.Configuration.SystemUnderTest)
-            {
-                throw new InvalidOperationException("System must be under test to configure testing");
-            }
-
-            BuildTestContainer(logger, types);
-        }
-
-        public static void CreateTestScope(object[] mocks)
-        {
-            if (!Configuration.Configuration.SystemUnderTest)
-            {
-                return;
-            }
-
-            ILifetimeScope? testScope = s_TestScope?.BeginLifetimeScope(configuration =>
-            {
-                foreach (object mock in mocks)
-                {
-                    Type interfaceType = mock.GetType().GetInterfaces().First();
-                    configuration.RegisterInstance(mock).As(interfaceType);
-                }
-            });
-
-            OverrideScope(testScope);
-        }
-
-        public static void EndTestScope()
-        {
-            if (!Configuration.Configuration.SystemUnderTest)
-            {
-                return;
-            }
-
-            EndScope();
-        }
-
         public static void EndScope()
         {
             s_Scope?.Dispose();
@@ -155,10 +114,56 @@ namespace Company.iFX.Container
             //    .InstancePerLifetimeScope();
         }
 
+        public static void ConfigureTesting(
+            object logger,
+            Type[] types)
+        {
+            if (!Configuration.Configuration.SystemUnderTest)
+            {
+                throw new InvalidOperationException("System must be under test to configure test container");
+            }
+
+            BuildTestContainer(logger, types);
+        }
+
+        public static void CreateTestScope(object[] mocks)
+        {
+            if (!Configuration.Configuration.SystemUnderTest)
+            {
+                throw new InvalidOperationException("System must be under test to create test scope");
+            }
+
+            ILifetimeScope? testScope = s_TestScope?.BeginLifetimeScope(configuration =>
+            {
+                foreach (object mock in mocks)
+                {
+                    Type interfaceType = mock.GetType().GetInterfaces().First();
+                    configuration.RegisterInstance(mock).As(interfaceType);
+                }
+            });
+
+            OverrideScope(testScope);
+        }
+
+        public static void EndTestScope()
+        {
+            if (!Configuration.Configuration.SystemUnderTest)
+            {
+                throw new InvalidOperationException("System must be under test to end test scope");
+            }
+
+            EndScope();
+        }
+
         private static void BuildTestContainer(
             object logger,
             Type[] types)
         {
+            if (!Configuration.Configuration.SystemUnderTest)
+            {
+                throw new InvalidOperationException("System must be under test to build test container");
+            }
+
             var builder = new ContainerBuilder();
             builder.RegisterInstance(logger).As(logger.GetType().GetInterfaces());
             builder.RegisterTypes(types).As(t => t.GetInterfaces());

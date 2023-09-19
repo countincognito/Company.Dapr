@@ -30,6 +30,11 @@ namespace Company.Access.User.Impl.Web
             RegisterRequest registerRequest,
             CallContext context = default)
         {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest.Name}");
 
@@ -48,13 +53,13 @@ namespace Company.Access.User.Impl.Web
                 if (result is null)
                 {
                     Debug.Assert(registerRequest is not null);
-                    m_Logger.Warning(@"No DOB currently stored for name: {@Name}", registerRequest?.Name);
+                    m_Logger.Warning(@"No DOB currently stored for name: {@Name}", registerRequest.Name);
 
                     m_Logger.Information(@"Encrypting data");
 
                     var createKeysRequest = new CreateKeysRequest
                     {
-                        SymmetricKeyName = registerRequest?.Name ?? Guid.NewGuid().ToDashedString(),
+                        SymmetricKeyName = registerRequest.Name ?? Guid.NewGuid().ToDashedString(),
                         AsymmetricKeyName = Guid.NewGuid().ToDashedString(),
                     };
 
@@ -76,8 +81,8 @@ namespace Company.Access.User.Impl.Web
 
                     var input = new NameValueSet
                     {
-                        Name = registerRequest?.Name ?? string.Empty,
-                        Value = registerRequest?.DateOfBirth?.ToString("u") ?? string.Empty,
+                        Name = registerRequest.Name ?? string.Empty,
+                        Value = registerRequest.DateOfBirth.ToString("u") ?? string.Empty,
                         SymmetricKeyId = symmetricKeyDefinition.Id,
                         EncryptedValue = encryptResponse.EncryptedData,
                     };
@@ -117,7 +122,7 @@ namespace Company.Access.User.Impl.Web
 
                 RegisterRequest output = decryptResponse.Data.ByteArrayToObject<RegisterRequest>();
 
-                webMessage = output?.DateOfBirth?.ToString("u") ?? @"No DOB";
+                webMessage = output?.DateOfBirth.ToString("u") ?? @"No DOB";
             }
             catch (Exception ex)
             {
@@ -127,7 +132,7 @@ namespace Company.Access.User.Impl.Web
 
             RegisterResponse response = new()
             {
-                Name = registerRequest?.Name,
+                Name = registerRequest.Name,
                 WebMessage = webMessage,
             };
 

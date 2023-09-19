@@ -10,6 +10,6 @@ namespace Company.Manager.Membership.Data.Mobile
     {
         [NotLogged]
         [ProtoMember(1)]
-        public string? Password { get; set; }
+        public required string Password { get; set; }
     }
 }

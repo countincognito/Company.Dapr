@@ -10,7 +10,7 @@ namespace Company.Utility.Encryption.Data
         public Guid Id { get; set; }
 
         [ProtoMember(2)]
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
         [ProtoMember(3)]
         public bool IsEnabled { get; set; }

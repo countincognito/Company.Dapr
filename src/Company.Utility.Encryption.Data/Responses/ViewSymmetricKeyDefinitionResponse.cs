@@ -7,6 +7,6 @@ namespace Company.Utility.Encryption.Data
     public class ViewSymmetricKeyDefinitionResponse
     {
         [ProtoMember(1)]
-        public SymmetricKeyDefinition? SymmetricKeyDefinition { get; set; }
+        public required SymmetricKeyDefinition SymmetricKeyDefinition { get; set; }
     }
 }
