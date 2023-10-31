@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: seq # Labels and Selectors
+  name: seq # Sets service name
+spec:
+  type: NodePort # Sets service type
+  ports:
+    - name: "80"
+      nodePort: 31081 # access service via external port number
+      port: 80 # port number exposed internally in cluster
+      targetPort: 80 # port number that containers are listening on
+      protocol: TCP
+    - name: "5341"
+      port: 5341
+      targetPort: 5341
+      protocol: TCP
+  selector:
+    app: seq
+status:
+  loadBalancer: {}
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   labels:
+#     app: seq # Labels and Selectors
+#   name: seq-external # Sets service name
+# spec:
+#   type: NodePort # Sets service type
+#   ports:
+#     - name: "80"
+#       port: 80
+#       protocol: TCP
+#   selector:
+#     app: seq
+# status:
+#   loadBalancer: {}

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seq
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: seq
+    spec:
+      containers:
+        - name: seq
+          image: datalust/seq:2023.3 # Sets Image
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5341
+              hostPort: 5341
+              protocol: TCP
+            - containerPort: 80
+              hostPort: 80
+              protocol: TCP
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+          resources: {}
+          volumeMounts:
+            - mountPath: /data
+              name: seqdata
+      volumes:
+        - name: seqdata
+          persistentVolumeClaim:
+            claimName: seq-pv-claim
+      restartPolicy: Always
+status: {}

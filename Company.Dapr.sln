@@ -115,13 +115,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Encryption.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cache", "Cache", "{83579E4C-F1F5-4B80-9B5F-6F5D20363D77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.Utility.Cache.Data", "src\Company.Utility.Cache.Data\Company.Utility.Cache.Data.csproj", "{F32A15F5-C136-4CA7-A488-244680845A5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Cache.Data", "src\Company.Utility.Cache.Data\Company.Utility.Cache.Data.csproj", "{F32A15F5-C136-4CA7-A488-244680845A5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.Utility.Cache.Impl", "src\Company.Utility.Cache.Impl\Company.Utility.Cache.Impl.csproj", "{64A7ABA9-6EA2-48ED-B5E1-6F3E0DC57211}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Cache.Impl", "src\Company.Utility.Cache.Impl\Company.Utility.Cache.Impl.csproj", "{64A7ABA9-6EA2-48ED-B5E1-6F3E0DC57211}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.Utility.Cache.Interface", "src\Company.Utility.Cache.Interface\Company.Utility.Cache.Interface.csproj", "{DAD1FA12-1C7A-4983-89DB-B3FB604F8C58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Cache.Interface", "src\Company.Utility.Cache.Interface\Company.Utility.Cache.Interface.csproj", "{DAD1FA12-1C7A-4983-89DB-B3FB604F8C58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.Utility.Cache.Service", "src\Company.Utility.Cache.Service\Company.Utility.Cache.Service.csproj", "{5AD60D46-38FE-4322-A997-CEE3C1236CA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Cache.Service", "src\Company.Utility.Cache.Service\Company.Utility.Cache.Service.csproj", "{5AD60D46-38FE-4322-A997-CEE3C1236CA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

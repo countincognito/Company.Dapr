@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dtc-zipkin
+  name: dtc-zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dtc-zipkin
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: dtc-zipkin
+    spec:
+      containers:
+        - image: openzipkin/zipkin:2.24.3
+          name: dtc-zipkin
+          ports:
+            - containerPort: 9411
+              hostPort: 9411
+              protocol: TCP
+          resources: {}
+      restartPolicy: Always
+status: {}

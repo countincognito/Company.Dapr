@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: company-access-user-service
+  name: company-access-user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: company-access-user-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: company-access-user-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "company-access-user-service"
+        dapr.io/app-port: "80"
+        dapr.io/app-protocol: "grpc"
+        dapr.io/enable-api-logging: "true"
+        dapr.io/log-level: "debug"
+        dapr.io/config: "dapr-config"
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret-config
+                  key: password
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: user
+            - name: CONNECTIONSTRINGS__OTEL
+              value: http://otel-collector:4317
+            - name: CONNECTIONSTRINGS__POSTGRES_USERS
+              value: Server=postgres;Port=5432;User Id=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);Database=Users;Integrated Security=true;Pooling=true;
+            - name: CONNECTIONSTRINGS__SEQ
+              value: http://seq:5341
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+          image: companyaccessuserservice
+          name: company-access-user-service
+          resources: {}
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+status: {}

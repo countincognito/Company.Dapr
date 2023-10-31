@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: company-microservice-membership-service
+  name: company-microservice-membership-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: company-microservice-membership-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: company-microservice-membership-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "company-microservice-membership-service"
+        dapr.io/app-port: "80"
+        dapr.io/app-protocol: "grpc"
+        dapr.io/enable-api-logging: "true"
+        dapr.io/log-level: "debug"
+        dapr.io/config: "dapr-config"
+    spec:
+      containers:
+        - env:
+            - name: CONNECTIONSTRINGS__OTEL
+              value: http://otel-collector:4317
+            - name: CONNECTIONSTRINGS__SEQ
+              value: http://seq:5341
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+          image: companymicroservicemembershipservice
+          name: company-microservice-membership-service
+          resources: {}
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+status: {}
