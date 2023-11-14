@@ -41,7 +41,7 @@ To run the solution in Docker-Compose without Visual Studio, perform the followi
 
 The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
 
-**Note**: you can find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard. Use the link that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/Swagger` (neither of these will be set by default).
+**Note**: you can find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard. Use the link that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/Swagger` (neither of these will be set by default). Also, depending on the order of services spinning up, you may need to restart the containers for the services that need to run database migrations (i.e. `company.access.user.service` and `company.utility.encryption.service`). This is because the migrations will fail if the database is not already running.
 
 ## Set up (Local Kubernetes)
 
