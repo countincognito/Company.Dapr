@@ -52,7 +52,8 @@ namespace Company.iFX.Common
                 && type.IsClass
                 && type.BaseType is not null
                 && type.BaseType.IsAbstract
-                && type.BaseType.IsClass)
+                && type.BaseType.IsClass
+                && typeInfo.Kind != JsonTypeInfoKind.None)
             {
                 Debug.Assert(type.FullName is not null);
                 JsonDerivedType derivedType = new(type, type.FullName);
