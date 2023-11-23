@@ -32,12 +32,12 @@ spec:
                   name: postgres-config
                   key: user
           resources: {}
-          volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgresdata
-      volumes:
-        - name: postgresdata
-          persistentVolumeClaim:
-            claimName: postgres-pv-claim
+          # volumeMounts:
+          #   - mountPath: /var/lib/postgresql/data
+          #     name: postgresdata
+      # volumes:
+      #   - name: postgresdata
+      #     persistentVolumeClaim:
+      #       claimName: postgres-pv-claim
       restartPolicy: Always
 status: {}

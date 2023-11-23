@@ -57,4 +57,5 @@ service:
     logs:
       receivers: [otlp]
       processors: []
-      exporters: [logging, file, otlphttp/seq]
+      #exporters: [logging, file, otlphttp/seq]
+      exporters: [logging, otlphttp/seq]

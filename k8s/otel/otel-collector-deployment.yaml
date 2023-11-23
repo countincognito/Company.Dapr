@@ -31,15 +31,15 @@ spec:
             - containerPort: 8888  # Default endpoint for querying metrics.
           resources: {}
           volumeMounts:
-            - name: oteldata
-              mountPath: "/etc/output"
+            # - name: oteldata
+            #   mountPath: "/etc/output"
             - name: otel-collector-config-vol
               mountPath: /config/otel-collector-config.yaml
               subPath: otel-collector-config.yaml
       volumes:
-        - name: oteldata
-          persistentVolumeClaim:
-            claimName: otel-collector-pv-claim
+        # - name: oteldata
+        #   persistentVolumeClaim:
+        #     claimName: otel-collector-pv-claim
         - name: otel-collector-config-vol
           configMap:
             name: otel-collector-config
