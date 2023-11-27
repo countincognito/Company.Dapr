@@ -22,6 +22,8 @@ namespace Company.Utility.Workflow.Service
                     .AddQuartzTemporalActivities()
                     .AddJavaScriptActivities()
                     .AddWorkflowsFrom<Startup>()
+                    .AddActivitiesFrom<ReadQueryString>()
+                    .AddWorkflow<EchoQueryStringWorkflow>()
                 );
 
             // Elsa API endpoints.

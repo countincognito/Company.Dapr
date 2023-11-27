@@ -123,11 +123,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Cache.Inter
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Cache.Service", "src\Company.Utility.Cache.Service\Company.Utility.Cache.Service.csproj", "{5AD60D46-38FE-4322-A997-CEE3C1236CA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.iFX.Nats.TestConsole", "test\Company.iFX.Nats.TestConsole\Company.iFX.Nats.TestConsole.csproj", "{6FEAF3A9-4149-4B90-908B-7946AC1D7ABF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.iFX.Nats.TestConsole", "test\Company.iFX.Nats.TestConsole\Company.iFX.Nats.TestConsole.csproj", "{6FEAF3A9-4149-4B90-908B-7946AC1D7ABF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.iFX.Nats", "src\Company.iFX.Nats\Company.iFX.Nats.csproj", "{719DEB2F-910B-4B48-AEE9-505E3E636A0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.iFX.Nats.TestWorker", "test\Company.iFX.Nats.TestWorker\Company.iFX.Nats.TestWorker.csproj", "{2B5C613C-EF27-4984-B262-943E5080BFE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.iFX.Nats.TestWorker", "test\Company.iFX.Nats.TestWorker\Company.iFX.Nats.TestWorker.csproj", "{2B5C613C-EF27-4984-B262-943E5080BFE7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflow", "Workflow", "{3D76EDBC-538C-4E9E-A0E9-A10A634CCA05}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Company.Utility.Workflow.Service", "src\Company.Utility.Workflow.Service\Company.Utility.Workflow.Service.csproj", "{FA3305F9-D0C3-49F2-B862-1B8A21FB24ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -307,6 +311,10 @@ Global
 		{2B5C613C-EF27-4984-B262-943E5080BFE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B5C613C-EF27-4984-B262-943E5080BFE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B5C613C-EF27-4984-B262-943E5080BFE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA3305F9-D0C3-49F2-B862-1B8A21FB24ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA3305F9-D0C3-49F2-B862-1B8A21FB24ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA3305F9-D0C3-49F2-B862-1B8A21FB24ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA3305F9-D0C3-49F2-B862-1B8A21FB24ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -372,6 +380,8 @@ Global
 		{6FEAF3A9-4149-4B90-908B-7946AC1D7ABF} = {2B8073C3-1FA8-4B05-B53C-CCD13264A1DF}
 		{719DEB2F-910B-4B48-AEE9-505E3E636A0D} = {6D5580E3-68BE-440C-AF8D-3C2FD33941BD}
 		{2B5C613C-EF27-4984-B262-943E5080BFE7} = {2B8073C3-1FA8-4B05-B53C-CCD13264A1DF}
+		{3D76EDBC-538C-4E9E-A0E9-A10A634CCA05} = {BB34A099-F9A9-455C-8C9A-13D0B885AC71}
+		{FA3305F9-D0C3-49F2-B862-1B8A21FB24ED} = {3D76EDBC-538C-4E9E-A0E9-A10A634CCA05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {103D1A73-9C30-4CE7-9DC8-143D8616054E}
