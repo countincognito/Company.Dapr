@@ -1,6 +1,7 @@
-using Elsa;
-using Elsa.Persistence.EntityFramework.Core.Extensions;
-using Elsa.Persistence.EntityFramework.Sqlite;
+using Elsa.EntityFrameworkCore.Extensions;
+using Elsa.EntityFrameworkCore.Modules.Management;
+using Elsa.EntityFrameworkCore.Modules.Runtime;
+using Elsa.Extensions;
 
 namespace Company.Utility.Workflow.Service
 {
@@ -10,61 +11,70 @@ namespace Company.Utility.Workflow.Service
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var elsaSection = builder.Configuration.GetSection("Elsa");
+            // Add services to the container.
+            builder.Services.AddElsa(elsa =>
+            {
+                // Configure management feature to use EF Core.
+                elsa.UseWorkflowManagement(management => management.UseEntityFrameworkCore(ef => ef.UseSqlite()));
 
-            // Elsa services.
-            builder.Services
-                .AddElsa(elsa => elsa
-                    .UseEntityFrameworkPersistence(ef => ef.UseSqlite())
-                    .AddConsoleActivities()
-                    .AddHttpActivities(elsaSection.GetSection("Server").Bind)
-                    .AddEmailActivities(elsaSection.GetSection("Smtp").Bind)
-                    .AddQuartzTemporalActivities()
-                    .AddJavaScriptActivities()
-                    .AddWorkflowsFrom<Startup>()
-                    .AddActivitiesFrom<ReadQueryString>()
-                    .AddWorkflow<EchoQueryStringWorkflow>()
-                );
+                elsa.UseWorkflowRuntime(runtime =>
+                {
+                    runtime.UseEntityFrameworkCore();
+                });
 
-            // Elsa API endpoints.
-            builder.Services.AddElsaApiEndpoints();
-            builder.Services.AddElsaSwagger();
+                elsa.UseJavaScript();
+                elsa.UseLiquid();
 
-            // For Dashboard.
+                // Expose API endpoints.
+                elsa.UseWorkflowsApi();
+
+                // Add services for HTTP activities and workflow middleware.
+                elsa.UseHttp(http =>
+                {
+                    http.ConfigureHttpOptions = options => options.BasePath = "/wf";
+                });
+
+                // Use timers.
+                elsa.UseScheduling();
+
+                // Configure identity so that we can create a default admin user.
+                elsa.UseIdentity(identity =>
+                {
+                    identity.UseAdminUserProvider();
+                    identity.TokenOptions = options =>
+                    {
+                        options.SigningKey = "secret-token-signing-key";
+                        options.AccessTokenLifetime = TimeSpan.FromDays(1);
+                    };
+                });
+
+                // Use default authentication (JWT).
+                elsa.UseDefaultAuthentication(auth => auth.UseAdminApiKey());
+
+                // Register custom activities.
+                elsa.AddActivitiesFrom<Program>();
+            });
+
+            // Configure CORS to allow designer app hosted on a different origin to invoke the APIs.
+            builder.Services.AddCors(cors => cors.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+            // Add services to the container.
+            builder.Services.AddControllers();
+            // Add Razor pages.
             builder.Services.AddRazorPages();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
             app.UseHttpsRedirection();
+            app.UseCors();
             app.UseStaticFiles();
-
-            app.UseHttpActivities();
-
-            app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
-            app.MapRazorPages();
-
-
-
-
-            // Elsa API Endpoints are implemented as regular ASP.NET Core API controllers.
+            app.UseWorkflowsApi();
+            app.UseWorkflows();
             app.MapControllers();
-
-            // // For Dashboard.
-            // app.MapFallbackToPage("/_Host");
-
-
-
+            app.MapRazorPages();
             app.Run();
         }
     }

@@ -1,26 +1,19 @@
-using Elsa.ActivityResults;
-using Elsa.Attributes;
-using Elsa.Services;
-using Elsa.Services.Models;
+﻿using Elsa.Extensions;
+using Elsa.Workflows.Core;
+using Elsa.Workflows.Core.Attributes;
+using Elsa.Workflows.Core.Models;
 
 namespace Company.Utility.Workflow.Service
 {
-    public class ParseQueryString : Activity
+    [Activity("Demo", "Demo", Description = "A demo activity for parsing query strings.")]
+    public class ParseQueryString : CodeActivity<string>
     {
-
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public ParseQueryString(IHttpContextAccessor httpContextAccessor)
+        protected override void Execute(ActivityExecutionContext context)
         {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        protected override IActivityExecutionResult OnExecute(ActivityExecutionContext context)
-        {
-            var query = _httpContextAccessor.HttpContext!.Request.Query;
-            var items = query!.Select(x => $"<li>{x.Key}: {x.Value}</li>");
-            context.SetVariable("ParsedResult", $"<ul>{string.Join("\n", items)}</ul>");
-            return Done();
+            var httpContextAccessor = context.GetRequiredService<IHttpContextAccessor>();
+            var query = httpContextAccessor.HttpContext!.Request.Query;
+            var items = query!.Select(x => $"{x.Key}: {x.Value}");
+            context.SetResult(string.Join(", ", items));
         }
     }
 }
