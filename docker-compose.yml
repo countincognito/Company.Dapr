@@ -162,7 +162,7 @@ services:
       - postgres.image
       - seq.image
     environment:
-      - CONNECTIONSTRINGS__POSTGRES_USERS=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Integrated Security=true;Pooling=true;
+      - CONNECTIONSTRINGS__POSTGRES_USERS=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Pooling=true;
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
     #networks:
@@ -208,7 +208,7 @@ services:
       - seq.image
     environment:
       - CONNECTIONSTRINGS__REDIS=redis.image
-      - CONNECTIONSTRINGS__POSTGRES_ENCRYPTION=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Encryption;Integrated Security=true;Pooling=true;
+      - CONNECTIONSTRINGS__POSTGRES_ENCRYPTION=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Encryption;Pooling=true;
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
       - ZAMETEK__CACHEOPTIONS__ABSOLUTEEXPIRATIONINMINUTES=60

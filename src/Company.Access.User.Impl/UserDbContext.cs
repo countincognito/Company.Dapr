@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.Access.User.Impl
 {
-    public class UserContext
+    public class UserDbContext
         : DbContext
     {
         public DbSet<NameValueSet> NameValueSets { get; set; }
 
-        public UserContext(DbContextOptions<UserContext> options)
+        public UserDbContext(DbContextOptions<UserDbContext> options)
             : base(options)
         {
         }

@@ -10,7 +10,7 @@
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
 	<PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.1.1" />
 	<PackageReference Include="protobuf-net.Grpc.AspNetCore.Reflection" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

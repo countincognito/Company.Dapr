@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace Company.Access.User.Impl
 {
     public class DesignTimeDbContextFactory
-        : IDesignTimeDbContextFactory<UserContext>
+        : IDesignTimeDbContextFactory<UserDbContext>
     {
-        public UserContext CreateDbContext(string[] args)
+        public UserDbContext CreateDbContext(string[] args)
         {
-            var builder = new DbContextOptionsBuilder<UserContext>();
+            var builder = new DbContextOptionsBuilder<UserDbContext>();
             builder.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users"));
-            return new UserContext(builder.Options);
+            return new UserDbContext(builder.Options);
         }
     }
 }

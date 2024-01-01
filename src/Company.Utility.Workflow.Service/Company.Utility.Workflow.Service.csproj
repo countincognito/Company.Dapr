@@ -10,13 +10,13 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Elsa" Version="3.0.0-preview.727" />
-		<PackageReference Include="Elsa.EntityFrameworkCore.Sqlite" Version="3.0.0-preview.727" />
-		<PackageReference Include="Elsa.Http" Version="3.0.0-preview.727" />
-		<PackageReference Include="Elsa.Identity" Version="3.0.0-preview.727" />
-		<PackageReference Include="Elsa.Liquid" Version="3.0.0-preview.727" />
-		<PackageReference Include="Elsa.Scheduling" Version="3.0.0-preview.727" />
-		<PackageReference Include="Elsa.Workflows.Api" Version="3.0.0-preview.727" />
+		<PackageReference Include="Elsa" Version="3.0.0" />
+		<PackageReference Include="Elsa.EntityFrameworkCore.Sqlite" Version="3.0.0" />
+		<PackageReference Include="Elsa.Http" Version="3.0.0" />
+		<PackageReference Include="Elsa.Identity" Version="3.0.0" />
+		<PackageReference Include="Elsa.Liquid" Version="3.0.0" />
+		<PackageReference Include="Elsa.Scheduling" Version="3.0.0" />
+		<PackageReference Include="Elsa.Workflows.Api" Version="3.0.0" />
 		<PackageReference Include="Elsa.Workflows.Designer" Version="3.0.0-preview.727" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
 	</ItemGroup>

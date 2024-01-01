@@ -1,6 +1,6 @@
 ﻿using Elsa.Scheduling.Activities;
-using Elsa.Workflows.Core.Activities;
-using Elsa.Workflows.Core.Attributes;
+using Elsa.Workflows.Activities;
+using Elsa.Workflows.Attributes;
 
 namespace Company.Utility.Workflow.Service
 {

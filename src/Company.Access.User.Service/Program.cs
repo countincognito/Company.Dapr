@@ -99,7 +99,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         ProxyExtensions.IncludeInvocationLogging(Configuration.Current.Setting<bool>("Zametek:InvocationLogging"));
         ProxyExtensions.AddTrackingContextToActivitySource();
 
-        services.AddPooledDbContextFactory<UserContext>(
+        services.AddPooledDbContextFactory<UserDbContext>(
             options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
     })
     .ConfigureWebHostDefaults(webBuilder =>
@@ -112,8 +112,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
 
             migrateDbPolicy.Execute(async () =>
             {
-                IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
-                using UserContext userCtx = await userCtxFactory
+                IDbContextFactory<UserDbContext> userCtxFactory =
+                    app.ApplicationServices.GetRequiredService<IDbContextFactory<UserDbContext>>();
+                using UserDbContext userCtx = await userCtxFactory
                     .CreateDbContextAsync()
                     .ConfigureAwait(false);
                 DatabaseFacade userDb = userCtx.Database;

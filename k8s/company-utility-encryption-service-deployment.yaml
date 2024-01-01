@@ -38,7 +38,7 @@ spec:
             - name: CONNECTIONSTRINGS__OTEL
               value: http://otel-collector:4317
             - name: CONNECTIONSTRINGS__POSTGRES_ENCRYPTION
-              value: Server=postgres;Port=5432;User Id=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);Database=Encryption;Integrated Security=true;Pooling=true;
+              value: Server=postgres;Port=5432;User Id=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);Database=Encryption;Pooling=true;
             - name: CONNECTIONSTRINGS__SEQ
               value: http://seq:5341
             - name: CONNECTIONSTRINGS__REDIS

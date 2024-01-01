@@ -4,7 +4,9 @@ using Company.Access.User.Interface.Web;
 using Company.iFX.Proxy;
 using Company.Utility.Encryption.Data;
 using Company.Utility.Encryption.Interface;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using ProtoBuf.Grpc;
 using Serilog;
 using System.Diagnostics;
@@ -18,12 +20,12 @@ namespace Company.Access.User.Impl.Web
         : IUseCases
     {
         private readonly ILogger m_Logger;
-        private readonly IDbContextFactory<UserContext> m_CtxFactory;
+        private readonly IDbContextFactory<UserDbContext> m_CtxFactory;
 
         public UseCases()
         {
             m_Logger = Proxy.CreateLogger<IUseCases>();
-            m_CtxFactory = iFX.Container.Container.GetService<IDbContextFactory<UserContext>>();
+            m_CtxFactory = iFX.Container.Container.GetService<IDbContextFactory<UserDbContext>>();
         }
 
         public async Task<RegisterResponse> RegisterAsync(

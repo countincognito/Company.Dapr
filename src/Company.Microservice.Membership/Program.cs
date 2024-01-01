@@ -156,7 +156,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         services.AddScoped<Zametek.Utility.Cache.ICacheUtility, Zametek.Utility.Cache.CacheUtility>();
         services.Configure<Zametek.Access.Encryption.CacheOptions>(Configuration.Current.All.GetRequiredSection("Zametek:CacheOptions"));
 
-        services.AddPooledDbContextFactory<UserContext>(
+        services.AddPooledDbContextFactory<UserDbContext>(
             options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
 
         // Cache.
@@ -186,8 +186,8 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
 
             migrateDbPolicy.Execute(async () =>
             {
-                IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
-                using UserContext userCtx = await userCtxFactory
+                IDbContextFactory<UserDbContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserDbContext>>();
+                using UserDbContext userCtx = await userCtxFactory
                     .CreateDbContextAsync()
                     .ConfigureAwait(false);
                 DatabaseFacade userDb = userCtx.Database;
