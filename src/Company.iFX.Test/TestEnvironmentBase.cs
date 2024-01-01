@@ -49,7 +49,7 @@ namespace Company.iFX.Test
                 T? instance = default;
                 instance = Activator.CreateInstance(targetType) as T;
                 Debug.Assert(instance is not null);
-                await serviceRunner.Invoke(instance);
+                await serviceRunner.Invoke(instance).ConfigureAwait(false);
             }
             finally
             {

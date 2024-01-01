@@ -24,7 +24,9 @@ namespace Company.Utility.Cache.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            await m_Proxy.DeleteCachedValueAsync(request, context);
+            await m_Proxy
+                .DeleteCachedValueAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task<GetCachedValueResponse> GetCachedValueAsync(
@@ -36,7 +38,9 @@ namespace Company.Utility.Cache.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await m_Proxy.GetCachedValueAsync(request, context);
+            return await m_Proxy
+                .GetCachedValueAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task RefreshCachedValueAsync(
@@ -48,7 +52,9 @@ namespace Company.Utility.Cache.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            await m_Proxy.RefreshCachedValueAsync(request, context);
+            await m_Proxy
+                .RefreshCachedValueAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task SetCachedValueAsync(
@@ -60,7 +66,9 @@ namespace Company.Utility.Cache.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            await m_Proxy.SetCachedValueAsync(request, context);
+            await m_Proxy
+                .SetCachedValueAsync(request, context)
+                .ConfigureAwait(false);
         }
     }
 }

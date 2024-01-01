@@ -97,7 +97,7 @@ namespace Company.iFX.Grpc
         {
             AddCallerMetadata(ref context);
 
-            return await continuation(request, context);
+            return await continuation(request, context).ConfigureAwait(false);
         }
 
         public override async Task<TResponse> ClientStreamingServerHandler<TRequest, TResponse>(
@@ -107,7 +107,7 @@ namespace Company.iFX.Grpc
         {
             AddCallerMetadata(ref context);
 
-            return await continuation(requestStream, context);
+            return await continuation(requestStream, context).ConfigureAwait(false);
         }
 
         public override async Task ServerStreamingServerHandler<TRequest, TResponse>(
@@ -118,7 +118,7 @@ namespace Company.iFX.Grpc
         {
             AddCallerMetadata(ref context);
 
-            await continuation(request, responseStream, context);
+            await continuation(request, responseStream, context).ConfigureAwait(false);
         }
 
         public override async Task DuplexStreamingServerHandler<TRequest, TResponse>(
@@ -129,7 +129,7 @@ namespace Company.iFX.Grpc
         {
             AddCallerMetadata(ref context);
 
-            await continuation(requestStream, responseStream, context);
+            await continuation(requestStream, responseStream, context).ConfigureAwait(false);
         }
 
         private static void AddCallerMetadata<TRequest, TResponse>(ref ClientInterceptorContext<TRequest, TResponse> context)

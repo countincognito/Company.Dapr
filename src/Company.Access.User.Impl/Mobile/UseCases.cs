@@ -44,7 +44,9 @@ namespace Company.Access.User.Impl.Mobile
                     Key = registerRequest.Name,
                 };
 
-                GetCachedValueResponse getResponse = await m_CacheUtility.GetCachedValueAsync(getRequest, context.CancellationToken);
+                GetCachedValueResponse getResponse = await m_CacheUtility
+                    .GetCachedValueAsync(getRequest, context.CancellationToken)
+                    .ConfigureAwait(false);
                 string password = getResponse?.Data?.ByteArrayToObject<string>() ?? string.Empty;
 
                 if (string.IsNullOrWhiteSpace(password))
@@ -57,14 +59,18 @@ namespace Company.Access.User.Impl.Mobile
                         Data = registerRequest.Password.ObjectToByteArray(),
                     };
 
-                    await m_CacheUtility.SetCachedValueAsync(setRequest, context.CancellationToken);
+                    await m_CacheUtility
+                        .SetCachedValueAsync(setRequest, context.CancellationToken)
+                        .ConfigureAwait(false);
 
                     getRequest = new GetCachedValueRequest
                     {
                         Key = registerRequest.Name,
                     };
 
-                    getResponse = await m_CacheUtility.GetCachedValueAsync(getRequest, context.CancellationToken);
+                    getResponse = await m_CacheUtility
+                        .GetCachedValueAsync(getRequest, context.CancellationToken)
+                        .ConfigureAwait(false);
                     password = getResponse?.Data?.ByteArrayToObject<string>() ?? string.Empty;
                 }
                 else

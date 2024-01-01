@@ -62,7 +62,7 @@ namespace Company.Manager.Membership.Impl.Tests
                         Email = ServiceRunner.GenerateRandomString(),
                         DateOfBirth = ServiceRunner.GenerateRandomDateTime(),
                     },
-                    default);
+                    default).ConfigureAwait(false);
                 response.Should().NotBeNull();
                 var webResponse = response as Data.Web.RegisterResponse;
                 webResponse.Should().NotBeNull();
@@ -72,7 +72,7 @@ namespace Company.Manager.Membership.Impl.Tests
 
             await m_TestEnvironment.TestService(
                 serviceRunner,
-                webUseCasesMock.Object);
+                webUseCasesMock.Object).ConfigureAwait(false);
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace Company.Manager.Membership.Impl.Tests
                         Email = ServiceRunner.GenerateRandomString(),
                         Password = ServiceRunner.GenerateRandomString()
                     },
-                    default);
+                    default).ConfigureAwait(false);
                 response.Should().NotBeNull();
                 var mobileResponse = response as Data.Mobile.RegisterResponse;
                 mobileResponse.Should().NotBeNull();
@@ -113,7 +113,7 @@ namespace Company.Manager.Membership.Impl.Tests
 
             await m_TestEnvironment.TestService(
                 serviceRunner,
-                mobileUseCasesMock.Object);
+                mobileUseCasesMock.Object).ConfigureAwait(false);
         }
     }
 }

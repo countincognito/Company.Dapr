@@ -199,7 +199,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
                         RegisterRequestBase registerRequest = mapper.Map<RegisterRequestBase>(registerRequestDto);
 
                         IMembershipManager membershipManager = Proxy.Create<IMembershipManager>();
-                        RegisterResponseBase response = await membershipManager.RegisterMemberAsync(registerRequest);
+                        RegisterResponseBase response = await membershipManager
+                            .RegisterMemberAsync(registerRequest)
+                            .ConfigureAwait(false);
 
                         Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase registerResponse =
                             mapper.Map<Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase>(response);
@@ -213,4 +215,4 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         });
     });
 
-await hostBuilder.RunAsync();
+await hostBuilder.RunAsync().ConfigureAwait(false);

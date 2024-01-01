@@ -38,9 +38,9 @@ namespace Company.Utility.Cache.Impl
 
             m_Logger.Information($"{nameof(GetCachedValueAsync)} Invoked");
 
-            Zametek.Utility.Cache.GetCachedValueResponse response = await m_CacheUtility.GetCachedValueAsync(
-                m_Mapper.Map<Zametek.Utility.Cache.GetCachedValueRequest>(request),
-                context.CancellationToken);
+            Zametek.Utility.Cache.GetCachedValueResponse response = await m_CacheUtility
+                .GetCachedValueAsync(m_Mapper.Map<Zametek.Utility.Cache.GetCachedValueRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
 
             if (response is null)
             {
@@ -64,9 +64,9 @@ namespace Company.Utility.Cache.Impl
 
             m_Logger.Information($"{nameof(RefreshCachedValueAsync)} Invoked");
 
-            await m_CacheUtility.RefreshCachedValueAsync(
-                m_Mapper.Map<Zametek.Utility.Cache.RefreshCachedValueRequest>(request),
-                context.CancellationToken);
+            await m_CacheUtility
+                .RefreshCachedValueAsync(m_Mapper.Map<Zametek.Utility.Cache.RefreshCachedValueRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task DeleteCachedValueAsync(
@@ -80,9 +80,9 @@ namespace Company.Utility.Cache.Impl
 
             m_Logger.Information($"{nameof(DeleteCachedValueAsync)} Invoked");
 
-            await m_CacheUtility.DeleteCachedValueAsync(
-                m_Mapper.Map<Zametek.Utility.Cache.DeleteCachedValueRequest>(request),
-                context.CancellationToken);
+            await m_CacheUtility
+                .DeleteCachedValueAsync(m_Mapper.Map<Zametek.Utility.Cache.DeleteCachedValueRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task SetCachedValueAsync(
@@ -103,9 +103,9 @@ namespace Company.Utility.Cache.Impl
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(m_CacheOptions.AbsoluteExpirationInMinutes),
             };
 
-            await m_CacheUtility.SetCachedValueAsync(
-                setCacheValueRequest,
-                context.CancellationToken);
+            await m_CacheUtility
+                .SetCachedValueAsync(setCacheValueRequest, context.CancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

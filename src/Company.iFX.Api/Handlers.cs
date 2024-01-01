@@ -13,10 +13,13 @@ namespace Company.iFX.Api
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 IExceptionHandlerPathFeature? exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
                 Exception? exception = exceptionHandlerPathFeature?.Error;
+
                 if (exception?.InnerException is AggregateException
                     && exception.InnerException?.InnerException is HttpRequestException)
                 {
-                    await context.Response.WriteAsync("Network or server error calling down stream service");
+                    await context.Response
+                        .WriteAsync("Network or server error calling down stream service")
+                        .ConfigureAwait(false);
                 };
             });
         }

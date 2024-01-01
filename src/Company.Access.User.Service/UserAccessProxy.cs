@@ -24,7 +24,9 @@ namespace Company.Access.User.Service
                 throw new ArgumentNullException(nameof(registerRequest));
             }
 
-            return await m_Proxy.RegisterAsync(registerRequest, context);
+            return await m_Proxy
+                .RegisterAsync(registerRequest, context)
+                .ConfigureAwait(false);
         }
     }
 }

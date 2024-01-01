@@ -112,4 +112,4 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         });
     });
 
-await hostBuilder.RunAsync();
+await hostBuilder.RunAsync().ConfigureAwait(false);

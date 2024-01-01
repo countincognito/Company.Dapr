@@ -29,7 +29,9 @@ namespace Company.Engine.Registration.Impl
 
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest}");
-            return await UseCaseFactory<IRegistrationEngine, RegisterRequestBase, CallContext, RegisterResponseBase>.CallAsync(registerRequest, context);
+            return await UseCaseFactory<IRegistrationEngine, RegisterRequestBase, CallContext, RegisterResponseBase>
+                .CallAsync(registerRequest, context)
+                .ConfigureAwait(false);
         }
     }
 }

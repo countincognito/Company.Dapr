@@ -1,10 +1,6 @@
 ﻿using Company.Engine.Registration.Data;
 using Company.Engine.Registration.Interface;
-using Company.iFX.Common;
-using NATS.Client.Core;
-using NATS.Client.Serializers.Json;
 using ProtoBuf.Grpc;
-using System.Text.Json.Serialization;
 
 namespace Company.iFX.Nats.TestConsole
 {
@@ -20,33 +16,13 @@ namespace Company.iFX.Nats.TestConsole
                 throw new ArgumentNullException(nameof(request));
             }
 
-            await using var nats = new NatsConnection();
-
-            string subject = Addressing.Subject<IRegistrationEngine>();
-
-            var requestSerializer = new NatsJsonSerializer<RegisterRequestBase>(
-                 new System.Text.Json.JsonSerializerOptions
-                 {
-                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                     TypeInfoResolver = new PolymorphicTypeResolver(),
-                 });
-
-            var replySerializer = new NatsJsonSerializer<RegisterResponseBase>(
-                 new System.Text.Json.JsonSerializerOptions
-                 {
-                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                     TypeInfoResolver = new PolymorphicTypeResolver(),
-                 });
-
-            NatsMsg<RegisterResponseBase> reply =
-                await nats.RequestAsync(
-                    subject,
+            RegisterResponseBase? reply = await NatsClientHelper
+                .CallAsync<IRegistrationEngine, RegisterRequestBase, RegisterResponseBase>(
                     request,
-                    requestSerializer: requestSerializer,
-                    replySerializer: replySerializer);
+                    cancellationToken: context.CancellationToken)
+                .ConfigureAwait(false);
 
-            return reply.Data!;
+            return reply!;
         }
-
     }
 }

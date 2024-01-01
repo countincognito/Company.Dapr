@@ -42,7 +42,7 @@ namespace Company.iFX.Proxy
                 nameof(invocation.Method),
                 invocation.Method?.Name);
 
-            await proceed(invocation, proceedInfo);
+            await proceed(invocation, proceedInfo).ConfigureAwait(false);
         }
 
         protected override async Task<T> InterceptAsync<T>(
@@ -79,7 +79,7 @@ namespace Company.iFX.Proxy
                 nameof(invocation.Method),
                 invocation.Method?.Name);
 
-            return await proceed(invocation, proceedInfo);
+            return await proceed(invocation, proceedInfo).ConfigureAwait(false);
         }
     }
 }

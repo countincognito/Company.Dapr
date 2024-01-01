@@ -17,11 +17,9 @@ namespace Company.iFX.Nats.TestWorker
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-                IRegistrationEngine engine = new RegistrationEngineNatsService();
+                var engine = new RegistrationEngineNatsService();
 
-                Task registerTask = engine.RegisterAsync(null, stoppingToken);
-
-                await registerTask.WaitAsync(stoppingToken);
+                await engine.Invoke<IRegistrationEngine>(stoppingToken).ConfigureAwait(false);
             }
         }
     }

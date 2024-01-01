@@ -127,9 +127,11 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
             {
                 IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext> encryptionCtxFactory =
                     app.ApplicationServices.GetRequiredService<IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>>();
-                using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
+                using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory
+                    .CreateDbContextAsync()
+                    .ConfigureAwait(false);
                 DatabaseFacade encryptionDb = encryptionCtx.Database;
-                await encryptionDb.MigrateAsync();
+                await encryptionDb.MigrateAsync().ConfigureAwait(false);
             });
 
             app.UseRouting();
@@ -144,4 +146,4 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         });
     });
 
-await hostBuilder.RunAsync();
+await hostBuilder.RunAsync().ConfigureAwait(false);

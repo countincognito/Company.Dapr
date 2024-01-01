@@ -187,15 +187,19 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
             migrateDbPolicy.Execute(async () =>
             {
                 IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
-                using UserContext userCtx = await userCtxFactory.CreateDbContextAsync();
+                using UserContext userCtx = await userCtxFactory
+                    .CreateDbContextAsync()
+                    .ConfigureAwait(false);
                 DatabaseFacade userDb = userCtx.Database;
-                await userDb.MigrateAsync();
+                await userDb.MigrateAsync().ConfigureAwait(false);
 
                 IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext> encryptionCtxFactory =
                     app.ApplicationServices.GetRequiredService<IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>>();
-                using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory.CreateDbContextAsync();
+                using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory
+                    .CreateDbContextAsync()
+                    .ConfigureAwait(false);
                 DatabaseFacade encryptionDb = encryptionCtx.Database;
-                await encryptionDb.MigrateAsync();
+                await encryptionDb.MigrateAsync().ConfigureAwait(false);
             });
 
             if (!ctx.HostingEnvironment.IsDevelopment())
@@ -243,7 +247,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
                         RegisterRequestBase registerRequest = mapper.Map<RegisterRequestBase>(registerRequestDto);
 
                         IMembershipManager membershipManager = Proxy.Create<IMembershipManager>();
-                        RegisterResponseBase response = await membershipManager.RegisterMemberAsync(registerRequest);
+                        RegisterResponseBase response = await membershipManager
+                            .RegisterMemberAsync(registerRequest)
+                            .ConfigureAwait(false);
 
                         Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase registerResponse =
                             mapper.Map<Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase>(response);
@@ -257,4 +263,4 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         });
     });
 
-await hostBuilder.RunAsync();
+await hostBuilder.RunAsync().ConfigureAwait(false);

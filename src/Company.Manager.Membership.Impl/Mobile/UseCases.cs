@@ -38,7 +38,9 @@ namespace Company.Manager.Membership.Impl.Mobile
                 m_Mapper.Map<Engine.Registration.Data.RegisterRequestBase>(registerRequest);
 
             IRegistrationEngine registrationEngine = Proxy.Create<IRegistrationEngine>();
-            Engine.Registration.Data.RegisterResponseBase engineResponse = await registrationEngine.RegisterAsync(engineRegisterRequest, context.CancellationToken);
+            Engine.Registration.Data.RegisterResponseBase engineResponse = await registrationEngine
+                .RegisterAsync(engineRegisterRequest, context.CancellationToken)
+                .ConfigureAwait(false);
 
             RegisterResponse registerResponse = m_Mapper.Map<RegisterResponse>(engineResponse);
 

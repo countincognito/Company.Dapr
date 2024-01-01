@@ -34,9 +34,9 @@ namespace Company.Utility.Encryption.Impl
 
             m_Logger.Information($"{nameof(CreateKeysAsync)} Invoked");
 
-            Zametek.Utility.Encryption.CreateKeysResponse response = await m_EncryptionUtility.CreateKeysAsync(
-                m_Mapper.Map<Zametek.Utility.Encryption.CreateKeysRequest>(request),
-                context.CancellationToken);
+            Zametek.Utility.Encryption.CreateKeysResponse response = await m_EncryptionUtility
+                .CreateKeysAsync(m_Mapper.Map<Zametek.Utility.Encryption.CreateKeysRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
 
             return m_Mapper.Map<CreateKeysResponse>(response);
         }
@@ -52,9 +52,9 @@ namespace Company.Utility.Encryption.Impl
 
             m_Logger.Information($"{nameof(EncryptAsync)} Invoked");
 
-            Zametek.Utility.Encryption.EncryptResponse response = await m_EncryptionUtility.EncryptAsync(
-                m_Mapper.Map<Zametek.Utility.Encryption.EncryptRequest>(request),
-                context.CancellationToken);
+            Zametek.Utility.Encryption.EncryptResponse response = await m_EncryptionUtility
+                .EncryptAsync(m_Mapper.Map<Zametek.Utility.Encryption.EncryptRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
 
             return m_Mapper.Map<EncryptResponse>(response);
         }
@@ -70,9 +70,9 @@ namespace Company.Utility.Encryption.Impl
 
             m_Logger.Information($"{nameof(DecryptAsync)} Invoked");
 
-            Zametek.Utility.Encryption.DecryptResponse response = await m_EncryptionUtility.DecryptAsync(
-                m_Mapper.Map<Zametek.Utility.Encryption.DecryptRequest>(request),
-                context.CancellationToken);
+            Zametek.Utility.Encryption.DecryptResponse response = await m_EncryptionUtility
+                .DecryptAsync(m_Mapper.Map<Zametek.Utility.Encryption.DecryptRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
 
             return m_Mapper.Map<DecryptResponse>(response);
         }
@@ -88,9 +88,9 @@ namespace Company.Utility.Encryption.Impl
 
             m_Logger.Information($"{nameof(RotateAsymmetricKeyAsync)} Invoked");
 
-            Zametek.Utility.Encryption.RotateAsymmetricKeyResponse response = await m_EncryptionUtility.RotateAsymmetricKeyAsync(
-                m_Mapper.Map<Zametek.Utility.Encryption.RotateAsymmetricKeyRequest>(request),
-                context.CancellationToken);
+            Zametek.Utility.Encryption.RotateAsymmetricKeyResponse response = await m_EncryptionUtility
+                .RotateAsymmetricKeyAsync(m_Mapper.Map<Zametek.Utility.Encryption.RotateAsymmetricKeyRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
 
             return m_Mapper.Map<RotateAsymmetricKeyResponse>(response);
         }
@@ -106,9 +106,9 @@ namespace Company.Utility.Encryption.Impl
 
             m_Logger.Information($"{nameof(ViewSymmetricKeyDefinitionAsync)} Invoked");
 
-            Zametek.Utility.Encryption.ViewSymmetricKeyDefinitionResponse response = await m_EncryptionUtility.ViewSymmetricKeyDefinitionAsync(
-                m_Mapper.Map<Zametek.Utility.Encryption.ViewSymmetricKeyDefinitionRequest>(request),
-                context.CancellationToken);
+            Zametek.Utility.Encryption.ViewSymmetricKeyDefinitionResponse response = await m_EncryptionUtility
+                .ViewSymmetricKeyDefinitionAsync(m_Mapper.Map<Zametek.Utility.Encryption.ViewSymmetricKeyDefinitionRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
 
             return m_Mapper.Map<ViewSymmetricKeyDefinitionResponse>(response);
         }
@@ -124,9 +124,9 @@ namespace Company.Utility.Encryption.Impl
 
             m_Logger.Information($"{nameof(ViewAsymmetricKeyDefinitionAsync)} Invoked");
 
-            Zametek.Utility.Encryption.ViewAsymmetricKeyDefinitionResponse response = await m_EncryptionUtility.ViewAsymmetricKeyDefinitionAsync(
-                m_Mapper.Map<Zametek.Utility.Encryption.ViewAsymmetricKeyDefinitionRequest>(request),
-                context.CancellationToken);
+            Zametek.Utility.Encryption.ViewAsymmetricKeyDefinitionResponse response = await m_EncryptionUtility
+                .ViewAsymmetricKeyDefinitionAsync(m_Mapper.Map<Zametek.Utility.Encryption.ViewAsymmetricKeyDefinitionRequest>(request), context.CancellationToken)
+                .ConfigureAwait(false);
 
             return m_Mapper.Map<ViewAsymmetricKeyDefinitionResponse>(response);
         }

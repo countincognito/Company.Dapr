@@ -24,7 +24,9 @@ namespace Company.Manager.Membership.Service
                 throw new ArgumentNullException(nameof(registerRequest));
             }
 
-            return await m_Proxy.RegisterMemberAsync(registerRequest, context);
+            return await m_Proxy
+                .RegisterMemberAsync(registerRequest, context)
+                .ConfigureAwait(false);
         }
     }
 }

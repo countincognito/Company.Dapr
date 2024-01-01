@@ -38,7 +38,9 @@ namespace Company.Engine.Registration.Impl.Web
                 m_Mapper.Map<Access.User.Data.RegisterRequestBase>(registerRequest);
 
             IUserAccess userAccess = Proxy.Create<IUserAccess>();
-            Access.User.Data.RegisterResponseBase userResponse = await userAccess.RegisterAsync(userRegisterRequest, context.CancellationToken);
+            Access.User.Data.RegisterResponseBase userResponse = await userAccess
+                .RegisterAsync(userRegisterRequest, context.CancellationToken)
+                .ConfigureAwait(false);
 
             RegisterResponse registerResponse = m_Mapper.Map<RegisterResponse>(userResponse);
 

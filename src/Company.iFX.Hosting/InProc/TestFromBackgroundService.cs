@@ -18,7 +18,7 @@ namespace Company.iFX.Hosting.InProc
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await m_TestAction.Invoke();
+            await m_TestAction.Invoke().ConfigureAwait(false);
             m_AppLifetime.StopApplication();
         }
     }

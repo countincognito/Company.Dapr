@@ -113,9 +113,11 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
             migrateDbPolicy.Execute(async () =>
             {
                 IDbContextFactory<UserContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserContext>>();
-                using UserContext userCtx = await userCtxFactory.CreateDbContextAsync();
+                using UserContext userCtx = await userCtxFactory
+                    .CreateDbContextAsync()
+                    .ConfigureAwait(false);
                 DatabaseFacade userDb = userCtx.Database;
-                await userDb.MigrateAsync();
+                await userDb.MigrateAsync().ConfigureAwait(false);
             });
 
             app.UseRouting();
@@ -130,4 +132,4 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         });
     });
 
-await hostBuilder.RunAsync();
+await hostBuilder.RunAsync().ConfigureAwait(false);

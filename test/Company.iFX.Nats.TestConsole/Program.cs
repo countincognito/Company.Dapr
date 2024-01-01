@@ -27,10 +27,14 @@ namespace Company.iFX.Nats.TestConsole
 
                 try
                 {
-                    RegisterResponseBase engineMobileResponse = await engine.RegisterAsync(engineMobileRequest);
+                    RegisterResponseBase engineMobileResponse = await engine
+                        .RegisterAsync(engineMobileRequest)
+                        .ConfigureAwait(false);
                     Console.WriteLine(engineMobileResponse.Name);
 
-                    RegisterResponseBase engineWebResponse = await engine.RegisterAsync(engineWebRequest);
+                    RegisterResponseBase engineWebResponse = await engine
+                        .RegisterAsync(engineWebRequest)
+                        .ConfigureAwait(false);
                     Console.WriteLine(engineWebResponse.Name);
                 }
                 catch (Exception ex)

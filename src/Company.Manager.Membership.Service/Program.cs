@@ -106,4 +106,4 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
         });
     });
 
-await hostBuilder.RunAsync();
+await hostBuilder.RunAsync().ConfigureAwait(false);

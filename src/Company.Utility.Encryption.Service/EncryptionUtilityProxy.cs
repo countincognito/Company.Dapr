@@ -24,7 +24,9 @@ namespace Company.Utility.Encryption.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await m_Proxy.CreateKeysAsync(request, context);
+            return await m_Proxy
+                .CreateKeysAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task<EncryptResponse> EncryptAsync(
@@ -36,7 +38,9 @@ namespace Company.Utility.Encryption.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await m_Proxy.EncryptAsync(request, context);
+            return await m_Proxy
+                .EncryptAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task<DecryptResponse> DecryptAsync(
@@ -48,7 +52,9 @@ namespace Company.Utility.Encryption.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await m_Proxy.DecryptAsync(request, context);
+            return await m_Proxy
+                .DecryptAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task<RotateAsymmetricKeyResponse> RotateAsymmetricKeyAsync(
@@ -60,7 +66,9 @@ namespace Company.Utility.Encryption.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await m_Proxy.RotateAsymmetricKeyAsync(request, context);
+            return await m_Proxy
+                .RotateAsymmetricKeyAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task<ViewSymmetricKeyDefinitionResponse> ViewSymmetricKeyDefinitionAsync(
@@ -72,7 +80,9 @@ namespace Company.Utility.Encryption.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await m_Proxy.ViewSymmetricKeyDefinitionAsync(request, context);
+            return await m_Proxy
+                .ViewSymmetricKeyDefinitionAsync(request, context)
+                .ConfigureAwait(false);
         }
 
         public async Task<ViewAsymmetricKeyDefinitionResponse> ViewAsymmetricKeyDefinitionAsync(
@@ -84,7 +94,9 @@ namespace Company.Utility.Encryption.Service
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await m_Proxy.ViewAsymmetricKeyDefinitionAsync(request, context);
+            return await m_Proxy
+                .ViewAsymmetricKeyDefinitionAsync(request, context)
+                .ConfigureAwait(false);
         }
     }
 }

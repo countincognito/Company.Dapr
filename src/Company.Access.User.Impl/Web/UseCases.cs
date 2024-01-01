@@ -42,11 +42,14 @@ namespace Company.Access.User.Impl.Web
 
             try
             {
-                using var ctx = await m_CtxFactory.CreateDbContextAsync(context.CancellationToken);
+                using var ctx = await m_CtxFactory
+                    .CreateDbContextAsync(context.CancellationToken)
+                    .ConfigureAwait(false);
 
                 NameValueSet? result = await ctx.NameValueSets
                     .Where(x => x.Name == registerRequest.Name)
-                    .SingleOrDefaultAsync(context.CancellationToken);
+                    .SingleOrDefaultAsync(context.CancellationToken)
+                    .ConfigureAwait(false);
 
                 var encryptionUtility = Proxy.Create<IEncryptionUtility>();
 
@@ -64,7 +67,8 @@ namespace Company.Access.User.Impl.Web
                     };
 
                     CreateKeysResponse createKeyResponse = await encryptionUtility
-                        .CreateKeysAsync(createKeysRequest, context.CancellationToken);
+                        .CreateKeysAsync(createKeysRequest, context.CancellationToken)
+                        .ConfigureAwait(false);
 
                     SymmetricKeyDefinition symmetricKeyDefinition = createKeyResponse.SymmetricKeyDefinition!;
 
@@ -77,7 +81,8 @@ namespace Company.Access.User.Impl.Web
                     };
 
                     EncryptResponse encryptResponse = await encryptionUtility
-                        .EncryptAsync(encryptRequest, context.CancellationToken);
+                        .EncryptAsync(encryptRequest, context.CancellationToken)
+                        .ConfigureAwait(false);
 
                     var input = new NameValueSet
                     {
@@ -87,12 +92,15 @@ namespace Company.Access.User.Impl.Web
                         EncryptedValue = encryptResponse.EncryptedData,
                     };
 
-                    using (var transaction = await ctx.Database.BeginTransactionAsync(context.CancellationToken))
+                    using (var transaction = await ctx.Database.BeginTransactionAsync(context.CancellationToken).ConfigureAwait(false))
                     {
                         try
                         {
-                            await ctx.NameValueSets.AddAsync(input, context.CancellationToken);
-                            await ctx.SaveChangesAsync(context.CancellationToken);
+                            await ctx.NameValueSets
+                                .AddAsync(input, context.CancellationToken)
+                                .ConfigureAwait(false);
+                            await ctx.SaveChangesAsync(context.CancellationToken)
+                                .ConfigureAwait(false);
                             transaction.Commit();
                         }
                         catch (Exception ex)
@@ -104,7 +112,8 @@ namespace Company.Access.User.Impl.Web
 
                     result = await ctx.NameValueSets
                         .Where(x => x.Name == input.Name)
-                        .SingleOrDefaultAsync(context.CancellationToken);
+                        .SingleOrDefaultAsync(context.CancellationToken)
+                        .ConfigureAwait(false);
                 }
                 else
                 {
@@ -118,7 +127,8 @@ namespace Company.Access.User.Impl.Web
                 };
 
                 DecryptResponse decryptResponse = await encryptionUtility
-                    .DecryptAsync(decryptRequest, context.CancellationToken);
+                    .DecryptAsync(decryptRequest, context.CancellationToken)
+                    .ConfigureAwait(false);
 
                 RegisterRequest output = decryptResponse.Data.ByteArrayToObject<RegisterRequest>();
 
