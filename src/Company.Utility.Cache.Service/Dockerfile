@@ -14,10 +14,10 @@ COPY ["src/Company.Utility.Cache.Service/Company.Utility.Cache.Service.csproj", 
 RUN dotnet restore "src/Company.Utility.Cache.Service/Company.Utility.Cache.Service.csproj"
 COPY . .
 WORKDIR "/src/src/Company.Utility.Cache.Service"
-RUN dotnet build "Company.Utility.Cache.Service.csproj" -c Release -o /app/build
+RUN dotnet build "Company.Utility.Cache.Service.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Company.Utility.Cache.Service.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Company.Utility.Cache.Service.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

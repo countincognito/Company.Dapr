@@ -11,10 +11,10 @@ COPY ["src/Company.Utility.Workflow.Service/Company.Utility.Workflow.Service.csp
 RUN dotnet restore "src/Company.Utility.Workflow.Service/Company.Utility.Workflow.Service.csproj"
 COPY . .
 WORKDIR "/src/src/Company.Utility.Workflow.Service"
-RUN dotnet build "Company.Utility.Workflow.Service.csproj" -c Release -o /app/build
+RUN dotnet build "Company.Utility.Workflow.Service.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Company.Utility.Workflow.Service.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Company.Utility.Workflow.Service.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

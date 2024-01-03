@@ -10,11 +10,11 @@ It requires a local installation of:
 - [Seq](https://community.chocolatey.org/packages/seq) for logging
 - [PostgreSQL](https://www.postgresql.org/download/)
 - [Docker Desktop](https://community.chocolatey.org/packages/docker-desktop)
-- [Dapr](https://docs.dapr.io/getting-started/install-dapr-cli/)
+<!-- - [Dapr](https://docs.dapr.io/getting-started/install-dapr-cli/) -->
 
-## Set up (InProc)
+## Set up (InProc with Visual Studio)
 
-To run the solution InProc, simply run debug on the `Company.Microservice.Membership` project from Visual Studio.
+To run the solution InProc with Visual Studio, simply run debug on the `Company.Microservice.Membership` project.
 
 The InProc solution includes only the component interfaces and implementations - this is to demonstrate just one possible way of separating business code from plumbing in order to make development and testing easier.
 
@@ -24,25 +24,69 @@ Calls made with the Web.RegisterRequest will be persisted in Postgres and can be
 
 ## Set up (Docker-Compose with Visual Studio)
 
-To run the solution in Docker-Compose, simply run debug on the `docker-compose` project from Visual Studio.
+To run the solution in Docker-Compose with Visual Studio, simply run debug on the `docker-compose` project.
 
 The docker-compose solution includes all component, framework and configuration projects. It also includes Dapr, Redis, Zipkin, and Seq as docker containers within the cluster.
 
 The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
 
-## Set up (Docker-Compose without Visual Studio)
+## Set up (Docker-Compose with VS Code - Windows)
 
-To run the solution in Docker-Compose without Visual Studio, perform the following steps:
+To run the solution in Docker-Compose with VS Code on Windows, perform the following steps:
 
 1. Run Docker Desktop.
-1. From powershell (in the root directory) run `create_certs.ps1` to install the development certificates for the service containers.
-1. From powershell build the entire solution from the root directory using `docker compose build`.
-1. From powershell run the solution from the root directory using `docker compose up`.
+1. From powershell (in the root directory) run `create_certs.windows.ps1` to install the development certificates for the service containers.
+1. From powershell build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml build`.
+1. From powershell run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml up`.
 
 The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
 
 **Note**: you can find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard. Use the link that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/Swagger` (neither of these will be set by default). Also, depending on the order of services spinning up, you may need to restart the containers for the services that need to run database migrations (i.e. `company.access.user.service` and `company.utility.encryption.service`). This is because the migrations will fail if the database is not already running.
 
+
+
+
+
+
+## Set up (Docker-Compose with VS Code - DevContainers)
+
+To run the solution in Docker-Compose without Visual Studio, perform the following steps:
+
+1. Run Docker Desktop.
+1. From powershell (in the root directory) run `create_certs.windows.ps1` to install the development certificates for the service containers.
+1. From powershell build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml build`.
+1. From powershell run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml up`.
+
+The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
+
+**Note**: you can find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard. Use the link that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/Swagger` (neither of these will be set by default). Also, depending on the order of services spinning up, you may need to restart the containers for the services that need to run database migrations (i.e. `company.access.user.service` and `company.utility.encryption.service`). This is because the migrations will fail if the database is not already running.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
 ## Set up (Local Kubernetes)
 
 To run the solution in a local Kubernetes cluster, perform the following steps:
@@ -59,4 +103,4 @@ The API should now be visible via Swagger via [http://localhost:8080/swagger/](h
 
 **Note**: the `file` output for the Open Telemetry Collector is disabled in this version as there appears to be issues around access permissions to the host file system. Also, depending on the order of services spinning up, you may need to restart the containers for the services that need to run database migrations (i.e. `company.access.user.service` and `company.utility.encryption.service`). This is because the migrations will fail if the database is not already running.
 
-I am not a Kubernetes expert, so apologies for the flakiness of this example.
+I am not a Kubernetes expert, so apologies for the flakiness of this example. -->

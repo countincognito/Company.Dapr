@@ -302,8 +302,8 @@ services:
   seq.image:
     #command: --memory=16g --memory-swap=16g
     image: datalust/seq:2023.3
-    volumes:
-      - ${SEQ_DATA}:/data
+    #volumes:
+    #  - ${SEQ_DATA}:/data
     ports:
       - 5342:${SEQ_API_PORT}
       - 81:${SEQ_UI_PORT}

@@ -14,10 +14,10 @@ COPY ["src/Company.Access.User.Service/Company.Access.User.Service.csproj", "src
 RUN dotnet restore "src/Company.Access.User.Service/Company.Access.User.Service.csproj"
 COPY . .
 WORKDIR "/src/src/Company.Access.User.Service"
-RUN dotnet build "Company.Access.User.Service.csproj" -c Release -o /app/build
+RUN dotnet build "Company.Access.User.Service.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Company.Access.User.Service.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Company.Access.User.Service.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

@@ -180,28 +180,6 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
     {
         webBuilder.Configure((ctx, app) =>
         {
-            var migrateDbPolicy = Policy
-                .Handle<Exception>()
-                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
-
-            migrateDbPolicy.Execute(async () =>
-            {
-                IDbContextFactory<UserDbContext> userCtxFactory = app.ApplicationServices.GetRequiredService<IDbContextFactory<UserDbContext>>();
-                using UserDbContext userCtx = await userCtxFactory
-                    .CreateDbContextAsync()
-                    .ConfigureAwait(false);
-                DatabaseFacade userDb = userCtx.Database;
-                await userDb.MigrateAsync().ConfigureAwait(false);
-
-                IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext> encryptionCtxFactory =
-                    app.ApplicationServices.GetRequiredService<IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>>();
-                using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory
-                    .CreateDbContextAsync()
-                    .ConfigureAwait(false);
-                DatabaseFacade encryptionDb = encryptionCtx.Database;
-                await encryptionDb.MigrateAsync().ConfigureAwait(false);
-            });
-
             if (!ctx.HostingEnvironment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Error");
@@ -263,4 +241,29 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         });
     });
 
-await hostBuilder.RunAsync().ConfigureAwait(false);
+var app = hostBuilder.Build();
+
+var migrateDbPolicy = Policy
+    .Handle<Exception>()
+    .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+
+await migrateDbPolicy.Execute(async () =>
+{
+    IDbContextFactory<UserDbContext> userCtxFactory =
+        app.Services.GetRequiredService<IDbContextFactory<UserDbContext>>();
+    using UserDbContext userCtx = await userCtxFactory
+        .CreateDbContextAsync()
+        .ConfigureAwait(false);
+    DatabaseFacade userDb = userCtx.Database;
+    await userDb.MigrateAsync().ConfigureAwait(false);
+
+    IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext> encryptionCtxFactory =
+        app.Services.GetRequiredService<IDbContextFactory<Zametek.Access.Encryption.EncryptionDbContext>>();
+    using Zametek.Access.Encryption.EncryptionDbContext encryptionCtx = await encryptionCtxFactory
+        .CreateDbContextAsync()
+        .ConfigureAwait(false);
+    DatabaseFacade encryptionDb = encryptionCtx.Database;
+    await encryptionDb.MigrateAsync().ConfigureAwait(false);
+}).ConfigureAwait(false);
+
+await app.RunAsync().ConfigureAwait(false);

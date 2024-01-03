@@ -20,10 +20,10 @@ COPY ["src/Company.Microservice.Membership/Company.Microservice.Membership.cspro
 RUN dotnet restore "src/Company.Microservice.Membership/Company.Microservice.Membership.csproj"
 COPY . .
 WORKDIR "/src/src/Company.Microservice.Membership"
-RUN dotnet build "Company.Microservice.Membership.csproj" -c Release -o /app/build
+RUN dotnet build "Company.Microservice.Membership.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Company.Microservice.Membership.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Company.Microservice.Membership.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

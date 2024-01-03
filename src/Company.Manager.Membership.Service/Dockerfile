@@ -14,10 +14,10 @@ COPY ["src/Company.Manager.Membership.Service/Company.Manager.Membership.Service
 RUN dotnet restore "src/Company.Manager.Membership.Service/Company.Manager.Membership.Service.csproj"
 COPY . .
 WORKDIR "/src/src/Company.Manager.Membership.Service"
-RUN dotnet build "Company.Manager.Membership.Service.csproj" -c Release -o /app/build
+RUN dotnet build "Company.Manager.Membership.Service.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Company.Manager.Membership.Service.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Company.Manager.Membership.Service.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
