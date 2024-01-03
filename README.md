@@ -37,8 +37,8 @@ To run the solution in Docker-Compose with VS Code on Windows, perform the follo
 
 1. Run Docker Desktop.
 1. From powershell (in the root directory) run `create_certs.windows.ps1` to install the development certificates for the service containers.
-1. From powershell build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml build`.
-1. From powershell run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml up`.
+1. From powershell build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml build`.
+1. From powershell run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up`.
 
 The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
 

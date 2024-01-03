@@ -11,7 +11,7 @@
     <None Include=".env" />
     <None Include="dapr\config\config.yml.compose" />
     <None Include="dapr\Dockerfile" />
-    <None Include="docker-compose.visualstudio.yml">
+    <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
