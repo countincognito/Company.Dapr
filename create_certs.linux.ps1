@@ -1,3 +1,5 @@
+#!/usr/bin/pwsh -Command
+
 Set-StrictMode -Version 2.0
 
 $CrtPassword = "Password123!"

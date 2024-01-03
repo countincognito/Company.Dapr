@@ -1,6 +1,6 @@
 # Company.Dapr
 
-This a minimalist template for building microservice architectures, using the [IDesign Method](http://www.idesign.net/), using .NET 7.0, Dapr, gRPC, RESTful API, Docker-Compose, and Swagger. It is heavily influenced by code samples from [Blair Moir](https://github.com/BlairMoir), [Remco Blok](https://github.com/RemcoBlok), and the [IDesign website](http://www.idesign.net/Downloads).
+This a minimalist template for building microservice architectures, using the [IDesign Method](http://www.idesign.net/), using .NET 8.0, Dapr, gRPC, RESTful API, Docker-Compose, and Swagger. It is heavily influenced by code samples from [Blair Moir](https://github.com/BlairMoir), [Remco Blok](https://github.com/RemcoBlok), and the [IDesign website](http://www.idesign.net/Downloads).
 
 The solution demonstrates how to use polymorphism on your DTOs via gRPC to achieve maximum flexibility for smaller APIs.
 
@@ -10,6 +10,7 @@ It requires a local installation of:
 - [Seq](https://community.chocolatey.org/packages/seq) for logging
 - [PostgreSQL](https://www.postgresql.org/download/)
 - [Docker Desktop](https://community.chocolatey.org/packages/docker-desktop)
+- Windows Subsystem for Linux (WSL)
 <!-- - [Dapr](https://docs.dapr.io/getting-started/install-dapr-cli/) -->
 
 ## Set up (InProc with Visual Studio)
@@ -26,7 +27,7 @@ Calls made with the Web.RegisterRequest will be persisted in Postgres and can be
 
 To run the solution in Docker-Compose with Visual Studio, simply run debug on the `docker-compose` project.
 
-The docker-compose solution includes all component, framework and configuration projects. It also includes Dapr, Redis, Zipkin, and Seq as docker containers within the cluster.
+The Docker-Compose solution includes all component, framework and configuration projects. It also includes Dapr, Redis, Zipkin, and Seq as docker containers within the cluster.
 
 The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
 
@@ -41,41 +42,31 @@ To run the solution in Docker-Compose with VS Code on Windows, perform the follo
 
 The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
 
-**Note**: you can find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard. Use the link that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/Swagger` (neither of these will be set by default). Also, depending on the order of services spinning up, you may need to restart the containers for the services that need to run database migrations (i.e. `company.access.user.service` and `company.utility.encryption.service`). This is because the migrations will fail if the database is not already running.
-
-
-
-
-
-
 ## Set up (Docker-Compose with VS Code - DevContainers)
 
-To run the solution in Docker-Compose without Visual Studio, perform the following steps:
+A general overview to set up DevContainers can be found here: [https://code.visualstudio.com/docs/remote/remote-overview](https://code.visualstudio.com/docs/remote/remote-overview)
+
+To run the solution in Docker-Compose with DevContainers VS Code, perform the following steps:
 
 1. Run Docker Desktop.
-1. From powershell (in the root directory) run `create_certs.windows.ps1` to install the development certificates for the service containers.
-1. From powershell build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml build`.
-1. From powershell run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.visualstudio.yml up`.
+1. In Windows Subsystem for Linux (WSL), set the default distribution to Ubuntu with `wsl --set-default Ubuntu`. This ensures that the default container for DevContainer environment is usable (more details can be found here: [https://docs.docker.com/desktop/wsl/](https://docs.docker.com/desktop/wsl/))
+1. In VS Code, install the Remote Development extension [https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+1. Use the VS Code Command Palette to select `Dev Containers: Clone Repository in Container Volume...` and select this repository.
+1. From the terminal (in the root directory) run `chmod 755 ./create_certs.linux.ps1 && ./create_certs.linux.ps1` to install the development certificates for the service containers.
+1. From the terminal build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.linux.yml build`.
+1. From the terminal run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.linux.yml up`.
+
+You will need to allow port forwarding to the localhost for the relevant service you wish to explore.
 
 The API should now be visible via Swagger, logs can be checked from Seq via [http://localhost:81/](http://localhost:81/), and telemetry can be checked from Zipkin via [http://localhost:6499/](http://localhost:6499/).
 
-**Note**: you can find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard. Use the link that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/Swagger` (neither of these will be set by default). Also, depending on the order of services spinning up, you may need to restart the containers for the services that need to run database migrations (i.e. `company.access.user.service` and `company.utility.encryption.service`). This is because the migrations will fail if the database is not already running.
+**Note**: when debugging run Docker-Compose as described above, then from the `Run and Debug` tab in VS Code select the `Docker .NET Attach (Preview)` option. Select the container you wish to debug and follow the instructions to activate the debugger.
 
+## Note
 
+You can normally find the address for `company.microservice.membership.service` in the Docker Desktop container dashboard, when used directly on your development machine. When using DevContainers, this information can be found in the Docker extension tab. In both cases, the same information can be found using the command `docker ps -a`.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+Be sure to use the port that is mapped to the port 443, and when the link opens ensure the protocol is listed as `https` and the address is pointing at `/swagger` (neither of these will be set by default). Also, depending on the order of services spinning up, you may need to restart the containers for the services that need to run database migrations (i.e. `company.access.user.service` and `company.utility.encryption.service`, followed by their respective Dapr services). This is because the migrations will fail if the database is not already running.
 
 
 
