@@ -25,25 +25,26 @@ namespace Company.iFX.Grpc
                 throw new ArgumentNullException(nameof(headers));
             }
 
-            Metadata.Entry? trackingEntry = headers.FirstOrDefault(x => string.CompareOrdinal(x.Key, s_TrackingContextKeyName) == 0);
+            Metadata.Entry? trackingEntry = headers
+                .FirstOrDefault(x => string.CompareOrdinal(x.Key, s_TrackingContextKeyName) == 0);
 
-            // Retrieve the tracking context from the message header, if it exists.
-            if (trackingEntry is not null)
+            // If the the tracking context exists in the header, retrieve it.
+            if (trackingEntry is null)
             {
-                // If an tracking context exists in the message header, always use it to replace the ambient context.
-                TrackingContext tc = TrackingContext.DeSerialize(trackingEntry.ValueBytes);
-                tc.SetAsCurrent();
-            }
-            else
-            {
-                // If no tracking context exists then create one.
+                // If no tracking context exists, then create one.
                 TrackingContext.NewCurrentIfEmpty();
 
                 Debug.Assert(TrackingContext.Current is not null);
 
-                // Copy the tracking context to the message header.
+                // Copy the tracking context to the header.
                 byte[] byteArray = TrackingContext.Serialize(TrackingContext.Current);
                 headers.Add(s_TrackingContextKeyName, byteArray);
+            }
+            else
+            {
+                // If a tracking context exists in the header, always use it to replace the ambient context.
+                TrackingContext tc = TrackingContext.DeSerialize(trackingEntry.ValueBytes);
+                tc.SetAsCurrent();
             }
 
             return headers;

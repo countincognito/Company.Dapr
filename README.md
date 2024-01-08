@@ -52,9 +52,9 @@ To run the solution in Docker-Compose with DevContainers VS Code, perform the fo
 1. In Windows Subsystem for Linux (WSL), set the default distribution to Ubuntu with `wsl --set-default Ubuntu`. This ensures that the default container for DevContainer environment is usable (more details can be found here: [https://docs.docker.com/desktop/wsl/](https://docs.docker.com/desktop/wsl/))
 1. In VS Code, install the Remote Development extension [https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
 1. Use the VS Code Command Palette to select `Dev Containers: Clone Repository in Container Volume...` and select this repository.
-1. From the terminal (in the root directory) run `chmod 755 ./create_certs.linux.ps1 && ./create_certs.linux.ps1` to install the development certificates for the service containers.
-1. From the terminal build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.linux.yml build`.
-1. From the terminal run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.linux.yml up`.
+1. From the VS Code terminal (in the root directory) run `chmod 755 ./create_certs.linux.ps1 && ./create_certs.linux.ps1` to install the development certificates for the service containers.
+1. From the VS Code terminal build the entire solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.linux.yml build`.
+1. From the VS Code terminal run the solution from the root directory using `docker compose -f ./docker-compose.yml -f ./docker-compose.linux.yml up`.
 
 You will need to allow port forwarding to the localhost for the relevant service you wish to explore.
 

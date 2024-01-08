@@ -21,12 +21,15 @@ namespace Company.iFX.Nats
 
             await using var nats = new NatsConnection(opts ?? NatsOpts.Default);
 
+            // Add TrackingContext to headers.
+            NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
+
             NatsMsg<TReply> reply =
                 await nats
                     .RequestAsync(
                         subject: Addressing.Subject<TService>(memberName),
                         data: request,
-                        headers: headers,
+                        headers: natsHeaders,
                         requestSerializer: PolymorphicJsonSerializer.Create<TRequest>(),
                         replySerializer: PolymorphicJsonSerializer.Create<TReply>(),
                         cancellationToken: cancellationToken)

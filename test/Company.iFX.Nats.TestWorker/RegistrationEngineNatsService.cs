@@ -16,6 +16,8 @@ namespace Company.iFX.Nats.TestWorker
             {
                 RegisterResponseBase? output = null;
 
+                Console.WriteLine($"CallChainId = {TrackingContext.Current.CallChainId}");
+
                 input.TypeSwitchOn()
                     .Case<Engine.Registration.Data.Mobile.RegisterRequest>(x =>
                     {
@@ -24,7 +26,7 @@ namespace Company.iFX.Nats.TestWorker
                         output = new Engine.Registration.Data.Mobile.RegisterResponse
                         {
                             Name = @$"This is the Mobile response name: email = {x.Email}",
-                            MobileMessage = "Mobile Message",
+                            MobileMessage = $@"Mobile Message and CallChainId = {TrackingContext.Current.CallChainId}",
                         };
                     })
                     .Case<Engine.Registration.Data.Web.RegisterRequest>(x =>
@@ -34,11 +36,12 @@ namespace Company.iFX.Nats.TestWorker
                         output = new Engine.Registration.Data.Web.RegisterResponse
                         {
                             Name = @$"This is the Web response name: DOB = {x.DateOfBirth}",
-                            WebMessage = "Web Message",
+                            WebMessage = $@"Web Message and CallChainId = {TrackingContext.Current.CallChainId}",
                         };
                     })
                     .Default(_ => throw new InvalidOperationException());
 
+                Console.WriteLine();
                 return output;
             }
 

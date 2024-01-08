@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,8 +7,8 @@
   </PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="NATS.Client.Serializers.Json" Version="2.0.2" />
-		<PackageReference Include="NATS.Net" Version="2.0.2" />
+		<PackageReference Include="NATS.Client.Serializers.Json" Version="2.0.3" />
+		<PackageReference Include="NATS.Net" Version="2.0.3" />
 	</ItemGroup>
 	
 	<ItemGroup>

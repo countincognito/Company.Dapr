@@ -67,6 +67,9 @@ namespace Company.iFX.Nats
 
             await using var nats = new NatsConnection(opts ?? NatsOpts.Default);
 
+            // Retrieve TrackingContext from headers.
+            NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
+
             await foreach (NatsMsg<TRequest> msg in nats
                 .SubscribeAsync(
                     subject: Addressing.Subject<TService>(memberName),
@@ -80,12 +83,15 @@ namespace Company.iFX.Nats
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
+                // Retrieve TrackingContext from headers.
+                natsHeaders = TrackingContextHelper.ProcessHeaders(msg.Headers ?? []);
+
                 TReply? response = func(msg.Data, cancellationToken);
 
                 await msg
                     .ReplyAsync(
                         data: response,
-                        headers: headers,
+                        headers: null, //natsHeaders,
                         serializer: PolymorphicJsonSerializer.Create<TReply?>(),
                         opts: pubOpts,
                         cancellationToken: cancellationToken)
