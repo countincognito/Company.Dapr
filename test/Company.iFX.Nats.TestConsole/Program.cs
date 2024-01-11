@@ -10,6 +10,15 @@ namespace Company.iFX.Nats.TestConsole
         {
             while (true)
             {
+                Console.WriteLine();
+                Console.WriteLine("Press any key to send another message, or press 'q' to quit.");
+                string? result = Console.ReadLine();
+
+                if (result == "q")
+                {
+                    break;
+                }
+
                 IRegistrationEngine engine = new RegistrationEngineNatsProxy();
 
                 RegisterRequestBase engineMobileRequest = new Engine.Registration.Data.Mobile.RegisterRequest
@@ -47,15 +56,6 @@ namespace Company.iFX.Nats.TestConsole
                 catch (Exception ex)
                 {
                     Console.WriteLine($"{ex}: The request did not complete properly.");
-                }
-
-                Console.WriteLine();
-                Console.WriteLine("Press any key to send another message, or press 'q' to quit.");
-                string? result = Console.ReadLine();
-
-                if (result == "q")
-                {
-                    break;
                 }
             }
         }

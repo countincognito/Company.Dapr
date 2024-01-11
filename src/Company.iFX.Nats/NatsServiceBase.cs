@@ -91,7 +91,7 @@ namespace Company.iFX.Nats
                 await msg
                     .ReplyAsync(
                         data: response,
-                        headers: null, //natsHeaders,
+                        headers: natsHeaders,
                         serializer: PolymorphicJsonSerializer.Create<TReply?>(),
                         opts: pubOpts,
                         cancellationToken: cancellationToken)
