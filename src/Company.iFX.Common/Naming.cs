@@ -57,7 +57,7 @@ namespace Company.iFX.Common
         public static string Component<I>()
         {
             Debug.Assert(typeof(I).IsInterface);
-            return $@"{VolatilityName<I>}{ComponentName<I>()}";
+            return $@"{VolatilityName<I>()}{ComponentName<I>()}";
         }
 
         public static string AppId<I>()
