@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Zametek.Utility;
 
 namespace Company.iFX.Common
 {
@@ -6,7 +7,7 @@ namespace Company.iFX.Common
     {
         public static string[] NamespaceSegments<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             string[] namespaceSegments = typeof(I)?.Namespace?.Split('.') ?? Array.Empty<string>();
 
             if (namespaceSegments.Length != Constant.NamespaceSize)
@@ -18,14 +19,14 @@ namespace Company.iFX.Common
         }
         public static string CompanyName<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             string[] namespaceSegments = NamespaceSegments<I>();
             return namespaceSegments[Constant.CompanyIndex];
         }
 
         public static ComponentKeyword ComponentName<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             string[] namespaceSegments = NamespaceSegments<I>();
             string componentKeyword = namespaceSegments[Constant.ComponentIndex];
 
@@ -39,14 +40,14 @@ namespace Company.iFX.Common
 
         public static string VolatilityName<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             string[] namespaceSegments = NamespaceSegments<I>();
             return namespaceSegments[Constant.VolatilityIndex];
         }
 
         public static string Microservice<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             Debug.Assert(
                 ComponentName<I>() == ComponentKeyword.Manager,
                 $@"Invalid microservice interface. Use only the {ComponentKeyword.Manager} interface to access a microservice.");
@@ -56,13 +57,13 @@ namespace Company.iFX.Common
 
         public static string Component<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             return $@"{VolatilityName<I>()}{ComponentName<I>()}";
         }
 
         public static string AppId<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             return $"{CompanyName<I>()}-{ComponentName<I>()}-{VolatilityName<I>()}-{ConventionKeyword.Service}".ToLowerInvariant();
         }
     }

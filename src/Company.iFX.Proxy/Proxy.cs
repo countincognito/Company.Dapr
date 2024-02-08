@@ -87,7 +87,7 @@ namespace Company.iFX.Proxy
                 throw new ArgumentNullException(nameof(logger));
             }
             Debug.Assert(instanceType != typeof(ILogger));
-            Debug.Assert(instanceType.IsInterface);
+            instanceType.ThrowIfNotInterface();
 
             IList<IInterceptor> extraInterceptors =
                 s_ExtraInterceptorProviders.Select(x => x.Invoke()).ToList();
@@ -114,7 +114,7 @@ namespace Company.iFX.Proxy
                 throw new ArgumentNullException(nameof(logger));
             }
             Debug.Assert(instanceType != typeof(ILogger));
-            Debug.Assert(instanceType.IsInterface);
+            instanceType.ThrowIfNotInterface();
 
             return Create(
                 instanceType,
@@ -129,7 +129,7 @@ namespace Company.iFX.Proxy
                 throw new ArgumentNullException(nameof(instanceType));
             }
             Debug.Assert(instanceType != typeof(ILogger));
-            Debug.Assert(instanceType.IsInterface);
+            instanceType.ThrowIfNotInterface();
 
             return Create(
                 instanceType,
@@ -138,7 +138,7 @@ namespace Company.iFX.Proxy
 
         public static ILogger CreateLogger(Type instanceType)
         {
-            Debug.Assert(instanceType.IsInterface);
+            instanceType.ThrowIfNotInterface();
             return Container.Container.GetService<ILogger>().ForContext(instanceType);
         }
 

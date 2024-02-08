@@ -3,6 +3,7 @@ using ProtoBuf.Grpc;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Zametek.Utility;
 
 namespace Company.iFX.Nats
 {
@@ -12,7 +13,7 @@ namespace Company.iFX.Nats
 
         public async Task Invoke<TService>(CancellationToken cancellationToken) where TService : class
         {
-            Debug.Assert(typeof(TService).IsInterface);
+            typeof(TService).ThrowIfNotInterface();
             Debug.Assert(GetType().IsAssignableTo(typeof(TService)));
 
             var taskList = new List<Task>();
@@ -69,7 +70,7 @@ namespace Company.iFX.Nats
             where TRequest : class
             where TReply : class
         {
-            Debug.Assert(typeof(TService).IsInterface);
+            typeof(TService).ThrowIfNotInterface();
             ArgumentNullException.ThrowIfNull(func);
 
             await using var nats = new NatsConnection(opts ?? NatsOpts.Default);

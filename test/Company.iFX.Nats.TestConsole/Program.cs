@@ -19,7 +19,7 @@ namespace Company.iFX.Nats.TestConsole
                     break;
                 }
 
-                IRegistrationEngine engine = new RegistrationEngineNatsProxy();
+                IRegistrationEngine engine = NatsClient.Create<IRegistrationEngine>();
 
                 RegisterRequestBase engineMobileRequest = new Engine.Registration.Data.Mobile.RegisterRequest
                 {

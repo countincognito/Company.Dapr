@@ -1,6 +1,6 @@
 ﻿using Company.iFX.Common;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Zametek.Utility;
 
 namespace Company.iFX.Nats
 {
@@ -8,7 +8,7 @@ namespace Company.iFX.Nats
     {
         public static string Subject<I>([CallerMemberName] string memberName = "")
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             if (string.IsNullOrEmpty(memberName))
             {
                 throw new ArgumentNullException(nameof(memberName));

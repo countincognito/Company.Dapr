@@ -1,6 +1,6 @@
 ﻿using NATS.Client.Core;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Zametek.Utility;
 
 namespace Company.iFX.Nats
 {
@@ -16,7 +16,7 @@ namespace Company.iFX.Nats
             where TRequest : class
             where TReply : class
         {
-            Debug.Assert(typeof(TService).IsInterface);
+            typeof(TService).ThrowIfNotInterface();
             ArgumentNullException.ThrowIfNull(request);
 
             await using var nats = new NatsConnection(opts ?? NatsOpts.Default);

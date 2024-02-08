@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using Zametek.Utility;
 
 namespace Company.iFX.Common
 {
@@ -6,13 +6,13 @@ namespace Company.iFX.Common
     {
         public static string Microservice<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             return $@"/{Naming.Microservice<I>()}/{Naming.VolatilityName<I>()}";
         }
 
         public static string Component<I>()
         {
-            Debug.Assert(typeof(I).IsInterface);
+            typeof(I).ThrowIfNotInterface();
             return $@"/{Naming.ComponentName<I>()}/{Naming.VolatilityName<I>()}";
         }
     }

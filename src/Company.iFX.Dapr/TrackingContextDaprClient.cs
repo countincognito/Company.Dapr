@@ -3,7 +3,6 @@ using Company.iFX.Grpc;
 using Dapr.Client;
 using Grpc.Core.Interceptors;
 using ProtoBuf.Grpc.Client;
-using System.Diagnostics;
 using Zametek.Utility;
 
 namespace Company.iFX.Dapr

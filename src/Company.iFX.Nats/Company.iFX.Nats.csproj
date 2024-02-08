@@ -13,6 +13,7 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\Company.iFX.Grpc\Company.iFX.Grpc.csproj" />
+	  <ProjectReference Include="..\Company.iFX.Logging\Company.iFX.Logging.csproj" />
 	</ItemGroup>
 
 </Project>
