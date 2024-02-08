@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Company.iFX.Common;
 using ProtoBuf.Grpc;
 using System.Diagnostics;
 using System.Reflection;
@@ -9,9 +10,6 @@ namespace Company.iFX.Nats
     public class AsyncNatsClientInterceptor<TService>
         : AsyncInterceptorBase where TService : class
     {
-        private const int c_MaxRequestParameters = 2;
-        private const int c_CallAsyncParameters = 5;
-
         public AsyncNatsClientInterceptor()
         {
             Type invocationTargetType = typeof(TService);
@@ -34,10 +32,10 @@ namespace Company.iFX.Nats
 
             Debug.Assert(arguments.Length == parameters.Length);
 
-            if (arguments.Length != c_MaxRequestParameters)
+            if (arguments.Length != Constant.NumberOfServiceMethodParameters)
             {
                 throw new InvalidOperationException(
-                    $@"Method '{invocation.Method.Name}' on type '{invocationTargetType.FullName}' must have {c_MaxRequestParameters} parameters.");
+                    $@"Method '{invocation.Method.Name}' on type '{invocationTargetType.FullName}' must have {Constant.NumberOfServiceMethodParameters} parameters.");
             }
 
             object requestArgument = arguments[0];
@@ -45,20 +43,25 @@ namespace Company.iFX.Nats
             object cancellationTokenArgument = arguments[1];
             Type cancellationTokenParameterType = parameters[1].ParameterType;
 
+            // If the CancellationToken is passed in as a gRPC CallContext,
+            // then convert it because NATS can only serialize standard CancellationTokens.
             if (cancellationTokenParameterType.IsAssignableTo(typeof(CallContext)))
             {
                 cancellationTokenArgument = ((CallContext)cancellationTokenArgument).CancellationToken;
             }
 
+            // These will be passed to CallAsync
+            var requestParameters = new object[] { requestArgument, null!, null!, invocation.Method.Name, cancellationTokenArgument };
+
             MethodInfo method = typeof(NatsClientHelper).GetMethods().First(
                 x => x.Name.Equals(nameof(NatsClientHelper.CallAsync), StringComparison.OrdinalIgnoreCase)
                 && x.IsGenericMethod
-                && x.GetParameters().Length == c_CallAsyncParameters);
+                && x.GetParameters().Length == requestParameters.Length);
 
             MethodInfo genericMethod = method.MakeGenericMethod([typeof(TService), requestParameterType, typeof(T)]);
 
             return await ((Task<T>)genericMethod
-                .Invoke(null, new object[] { requestArgument, null!, null!, invocation.Method.Name, cancellationTokenArgument })!)
+                .Invoke(null, requestParameters)!)
                 .ConfigureAwait(false);
         }
 

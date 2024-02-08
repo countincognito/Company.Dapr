@@ -1,4 +1,5 @@
-﻿using NATS.Client.Core;
+﻿using Company.iFX.Common;
+using NATS.Client.Core;
 using ProtoBuf.Grpc;
 using System.Diagnostics;
 using System.Reflection;
@@ -9,8 +10,6 @@ namespace Company.iFX.Nats
 {
     public abstract class NatsServiceBase
     {
-        private const int c_MaxParameters = 2;
-
         public async Task Invoke<TService>(CancellationToken cancellationToken) where TService : class
         {
             typeof(TService).ThrowIfNotInterface();
@@ -24,29 +23,27 @@ namespace Company.iFX.Nats
             {
                 ParameterInfo[] parameters = methodInfo.GetParameters();
 
-                if (parameters.Length == c_MaxParameters)
-                {
-                    Type secondParameterType = parameters[1].ParameterType;
-                    Task? methodTask = null;
-
-                    if (secondParameterType.IsAssignableTo(typeof(CallContext)))
-                    {
-                        methodTask = (Task?)methodInfo.Invoke(this, new object[] { null!, (CallContext)cancellationToken });
-                    }
-                    else if (secondParameterType.IsAssignableTo(typeof(CancellationToken)))
-                    {
-                        methodTask = (Task?)methodInfo.Invoke(this, new object[] { null!, cancellationToken });
-                    }
-
-                    if (methodTask is not null)
-                    {
-                        taskList.Add(methodTask);
-                    }
-                }
-                else
+                if (parameters.Length != Constant.NumberOfServiceMethodParameters)
                 {
                     throw new InvalidOperationException(
-                        $@"Method '{methodInfo.Name}' on type '{typeof(TService).FullName}' must have {c_MaxParameters} parameters.");
+                        $@"Method '{methodInfo.Name}' on type '{typeof(TService).FullName}' must have {Constant.NumberOfServiceMethodParameters} parameters.");
+                }
+
+                Type secondParameterType = parameters[1].ParameterType;
+                Task? methodTask = null;
+
+                if (secondParameterType.IsAssignableTo(typeof(CallContext)))
+                {
+                    methodTask = (Task?)methodInfo.Invoke(this, new object[] { null!, (CallContext)cancellationToken });
+                }
+                else if (secondParameterType.IsAssignableTo(typeof(CancellationToken)))
+                {
+                    methodTask = (Task?)methodInfo.Invoke(this, new object[] { null!, cancellationToken });
+                }
+
+                if (methodTask is not null)
+                {
+                    taskList.Add(methodTask);
                 }
             }
 

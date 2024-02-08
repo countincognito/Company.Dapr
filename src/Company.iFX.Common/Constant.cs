@@ -8,6 +8,8 @@
         public const int VolatilityIndex = 2;
         public const int TypeIndex = 3;
 
+        public const int NumberOfServiceMethodParameters = 2;
+
         public const string DiscriminatorName = @"$type";
         public const string ApiVersionString = @"Api-Version";
     }
