@@ -8,6 +8,8 @@ namespace Company.iFX.Nats
 {
     public abstract class NatsServiceBase
     {
+        private const int c_MaxParameters = 2;
+
         public async Task Invoke<TService>(CancellationToken cancellationToken) where TService : class
         {
             Debug.Assert(typeof(TService).IsInterface);
@@ -21,7 +23,7 @@ namespace Company.iFX.Nats
             {
                 ParameterInfo[] parameters = methodInfo.GetParameters();
 
-                if (parameters.Length == 2)
+                if (parameters.Length == c_MaxParameters)
                 {
                     Type secondParameterType = parameters[1].ParameterType;
                     Task? methodTask = null;
@@ -34,23 +36,28 @@ namespace Company.iFX.Nats
                     {
                         methodTask = (Task?)methodInfo.Invoke(this, new object[] { null!, cancellationToken });
                     }
-    
+
                     if (methodTask is not null)
                     {
                         taskList.Add(methodTask);
                     }
                 }
+                else
+                {
+                    throw new InvalidOperationException(
+                        $@"Method '{methodInfo.Name}' on type '{typeof(TService).FullName}' must have {c_MaxParameters} parameters.");
+                }
             }
 
             if (taskList.Count == 0)
             {
-                throw new InvalidOperationException("No methods to host on service.");
+                throw new InvalidOperationException($@"No methods to host on type '{typeof(TService).FullName}'.");
             }
 
             await Task.WhenAll([.. taskList]).ConfigureAwait(false);
         }
 
-        public static async Task<TReply?> CallAsync<TService, TRequest, TReply>(
+        public static async Task<TReply?> SubscribeAsync<TService, TRequest, TReply>(
             Func<TRequest?, CancellationToken, TReply?> func,
             NatsOpts? opts = null,
             NatsSubOpts? subOpts = null,
@@ -73,6 +80,7 @@ namespace Company.iFX.Nats
             await foreach (NatsMsg<TRequest> msg in nats
                 .SubscribeAsync(
                     subject: Addressing.Subject<TService>(memberName),
+                    queueGroup: Addressing.Subject<TService>(),
                     serializer: PolymorphicJsonSerializer.Create<TRequest>(),
                     opts: subOpts,
                     cancellationToken: cancellationToken)
@@ -108,7 +116,8 @@ namespace Company.iFX.Nats
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            throw new InvalidOperationException("Failed to subscribe to NATS");
+            throw new InvalidOperationException(
+                $@"Failed to subscribe to member '{memberName}' on type '{typeof(TService).FullName}' with NATS.");
         }
     }
 }

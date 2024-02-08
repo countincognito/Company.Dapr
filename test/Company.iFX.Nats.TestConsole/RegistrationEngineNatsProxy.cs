@@ -11,10 +11,7 @@ namespace Company.iFX.Nats.TestConsole
             RegisterRequestBase request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             RegisterResponseBase? reply = await NatsClientHelper
                 .CallAsync<IRegistrationEngine, RegisterRequestBase, RegisterResponseBase>(

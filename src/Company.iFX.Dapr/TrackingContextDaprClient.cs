@@ -4,6 +4,7 @@ using Dapr.Client;
 using Grpc.Core.Interceptors;
 using ProtoBuf.Grpc.Client;
 using System.Diagnostics;
+using Zametek.Utility;
 
 namespace Company.iFX.Dapr
 {
@@ -11,7 +12,7 @@ namespace Company.iFX.Dapr
     {
         public static T Create<T>() where T : class
         {
-            Debug.Assert(typeof(T).IsInterface);
+            typeof(T).ThrowIfNotInterface();
             return DaprClient
                 .CreateInvocationInvoker(Naming.AppId<T>())
                 .Intercept(new TrackingContextGrpcInterceptor())

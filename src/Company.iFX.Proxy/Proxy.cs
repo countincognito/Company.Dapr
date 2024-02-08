@@ -1,6 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using Serilog;
 using System.Diagnostics;
+using Zametek.Utility;
 using Zametek.Utility.Logging;
 
 namespace Company.iFX.Proxy
@@ -30,7 +31,7 @@ namespace Company.iFX.Proxy
                 throw new ArgumentNullException(nameof(logger));
             }
             Debug.Assert(typeof(T) != typeof(ILogger));
-            Debug.Assert(typeof(T).IsInterface);
+            typeof(T).ThrowIfNotInterface();
 
             IList<IInterceptor> extraInterceptors = 
                 s_ExtraInterceptorProviders.Select(x => x.Invoke()).ToList();
@@ -51,20 +52,20 @@ namespace Company.iFX.Proxy
                 throw new ArgumentNullException(nameof(logger));
             }
             Debug.Assert(typeof(T) != typeof(ILogger));
-            Debug.Assert(typeof(T).IsInterface);
+            typeof(T).ThrowIfNotInterface();
             return Create(Container.Container.GetService<T>(), logger);
         }
 
         public static T Create<T>() where T : class
         {
             Debug.Assert(typeof(T) != typeof(ILogger));
-            Debug.Assert(typeof(T).IsInterface);
+            typeof(T).ThrowIfNotInterface();
             return Create<T>(CreateLogger<T>());
         }
 
         public static ILogger CreateLogger<T>()
         {
-            Debug.Assert(typeof(T).IsInterface);
+            typeof(T).ThrowIfNotInterface();
             return Container.Container.GetService<ILogger>().ForContext(typeof(T));
         }
 
