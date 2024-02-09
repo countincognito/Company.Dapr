@@ -53,9 +53,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
         loggerConfiguration.Enrich.WithProperty(nameof(BuildVersion), BuildVersion);
         loggerConfiguration.Enrich.WithProperty(nameof(ServiceName), ServiceName);
 
-        // string? seqHost = Configuration.Current.Setting<string>("ConnectionStrings:seq");
-        // Debug.Assert(seqHost != null);
-        // loggerConfiguration.WriteTo.Seq(seqHost);
+        string? seqHost = Configuration.Current.Setting<string>("ConnectionStrings:seq");
+        Debug.Assert(seqHost != null);
+        loggerConfiguration.WriteTo.Seq(seqHost);
 
         Serilog.Core.Logger logger = loggerConfiguration.CreateLogger();
         Log.Logger = logger;
@@ -91,38 +91,3 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
 var app = hostBuilder.Build();
 
 await app.RunAsync().ConfigureAwait(false);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// using Company.Access.Account.Service;
-
-// IHost host = Host.CreateDefaultBuilder(args)
-//      .ConfigureServices(services =>
-//      {
-//          services.AddHostedService<Worker>();
-//      })
-//      .Build();
-
-// host.Run();
-
-
-
-// var builder = Host.CreateApplicationBuilder(args);
-// builder.Services.AddHostedService<Worker>();
-
-// var host = builder.Build();
-// host.Run();
