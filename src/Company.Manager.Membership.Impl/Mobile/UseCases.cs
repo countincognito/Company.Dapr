@@ -39,7 +39,32 @@ namespace Company.Manager.Membership.Impl.Mobile
 
             IRegistrationEngine registrationEngine = Proxy.Create<IRegistrationEngine>();
             Engine.Registration.Data.RegisterResponseBase engineResponse = await registrationEngine
-                .RegisterAsync(engineRegisterRequest, context.CancellationToken)
+                .RegisterMemberAsync(engineRegisterRequest, context.CancellationToken)
+                .ConfigureAwait(false);
+
+            RegisterResponse registerResponse = m_Mapper.Map<RegisterResponse>(engineResponse);
+
+            return registerResponse;
+        }
+
+        public async Task<RegisterResponse> RegisterAccountAsync(
+            RegisterRequest registerRequest,
+            CallContext context = default)
+        {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} Invoked");
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} {registerRequest.Name}");
+
+            Engine.Registration.Data.RegisterRequestBase engineRegisterRequest =
+                m_Mapper.Map<Engine.Registration.Data.RegisterRequestBase>(registerRequest);
+
+            IRegistrationEngine registrationEngine = Proxy.Create<IRegistrationEngine>();
+            Engine.Registration.Data.RegisterResponseBase engineResponse = await registrationEngine
+                .RegisterAccountAsync(engineRegisterRequest, context.CancellationToken)
                 .ConfigureAwait(false);
 
             RegisterResponse registerResponse = m_Mapper.Map<RegisterResponse>(engineResponse);

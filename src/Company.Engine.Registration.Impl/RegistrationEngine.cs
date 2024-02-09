@@ -18,7 +18,7 @@ namespace Company.Engine.Registration.Impl
             m_Logger = Proxy.CreateLogger<IRegistrationEngine>();
         }
 
-        public async Task<RegisterResponseBase> RegisterAsync(
+        public async Task<RegisterResponseBase> RegisterMemberAsync(
             RegisterRequestBase registerRequest,
             [DiagnosticLogging(LogActive.Off)] CallContext context = default)
         {
@@ -27,8 +27,24 @@ namespace Company.Engine.Registration.Impl
                 throw new ArgumentNullException(nameof(registerRequest));
             }
 
-            m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
-            m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest}");
+            m_Logger.Information($"{nameof(RegisterMemberAsync)} Invoked");
+            m_Logger.Information($"{nameof(RegisterMemberAsync)} {registerRequest}");
+            return await UseCaseFactory<IRegistrationEngine, RegisterRequestBase, CallContext, RegisterResponseBase>
+                .CallAsync(registerRequest, context)
+                .ConfigureAwait(false);
+        }
+
+        public async Task<RegisterResponseBase> RegisterAccountAsync(
+            RegisterRequestBase registerRequest,
+            [DiagnosticLogging(LogActive.Off)] CallContext context = default)
+        {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} Invoked");
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} {registerRequest}");
             return await UseCaseFactory<IRegistrationEngine, RegisterRequestBase, CallContext, RegisterResponseBase>
                 .CallAsync(registerRequest, context)
                 .ConfigureAwait(false);

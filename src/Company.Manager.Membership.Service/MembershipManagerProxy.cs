@@ -28,5 +28,19 @@ namespace Company.Manager.Membership.Service
                 .RegisterMemberAsync(registerRequest, context)
                 .ConfigureAwait(false);
         }
+
+        public async Task<RegisterResponseBase> RegisterAccountAsync(
+            RegisterRequestBase registerRequest,
+            CallContext context = default)
+        {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
+            return await m_Proxy
+                .RegisterAccountAsync(registerRequest, context)
+                .ConfigureAwait(false);
+        }
     }
 }

@@ -10,6 +10,7 @@ WORKDIR /src
 COPY ["src/Company.Engine.Registration.Impl/Company.Engine.Registration.Impl.csproj", "src/Company.Engine.Registration.Impl/"]
 COPY ["src/Company.iFX.Dapr/Company.iFX.Dapr.csproj", "src/Company.iFX.Dapr/"]
 COPY ["src/Company.iFX.Hosting/Company.iFX.Hosting.csproj", "src/Company.iFX.Hosting/"]
+COPY ["src/Company.iFX.Nats/Company.iFX.Nats.csproj", "src/Company.iFX.Nats/"]
 COPY ["src/Company.Engine.Registration.Service/Company.Engine.Registration.Service.csproj", "src/Company.Engine.Registration.Service/"]
 RUN dotnet restore "src/Company.Engine.Registration.Service/Company.Engine.Registration.Service.csproj"
 COPY . .

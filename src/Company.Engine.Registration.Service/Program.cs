@@ -1,3 +1,4 @@
+using Company.Access.Account.Interface;
 using Company.Access.User.Interface;
 using Company.Engine.Registration.Service;
 using Company.iFX.Configuration;
@@ -5,6 +6,7 @@ using Company.iFX.Dapr;
 using Company.iFX.Grpc;
 using Company.iFX.Hosting;
 using Company.iFX.Logging;
+using Company.iFX.Nats;
 using Company.iFX.Proxy;
 using Company.iFX.Telemetry;
 using OpenTelemetry.Logs;
@@ -26,6 +28,10 @@ Debug.Assert(!string.IsNullOrWhiteSpace(BuildVersion));
 var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
     .ConfigureServices(services =>
     {
+        string? natsUrl = Configuration.Current.Setting<string>("NATS:URL");
+
+        services.AddScoped(_ => NatsClient.Create<IAccountAccess>(natsUrl));
+
         services.AddScoped(_ => TrackingContextDaprClient.Create<IUserAccess>());
         services.AddTrackingContextGrpcInterceptor();
 

@@ -8,6 +8,9 @@ namespace Company.Engine.Registration.Interface
     public interface IRegistrationEngine
     {
         [Operation]
-        Task<RegisterResponseBase> RegisterAsync(RegisterRequestBase request, CallContext context = default);
+        Task<RegisterResponseBase> RegisterMemberAsync(RegisterRequestBase request, CallContext context = default);
+
+        [Operation]
+        Task<RegisterResponseBase> RegisterAccountAsync(RegisterRequestBase request, CallContext context = default);
     }
 }

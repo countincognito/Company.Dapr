@@ -42,13 +42,13 @@ namespace Company.iFX.Nats.TestConsole
                     Console.WriteLine($@"CallChainId = {TrackingContext.Current.CallChainId}");
 
                     var engineMobileResponse = await engine
-                        .RegisterAsync(engineMobileRequest)
+                        .RegisterAccountAsync(engineMobileRequest)
                         .ConfigureAwait(false) as Engine.Registration.Data.Mobile.RegisterResponse;
                     Console.WriteLine(engineMobileResponse!.Name);
                     Console.WriteLine(engineMobileResponse!.MobileMessage);
 
                     var engineWebResponse = await engine
-                        .RegisterAsync(engineWebRequest)
+                        .RegisterAccountAsync(engineWebRequest)
                         .ConfigureAwait(false) as Engine.Registration.Data.Web.RegisterResponse;
                     Console.WriteLine(engineWebResponse!.Name);
                     Console.WriteLine(engineWebResponse!.WebMessage);

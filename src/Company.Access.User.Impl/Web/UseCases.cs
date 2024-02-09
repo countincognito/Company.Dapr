@@ -144,7 +144,7 @@ namespace Company.Access.User.Impl.Web
 
             RegisterResponse response = new()
             {
-                Name = registerRequest.Name,
+                Name = registerRequest.Name!,
                 WebMessage = webMessage,
             };
 

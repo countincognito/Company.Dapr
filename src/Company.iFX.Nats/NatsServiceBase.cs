@@ -56,7 +56,7 @@ namespace Company.iFX.Nats
         }
 
         public static async Task<TReply?> SubscribeAsync<TService, TRequest, TReply>(
-            Func<TRequest?, CancellationToken, TReply?> func,
+            Func<TRequest?, CancellationToken, Task<TReply?>> func,
             NatsOpts? opts = null,
             NatsSubOpts? subOpts = null,
             NatsPubOpts? pubOpts = null,
@@ -92,7 +92,7 @@ namespace Company.iFX.Nats
                 // Retrieve TrackingContext from headers.
                 natsHeaders = TrackingContextHelper.ProcessHeaders(msg.Headers ?? []);
 
-                TReply? response = func(msg.Data, cancellationToken);
+                TReply? response = await func(msg.Data, cancellationToken);
 
                 await msg
                     .ReplyAsync(

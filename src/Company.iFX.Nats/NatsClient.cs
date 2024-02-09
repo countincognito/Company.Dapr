@@ -7,11 +7,11 @@ namespace Company.iFX.Nats
     {
         private static readonly ProxyGenerator s_ProxyGenerator = new();
 
-        public static T Create<T>() where T : class
+        public static T Create<T>(string? natsUrl = null) where T : class
         {
             typeof(T).ThrowIfNotInterface();
             return s_ProxyGenerator.CreateInterfaceProxyWithoutTarget<T>(
-                new AsyncNatsClientInterceptor<T>().ToInterceptor());
+                new AsyncNatsClientInterceptor<T>(natsUrl).ToInterceptor());
         }
     }
 }

@@ -191,7 +191,7 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
                     .Build();
 
                 endpoints.MapPost(
-                    $@"{Addressing.Microservice<IMembershipManager>()}/Register",
+                    $@"{Addressing.Microservice<IMembershipManager>()}/RegisterMember",
                     async (
                         [FromServices] IMapper mapper,
                         [FromBody] Company.Microservice.Membership.Data.v1_0.RegisterRequestDtoBase registerRequestDto) =>
@@ -201,6 +201,28 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
                         IMembershipManager membershipManager = Proxy.Create<IMembershipManager>();
                         RegisterResponseBase response = await membershipManager
                             .RegisterMemberAsync(registerRequest)
+                            .ConfigureAwait(false);
+
+                        Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase registerResponse =
+                            mapper.Map<Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase>(response);
+
+                        return Results.Ok(registerResponse);
+                    })
+                    .WithApiVersionSet(versionSet)
+                    .HasApiVersion(apiV1_0)
+                    .Produces<Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase>();
+
+                endpoints.MapPost(
+                    $@"{Addressing.Microservice<IMembershipManager>()}/RegisterAccount",
+                    async (
+                        [FromServices] IMapper mapper,
+                        [FromBody] Company.Microservice.Membership.Data.v1_0.RegisterRequestDtoBase registerRequestDto) =>
+                    {
+                        RegisterRequestBase registerRequest = mapper.Map<RegisterRequestBase>(registerRequestDto);
+
+                        IMembershipManager membershipManager = Proxy.Create<IMembershipManager>();
+                        RegisterResponseBase response = await membershipManager
+                            .RegisterAccountAsync(registerRequest)
                             .ConfigureAwait(false);
 
                         Company.Microservice.Membership.Data.v1_0.RegisterResponseDtoBase registerResponse =

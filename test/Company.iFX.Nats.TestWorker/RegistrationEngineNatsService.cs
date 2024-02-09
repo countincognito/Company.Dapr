@@ -10,7 +10,7 @@ namespace Company.iFX.Nats.TestWorker
     {
         #region Private Members
 
-        private static RegisterResponseBase? RegisterFunction(
+        private static Task<RegisterResponseBase?> RegisterFunction(
             RegisterRequestBase? input,
             CancellationToken cancellationToken)
         {
@@ -43,14 +43,14 @@ namespace Company.iFX.Nats.TestWorker
                 .Default(_ => throw new InvalidOperationException());
 
             Console.WriteLine();
-            return output;
+            return Task.FromResult(output);
         }
 
         #endregion
 
         #region IRegistrationEngine Members
 
-        public async Task<RegisterResponseBase> RegisterAsync(
+        public async Task<RegisterResponseBase> RegisterMemberAsync(
             RegisterRequestBase request,
             CallContext context = default)
         {
@@ -65,6 +65,20 @@ namespace Company.iFX.Nats.TestWorker
             return reply!;
         }
 
+        public async Task<RegisterResponseBase> RegisterAccountAsync(
+            RegisterRequestBase request,
+            CallContext context = default)
+        {
+            // No null checks here because the only value that will
+            // ever be passed in is null.
+
+            RegisterResponseBase? reply = await SubscribeAsync<IRegistrationEngine, RegisterRequestBase, RegisterResponseBase>(
+                    RegisterFunction,
+                    cancellationToken: context.CancellationToken)
+                .ConfigureAwait(false);
+
+            return reply!;
+        }
         #endregion
     }
 }

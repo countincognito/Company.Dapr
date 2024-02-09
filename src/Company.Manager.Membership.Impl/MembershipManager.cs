@@ -33,5 +33,21 @@ namespace Company.Manager.Membership.Impl
                 .CallAsync(registerRequest, context)
                 .ConfigureAwait(false);
         }
+
+        public async Task<RegisterResponseBase> RegisterAccountAsync(
+            RegisterRequestBase registerRequest,
+            [DiagnosticLogging(LogActive.Off)] CallContext context = default)
+        {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} Invoked");
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} {registerRequest}");
+            return await UseCaseFactory<IMembershipManager, RegisterRequestBase, CallContext, RegisterResponseBase>
+                .CallAsync(registerRequest, context)
+                .ConfigureAwait(false);
+        }
     }
 }

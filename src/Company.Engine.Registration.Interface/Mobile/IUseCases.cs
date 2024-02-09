@@ -5,6 +5,8 @@ namespace Company.Engine.Registration.Interface.Mobile
 {
     public interface IUseCases
     {
-        Task<RegisterResponse> RegisterAsync(RegisterRequest request, CallContext context = default);
+        Task<RegisterResponse> RegisterMemberAsync(RegisterRequest request, CallContext context = default);
+
+        Task<RegisterResponse> RegisterAccountAsync(RegisterRequest request, CallContext context = default);
     }
 }

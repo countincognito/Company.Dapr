@@ -1,5 +1,6 @@
 ﻿using Castle.DynamicProxy;
 using Company.iFX.Common;
+using NATS.Client.Core;
 using ProtoBuf.Grpc;
 using System.Diagnostics;
 using System.Reflection;
@@ -10,10 +11,13 @@ namespace Company.iFX.Nats
     public class AsyncNatsClientInterceptor<TService>
         : AsyncInterceptorBase where TService : class
     {
-        public AsyncNatsClientInterceptor()
+        private readonly string? m_NatsUrl;
+
+        public AsyncNatsClientInterceptor(string? natsUrl)
         {
             Type invocationTargetType = typeof(TService);
             invocationTargetType.ThrowIfNotInterface();
+            m_NatsUrl = natsUrl;
         }
 
         protected override async Task<T> InterceptAsync<T>(
@@ -50,8 +54,10 @@ namespace Company.iFX.Nats
                 cancellationTokenArgument = ((CallContext)cancellationTokenArgument).CancellationToken;
             }
 
+            NatsOpts natsOpts = m_NatsUrl is null ? NatsOpts.Default : NatsOpts.Default with { Url = m_NatsUrl };
+
             // These will be passed to CallAsync
-            var requestParameters = new object[] { requestArgument, null!, null!, invocation.Method.Name, cancellationTokenArgument };
+            var requestParameters = new object[] { requestArgument, natsOpts, null!, invocation.Method.Name, cancellationTokenArgument };
 
             MethodInfo method = typeof(NatsClientHelper).GetMethods().First(
                 x => x.Name.Equals(nameof(NatsClientHelper.CallAsync), StringComparison.OrdinalIgnoreCase)

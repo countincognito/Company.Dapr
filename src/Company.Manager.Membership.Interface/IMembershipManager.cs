@@ -9,5 +9,8 @@ namespace Company.Manager.Membership.Interface
     {
         [Operation]
         Task<RegisterResponseBase> RegisterMemberAsync(RegisterRequestBase request, CallContext context = default);
+
+        [Operation]
+        Task<RegisterResponseBase> RegisterAccountAsync(RegisterRequestBase request, CallContext context = default);
     }
 }

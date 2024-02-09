@@ -15,7 +15,7 @@ namespace Company.Engine.Registration.Service
             m_Proxy = Proxy.Create<IRegistrationEngine>();
         }
 
-        public async Task<RegisterResponseBase> RegisterAsync(
+        public async Task<RegisterResponseBase> RegisterMemberAsync(
             RegisterRequestBase registerRequest,
             CallContext context = default)
         {
@@ -24,7 +24,19 @@ namespace Company.Engine.Registration.Service
                 throw new ArgumentNullException(nameof(registerRequest));
             }
 
-            return await m_Proxy.RegisterAsync(registerRequest, context).ConfigureAwait(false);
+            return await m_Proxy.RegisterMemberAsync(registerRequest, context).ConfigureAwait(false);
+        }
+
+        public async Task<RegisterResponseBase> RegisterAccountAsync(
+            RegisterRequestBase registerRequest,
+            CallContext context = default)
+        {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
+            return await m_Proxy.RegisterAccountAsync(registerRequest, context).ConfigureAwait(false);
         }
     }
 }

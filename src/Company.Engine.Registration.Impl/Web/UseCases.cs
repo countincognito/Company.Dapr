@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Company.Access.Account.Interface;
 using Company.Access.User.Interface;
 using Company.Engine.Registration.Data.Web;
 using Company.Engine.Registration.Interface.Web;
@@ -22,7 +23,7 @@ namespace Company.Engine.Registration.Impl.Web
             m_Mapper = iFX.Container.Container.GetService<IMapper>();
         }
 
-        public async Task<RegisterResponse> RegisterAsync(
+        public async Task<RegisterResponse> RegisterMemberAsync(
             RegisterRequest registerRequest,
             CallContext context = default)
         {
@@ -31,8 +32,8 @@ namespace Company.Engine.Registration.Impl.Web
                 throw new ArgumentNullException(nameof(registerRequest));
             }
 
-            m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
-            m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest.Name}");
+            m_Logger.Information($"{nameof(RegisterMemberAsync)} Invoked");
+            m_Logger.Information($"{nameof(RegisterMemberAsync)} {registerRequest.Name}");
 
             Access.User.Data.RegisterRequestBase userRegisterRequest =
                 m_Mapper.Map<Access.User.Data.RegisterRequestBase>(registerRequest);
@@ -43,6 +44,31 @@ namespace Company.Engine.Registration.Impl.Web
                 .ConfigureAwait(false);
 
             RegisterResponse registerResponse = m_Mapper.Map<RegisterResponse>(userResponse);
+
+            return registerResponse;
+        }
+
+        public async Task<RegisterResponse> RegisterAccountAsync(
+            RegisterRequest registerRequest,
+            CallContext context = default)
+        {
+            if (registerRequest is null)
+            {
+                throw new ArgumentNullException(nameof(registerRequest));
+            }
+
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} Invoked");
+            m_Logger.Information($"{nameof(RegisterAccountAsync)} {registerRequest.Name}");
+
+            Access.Account.Data.RegisterRequestBase accountRegisterRequest =
+                m_Mapper.Map<Access.Account.Data.RegisterRequestBase>(registerRequest);
+
+            IAccountAccess accountAccess = Proxy.Create<IAccountAccess>();
+            Access.Account.Data.RegisterResponseBase accountResponse = await accountAccess
+                .RegisterAsync(accountRegisterRequest, context.CancellationToken)
+                .ConfigureAwait(false);
+
+            RegisterResponse registerResponse = m_Mapper.Map<RegisterResponse>(accountResponse);
 
             return registerResponse;
         }
