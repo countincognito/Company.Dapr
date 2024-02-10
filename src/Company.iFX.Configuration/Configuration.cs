@@ -75,13 +75,16 @@ namespace Company.iFX.Configuration
 
         public static bool IsEnvironment(string environmentName)
         {
-            return string.Equals(
-                HostingEnvironment,
-                environmentName,
-                StringComparison.OrdinalIgnoreCase);
+            if (string.Equals(DotNetEnvironment, environmentName, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(AspNetCoreEnvironment, environmentName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            return false;
         }
 
-        private static string? HostingEnvironment => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        private static string? DotNetEnvironment => Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+        private static string? AspNetCoreEnvironment => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
         private static IConfiguration LoadConfiguration()
         {
@@ -89,11 +92,16 @@ namespace Company.iFX.Configuration
 
             configBuilder.AddJsonFile(@"appsettings.json", optional: true, reloadOnChange: true);
 
-            string? hostingEnvironment = HostingEnvironment;
+            string? dotNetEnvironment = DotNetEnvironment;
+            string? aspNetCoreEnvironment = AspNetCoreEnvironment;
 
-            if (hostingEnvironment is not null)
+            if (dotNetEnvironment is not null)
             {
-                configBuilder.AddJsonFile($@"appsettings.{hostingEnvironment}.json", optional: true, reloadOnChange: true);
+                configBuilder.AddJsonFile($@"appsettings.{dotNetEnvironment}.json", optional: true, reloadOnChange: true);
+            }
+            else if (aspNetCoreEnvironment is not null)
+            {
+                configBuilder.AddJsonFile($@"appsettings.{aspNetCoreEnvironment}.json", optional: true, reloadOnChange: true);
             }
 
             configBuilder.AddEnvironmentVariables();
