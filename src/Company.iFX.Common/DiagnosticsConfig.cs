@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Company.iFX.Telemetry
+namespace Company.iFX.Common
 {
     public class DiagnosticsConfig
     {

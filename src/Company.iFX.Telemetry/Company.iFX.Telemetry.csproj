@@ -17,4 +17,8 @@
 		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.5.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Company.iFX.Common\Company.iFX.Common.csproj" />
+	</ItemGroup>
+
 </Project>

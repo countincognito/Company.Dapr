@@ -3,6 +3,7 @@ using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using Company.iFX.Common;
 
 namespace Company.iFX.Telemetry
 {

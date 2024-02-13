@@ -1,5 +1,5 @@
 ﻿using Castle.DynamicProxy;
-using Company.iFX.Telemetry;
+using Company.iFX.Common;
 using System.Diagnostics;
 using Zametek.Utility;
 
