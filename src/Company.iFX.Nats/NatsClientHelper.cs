@@ -21,7 +21,8 @@ namespace Company.iFX.Nats
 
             await using var nats = new NatsConnection(opts ?? NatsOpts.Default);
 
-            // Add TrackingContext to headers.
+            // Retrieve TrackingContext from headers, or add a
+            // TrackingContext to headers if they don't already exist.
             NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
 
             NatsMsg<TReply> reply =

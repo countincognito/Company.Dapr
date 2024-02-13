@@ -31,6 +31,7 @@ services:
       dockerfile: src/Company.Microservice.Membership.Service/Dockerfile
     depends_on:
       - seq.image
+      - otel-collector
     environment:
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
@@ -73,6 +74,7 @@ services:
       dockerfile: src/Company.Manager.Membership.Service/Dockerfile
     depends_on:
       - seq.image
+      - otel-collector
     environment:
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
@@ -115,6 +117,7 @@ services:
       dockerfile: src/Company.Engine.Registration.Service/Dockerfile
     depends_on:
       - seq.image
+      - otel-collector
     environment:
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
@@ -159,6 +162,7 @@ services:
     depends_on:
       - postgres.image
       - seq.image
+      - otel-collector
     environment:
       - CONNECTIONSTRINGS__POSTGRES_USERS=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Pooling=true;
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
@@ -203,6 +207,7 @@ services:
     depends_on:
       - seq.image
       - nats
+      - otel-collector
     environment:
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
@@ -222,6 +227,7 @@ services:
       - redis.image
       - postgres.image
       - seq.image
+      - otel-collector
     environment:
       - CONNECTIONSTRINGS__REDIS=redis.image
       - CONNECTIONSTRINGS__POSTGRES_ENCRYPTION=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Encryption;Pooling=true;
@@ -268,6 +274,7 @@ services:
     depends_on:
       - redis.image
       - seq.image
+      - otel-collector
     environment:
       - CONNECTIONSTRINGS__REDIS=redis.image
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}

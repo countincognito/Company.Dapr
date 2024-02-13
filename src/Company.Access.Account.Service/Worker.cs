@@ -4,7 +4,7 @@ using Company.iFX.Configuration;
 namespace Company.Access.Account.Service
 {
     public class Worker
-     : BackgroundService
+        : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
 

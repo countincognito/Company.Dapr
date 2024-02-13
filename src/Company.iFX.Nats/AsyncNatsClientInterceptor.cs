@@ -13,6 +13,18 @@ namespace Company.iFX.Nats
     {
         private readonly string? m_NatsUrl;
 
+        private const int c_RequestParametersLength = 5;
+
+        private static readonly MethodInfo s_CallAsyncMethodInfo;
+
+        static AsyncNatsClientInterceptor()
+        {
+            s_CallAsyncMethodInfo = typeof(NatsClientHelper).GetMethods().First(
+                x => x.Name.Equals(nameof(NatsClientHelper.CallAsync), StringComparison.OrdinalIgnoreCase)
+                && x.IsGenericMethod
+                && x.GetParameters().Length == c_RequestParametersLength);
+        }
+
         public AsyncNatsClientInterceptor(string? natsUrl)
         {
             Type invocationTargetType = typeof(TService);
@@ -59,14 +71,11 @@ namespace Company.iFX.Nats
             // These will be passed to CallAsync
             var requestParameters = new object[] { requestArgument, natsOpts, null!, invocation.Method.Name, cancellationTokenArgument };
 
-            MethodInfo method = typeof(NatsClientHelper).GetMethods().First(
-                x => x.Name.Equals(nameof(NatsClientHelper.CallAsync), StringComparison.OrdinalIgnoreCase)
-                && x.IsGenericMethod
-                && x.GetParameters().Length == requestParameters.Length);
+            Debug.Assert(requestParameters.Length == c_RequestParametersLength);
 
-            MethodInfo genericMethod = method.MakeGenericMethod([typeof(TService), requestParameterType, typeof(T)]);
+            MethodInfo callAsyncMethod = s_CallAsyncMethodInfo.MakeGenericMethod([typeof(TService), requestParameterType, typeof(T)]);
 
-            return await ((Task<T>)genericMethod
+            return await ((Task<T>)callAsyncMethod
                 .Invoke(null, requestParameters)!)
                 .ConfigureAwait(false);
         }

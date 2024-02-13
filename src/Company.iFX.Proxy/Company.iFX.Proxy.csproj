@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Company.iFX.Container\Company.iFX.Container.csproj" />
-	  <ProjectReference Include="..\Company.iFX.Logging\Company.iFX.Logging.csproj" />
-	  <ProjectReference Include="..\Company.iFX.Telemetry\Company.iFX.Telemetry.csproj" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Company.iFX.Container\Company.iFX.Container.csproj" />
+    <ProjectReference Include="..\Company.iFX.Logging\Company.iFX.Logging.csproj" />
+    <ProjectReference Include="..\Company.iFX.Telemetry\Company.iFX.Telemetry.csproj" />
+  </ItemGroup>
 </Project>

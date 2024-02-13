@@ -72,7 +72,8 @@ namespace Company.iFX.Nats
 
             await using var nats = new NatsConnection(opts ?? NatsOpts.Default);
 
-            // Retrieve TrackingContext from headers.
+            // Retrieve TrackingContext from headers, or add a
+            // TrackingContext to headers if they don't already exist.
             NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
 
             await foreach (NatsMsg<TRequest> msg in nats
@@ -89,7 +90,8 @@ namespace Company.iFX.Nats
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                // Retrieve TrackingContext from headers.
+                // Retrieve TrackingContext from headers, or add a
+                // TrackingContext to headers if they don't already exist.
                 natsHeaders = TrackingContextHelper.ProcessHeaders(msg.Headers ?? []);
 
                 TReply? response = await func(msg.Data, cancellationToken);
