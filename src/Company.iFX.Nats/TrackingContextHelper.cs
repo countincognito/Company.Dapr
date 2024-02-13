@@ -19,10 +19,7 @@ namespace Company.iFX.Nats
 
         public static NatsHeaders ProcessHeaders(NatsHeaders headers)
         {
-            if (headers is null)
-            {
-                throw new ArgumentNullException(nameof(headers));
-            }
+            ArgumentNullException.ThrowIfNull(headers);
 
             // If the the tracking context exists in the header, retrieve it.
             if (headers.TryGetValue(s_TrackingContextKeyName, out StringValues values))

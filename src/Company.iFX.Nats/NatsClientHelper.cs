@@ -25,6 +25,9 @@ namespace Company.iFX.Nats
             // TrackingContext to headers if they don't already exist.
             NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
 
+            // NATS does not support OpenTracing yet, so we need to correct for that.
+            natsHeaders = OpenTracingHelper.ProcessClientHeaders(natsHeaders);
+
             NatsMsg<TReply> reply =
                 await nats
                     .RequestAsync(

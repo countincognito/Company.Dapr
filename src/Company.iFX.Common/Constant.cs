@@ -1,4 +1,6 @@
-﻿namespace Company.iFX.Common
+﻿using System.Diagnostics;
+
+namespace Company.iFX.Common
 {
     public class Constant
     {
@@ -12,5 +14,12 @@
 
         public const string DiscriminatorName = @"$type";
         public const string ApiVersionString = @"Api-Version";
+
+        public const string ActivityTraceIdName = nameof(ActivityTraceId);
+        public const string ActivitySpanIdName = nameof(ActivitySpanId);
+
+        public const string Namespace = nameof(Namespace);
+        public const string TargetType = nameof(TargetType);
+        public const string Method = nameof(Method);
     }
 }

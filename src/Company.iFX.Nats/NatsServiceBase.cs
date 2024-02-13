@@ -76,6 +76,8 @@ namespace Company.iFX.Nats
             // TrackingContext to headers if they don't already exist.
             NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
 
+            Type ServiceType = typeof(TService);
+
             await foreach (NatsMsg<TRequest> msg in nats
                 .SubscribeAsync(
                     subject: Addressing.Subject<TService>(memberName),
@@ -93,6 +95,29 @@ namespace Company.iFX.Nats
                 // Retrieve TrackingContext from headers, or add a
                 // TrackingContext to headers if they don't already exist.
                 natsHeaders = TrackingContextHelper.ProcessHeaders(msg.Headers ?? []);
+
+                // NATS does not support OpenTracing yet, so we need to correct for that.
+                ActivityContext parentContext = OpenTracingHelper.GetParentContext(natsHeaders);
+
+                using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
+                    memberName,
+                    ActivityKind.Internal,
+                    parentContext);
+
+                TrackingContext.NewCurrentIfEmpty();
+
+                activity?.SetTag(
+                    nameof(TrackingContext.CallChainId),
+                    TrackingContext.Current.CallChainId.ToDashedString());
+                activity?.SetTag(
+                    Constant.Namespace,
+                    ServiceType.Namespace);
+                activity?.SetTag(
+                    Constant.TargetType,
+                    ServiceType.Name);
+                activity?.SetTag(
+                    Constant.Method,
+                    memberName);
 
                 TReply? response = await func(msg.Data, cancellationToken);
 

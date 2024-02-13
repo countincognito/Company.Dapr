@@ -33,13 +33,13 @@ namespace Company.iFX.Proxy
                 nameof(TrackingContext.CallChainId),
                 TrackingContext.Current.CallChainId.ToDashedString());
             activity?.SetTag(
-                nameof(invocation.TargetType.Namespace),
+                Constant.Namespace,
                 invocation.TargetType?.Namespace);
             activity?.SetTag(
-                nameof(invocation.TargetType),
+                Constant.TargetType,
                 invocation.TargetType?.Name);
             activity?.SetTag(
-                nameof(invocation.Method),
+                Constant.Method,
                 invocation.Method?.Name);
 
             await proceed(invocation, proceedInfo).ConfigureAwait(false);
@@ -70,13 +70,13 @@ namespace Company.iFX.Proxy
                 nameof(TrackingContext.CallChainId),
                 TrackingContext.Current.CallChainId.ToDashedString());
             activity?.SetTag(
-                nameof(invocation.TargetType.Namespace),
+                Constant.Namespace,
                 invocation.TargetType?.Namespace);
             activity?.SetTag(
-                nameof(invocation.TargetType),
+                Constant.TargetType,
                 invocation.TargetType?.Name);
             activity?.SetTag(
-                nameof(invocation.Method),
+                Constant.Method,
                 invocation.Method?.Name);
 
             return await proceed(invocation, proceedInfo).ConfigureAwait(false);
