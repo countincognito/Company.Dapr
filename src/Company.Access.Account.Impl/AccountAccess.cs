@@ -22,13 +22,11 @@ namespace Company.Access.Account.Impl
             RegisterRequestBase registerRequest,
             [DiagnosticLogging(LogActive.Off)] CallContext context = default)
         {
-            if (registerRequest is null)
-            {
-                throw new ArgumentNullException(nameof(registerRequest));
-            }
+            ArgumentNullException.ThrowIfNull(registerRequest);
 
             m_Logger.Information($"{nameof(RegisterAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAsync)} {registerRequest}");
+
             return await UseCaseFactory<IAccountAccess, RegisterRequestBase, CallContext, RegisterResponseBase>
                 .CallAsync(registerRequest, context)
                 .ConfigureAwait(false);

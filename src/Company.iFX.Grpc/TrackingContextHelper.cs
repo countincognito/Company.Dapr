@@ -20,10 +20,7 @@ namespace Company.iFX.Grpc
 
         public static Metadata ProcessHeaders(Metadata headers)
         {
-            if (headers is null)
-            {
-                throw new ArgumentNullException(nameof(headers));
-            }
+            ArgumentNullException.ThrowIfNull(headers);
 
             Metadata.Entry? trackingEntry = headers
                 .FirstOrDefault(x => string.CompareOrdinal(x.Key, s_TrackingContextKeyName) == 0);

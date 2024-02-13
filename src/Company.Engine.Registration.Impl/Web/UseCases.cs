@@ -27,10 +27,7 @@ namespace Company.Engine.Registration.Impl.Web
             RegisterRequest registerRequest,
             CallContext context = default)
         {
-            if (registerRequest is null)
-            {
-                throw new ArgumentNullException(nameof(registerRequest));
-            }
+            ArgumentNullException.ThrowIfNull(registerRequest);
 
             m_Logger.Information($"{nameof(RegisterMemberAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterMemberAsync)} {registerRequest.Name}");
@@ -52,10 +49,7 @@ namespace Company.Engine.Registration.Impl.Web
             RegisterRequest registerRequest,
             CallContext context = default)
         {
-            if (registerRequest is null)
-            {
-                throw new ArgumentNullException(nameof(registerRequest));
-            }
+            ArgumentNullException.ThrowIfNull(registerRequest);
 
             m_Logger.Information($"{nameof(RegisterAccountAsync)} Invoked");
             m_Logger.Information($"{nameof(RegisterAccountAsync)} {registerRequest.Name}");

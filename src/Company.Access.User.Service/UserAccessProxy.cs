@@ -19,10 +19,7 @@ namespace Company.Access.User.Service
             RegisterRequestBase registerRequest,
             CallContext context = default)
         {
-            if (registerRequest is null)
-            {
-                throw new ArgumentNullException(nameof(registerRequest));
-            }
+            ArgumentNullException.ThrowIfNull(registerRequest);
 
             return await m_Proxy
                 .RegisterAsync(registerRequest, context)

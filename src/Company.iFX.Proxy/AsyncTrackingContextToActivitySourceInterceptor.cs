@@ -13,33 +13,24 @@ namespace Company.iFX.Proxy
             IInvocationProceedInfo proceedInfo,
             Func<IInvocation, IInvocationProceedInfo, Task> proceed)
         {
-            if (invocation is null)
-            {
-                throw new ArgumentNullException(nameof(invocation));
-            }
-            if (proceedInfo is null)
-            {
-                throw new ArgumentNullException(nameof(proceedInfo));
-            }
-            if (proceed is null)
-            {
-                throw new ArgumentNullException(nameof(proceed));
-            }
+            ArgumentNullException.ThrowIfNull(invocation);
+            ArgumentNullException.ThrowIfNull(proceedInfo);
+            ArgumentNullException.ThrowIfNull(proceed);
 
             TrackingContext.NewCurrentIfEmpty();
             using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(invocation.Method.Name);
 
             activity?.SetTag(
-                nameof(TrackingContext.CallChainId),
+                Constant.TrackingCallChainTag,
                 TrackingContext.Current.CallChainId.ToDashedString());
             activity?.SetTag(
-                Constant.Namespace,
+                Constant.ServiceNamespaceTag,
                 invocation.TargetType?.Namespace);
             activity?.SetTag(
-                Constant.TargetType,
+                Constant.ServiceTypeTag,
                 invocation.TargetType?.Name);
             activity?.SetTag(
-                Constant.Method,
+                Constant.ServiceMethodTag,
                 invocation.Method?.Name);
 
             await proceed(invocation, proceedInfo).ConfigureAwait(false);
@@ -50,33 +41,24 @@ namespace Company.iFX.Proxy
             IInvocationProceedInfo proceedInfo,
             Func<IInvocation, IInvocationProceedInfo, Task<T>> proceed)
         {
-            if (invocation is null)
-            {
-                throw new ArgumentNullException(nameof(invocation));
-            }
-            if (proceedInfo is null)
-            {
-                throw new ArgumentNullException(nameof(proceedInfo));
-            }
-            if (proceed is null)
-            {
-                throw new ArgumentNullException(nameof(proceed));
-            }
+            ArgumentNullException.ThrowIfNull(invocation);
+            ArgumentNullException.ThrowIfNull(proceedInfo);
+            ArgumentNullException.ThrowIfNull(proceed);
 
             TrackingContext.NewCurrentIfEmpty();
             using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(invocation.Method.Name);
 
             activity?.SetTag(
-                nameof(TrackingContext.CallChainId),
+                Constant.TrackingCallChainTag,
                 TrackingContext.Current.CallChainId.ToDashedString());
             activity?.SetTag(
-                Constant.Namespace,
+                Constant.ServiceNamespaceTag,
                 invocation.TargetType?.Namespace);
             activity?.SetTag(
-                Constant.TargetType,
+                Constant.ServiceTypeTag,
                 invocation.TargetType?.Name);
             activity?.SetTag(
-                Constant.Method,
+                Constant.ServiceMethodTag,
                 invocation.Method?.Name);
 
             return await proceed(invocation, proceedInfo).ConfigureAwait(false);

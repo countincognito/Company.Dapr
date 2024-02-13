@@ -27,10 +27,7 @@ namespace Company.Utility.Encryption.Impl
             CreateKeysRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(CreateKeysAsync)} Invoked");
 
@@ -45,10 +42,7 @@ namespace Company.Utility.Encryption.Impl
             EncryptRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(EncryptAsync)} Invoked");
 
@@ -63,10 +57,7 @@ namespace Company.Utility.Encryption.Impl
             DecryptRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(DecryptAsync)} Invoked");
 
@@ -81,10 +72,7 @@ namespace Company.Utility.Encryption.Impl
             RotateAsymmetricKeyRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(RotateAsymmetricKeyAsync)} Invoked");
 
@@ -99,10 +87,7 @@ namespace Company.Utility.Encryption.Impl
             ViewSymmetricKeyDefinitionRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(ViewSymmetricKeyDefinitionAsync)} Invoked");
 
@@ -117,10 +102,7 @@ namespace Company.Utility.Encryption.Impl
             ViewAsymmetricKeyDefinitionRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(ViewAsymmetricKeyDefinitionAsync)} Invoked");
 

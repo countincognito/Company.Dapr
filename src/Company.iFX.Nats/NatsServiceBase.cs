@@ -107,16 +107,16 @@ namespace Company.iFX.Nats
                 TrackingContext.NewCurrentIfEmpty();
 
                 activity?.SetTag(
-                    nameof(TrackingContext.CallChainId),
+                    Constant.TrackingCallChainTag,
                     TrackingContext.Current.CallChainId.ToDashedString());
                 activity?.SetTag(
-                    Constant.Namespace,
+                    Constant.ServiceNamespaceTag,
                     ServiceType.Namespace);
                 activity?.SetTag(
-                    Constant.TargetType,
+                    Constant.ServiceTypeTag,
                     ServiceType.Name);
                 activity?.SetTag(
-                    Constant.Method,
+                    Constant.ServiceMethodTag,
                     memberName);
 
                 TReply? response = await func(msg.Data, cancellationToken);

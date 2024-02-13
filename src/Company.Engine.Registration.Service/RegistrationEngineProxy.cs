@@ -19,10 +19,7 @@ namespace Company.Engine.Registration.Service
             RegisterRequestBase registerRequest,
             CallContext context = default)
         {
-            if (registerRequest is null)
-            {
-                throw new ArgumentNullException(nameof(registerRequest));
-            }
+            ArgumentNullException.ThrowIfNull(registerRequest);
 
             return await m_Proxy.RegisterMemberAsync(registerRequest, context).ConfigureAwait(false);
         }
@@ -31,10 +28,7 @@ namespace Company.Engine.Registration.Service
             RegisterRequestBase registerRequest,
             CallContext context = default)
         {
-            if (registerRequest is null)
-            {
-                throw new ArgumentNullException(nameof(registerRequest));
-            }
+            ArgumentNullException.ThrowIfNull(registerRequest);
 
             return await m_Proxy.RegisterAccountAsync(registerRequest, context).ConfigureAwait(false);
         }

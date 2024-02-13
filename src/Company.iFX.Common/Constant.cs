@@ -15,11 +15,12 @@ namespace Company.iFX.Common
         public const string DiscriminatorName = @"$type";
         public const string ApiVersionString = @"Api-Version";
 
-        public const string ActivityTraceIdName = nameof(ActivityTraceId);
-        public const string ActivitySpanIdName = nameof(ActivitySpanId);
+        public const string ActivityTraceIdName = @"activitytraceid";
+        public const string ActivitySpanIdName = @"activityspanid";
 
-        public const string Namespace = nameof(Namespace);
-        public const string TargetType = nameof(TargetType);
-        public const string Method = nameof(Method);
+        public const string TrackingCallChainTag = @"trackingcontext.callchainid";
+        public const string ServiceNamespaceTag = @"service.sourcecode.namespace";
+        public const string ServiceTypeTag = @"service.sourcecode.type";
+        public const string ServiceMethodTag = @"service.sourcecode.method";
     }
 }

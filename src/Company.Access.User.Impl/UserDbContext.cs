@@ -15,10 +15,7 @@ namespace Company.Access.User.Impl
 
         private static void ModelUsers(ModelBuilder modelBuilder)
         {
-            if (modelBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(modelBuilder));
-            }
+            ArgumentNullException.ThrowIfNull(modelBuilder);
 
             modelBuilder.Entity<NameValueSet>()
                 .HasKey(x => x.Name);
@@ -28,10 +25,7 @@ namespace Company.Access.User.Impl
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            if (modelBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(modelBuilder));
-            }
+            ArgumentNullException.ThrowIfNull(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
 

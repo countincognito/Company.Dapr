@@ -31,10 +31,7 @@ namespace Company.Utility.Cache.Impl
             GetCachedValueRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(GetCachedValueAsync)} Invoked");
 
@@ -57,10 +54,7 @@ namespace Company.Utility.Cache.Impl
             RefreshCachedValueRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(RefreshCachedValueAsync)} Invoked");
 
@@ -73,10 +67,7 @@ namespace Company.Utility.Cache.Impl
             DeleteCachedValueRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(DeleteCachedValueAsync)} Invoked");
 
@@ -89,10 +80,7 @@ namespace Company.Utility.Cache.Impl
             SetCachedValueRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             m_Logger.Information($"{nameof(SetCachedValueAsync)} Invoked");
 

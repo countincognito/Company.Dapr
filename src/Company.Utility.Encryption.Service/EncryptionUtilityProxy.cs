@@ -19,10 +19,7 @@ namespace Company.Utility.Encryption.Service
             CreateKeysRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             return await m_Proxy
                 .CreateKeysAsync(request, context)
@@ -33,10 +30,7 @@ namespace Company.Utility.Encryption.Service
             EncryptRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             return await m_Proxy
                 .EncryptAsync(request, context)
@@ -47,10 +41,7 @@ namespace Company.Utility.Encryption.Service
             DecryptRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             return await m_Proxy
                 .DecryptAsync(request, context)
@@ -61,10 +52,7 @@ namespace Company.Utility.Encryption.Service
             RotateAsymmetricKeyRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             return await m_Proxy
                 .RotateAsymmetricKeyAsync(request, context)
@@ -75,10 +63,7 @@ namespace Company.Utility.Encryption.Service
             ViewSymmetricKeyDefinitionRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             return await m_Proxy
                 .ViewSymmetricKeyDefinitionAsync(request, context)
@@ -89,10 +74,7 @@ namespace Company.Utility.Encryption.Service
             ViewAsymmetricKeyDefinitionRequest request,
             CallContext context = default)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             return await m_Proxy
                 .ViewAsymmetricKeyDefinitionAsync(request, context)

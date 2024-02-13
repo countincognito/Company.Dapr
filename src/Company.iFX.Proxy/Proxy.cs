@@ -22,18 +22,12 @@ namespace Company.iFX.Proxy
             T instance,
             ILogger logger) where T : class
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-            if (logger is null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
+            ArgumentNullException.ThrowIfNull(instance);
+            ArgumentNullException.ThrowIfNull(logger);
             Debug.Assert(typeof(T) != typeof(ILogger));
             typeof(T).ThrowIfNotInterface();
 
-            IList<IInterceptor> extraInterceptors = 
+            IList<IInterceptor> extraInterceptors =
                 s_ExtraInterceptorProviders.Select(x => x.Invoke()).ToList();
 
             T proxy = LogProxy.Create(
@@ -47,10 +41,7 @@ namespace Company.iFX.Proxy
         public static T Create<T>(
             ILogger logger) where T : class
         {
-            if (logger is null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
+            ArgumentNullException.ThrowIfNull(logger);
             Debug.Assert(typeof(T) != typeof(ILogger));
             typeof(T).ThrowIfNotInterface();
             return Create(Container.Container.GetService<T>(), logger);
@@ -74,18 +65,9 @@ namespace Company.iFX.Proxy
             object instance,
             ILogger logger)
         {
-            if (instanceType is null)
-            {
-                throw new ArgumentNullException(nameof(instanceType));
-            }
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-            if (logger is null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
+            ArgumentNullException.ThrowIfNull(instanceType);
+            ArgumentNullException.ThrowIfNull(instance);
+            ArgumentNullException.ThrowIfNull(logger);
             Debug.Assert(instanceType != typeof(ILogger));
             instanceType.ThrowIfNotInterface();
 
@@ -105,14 +87,8 @@ namespace Company.iFX.Proxy
             Type instanceType,
             ILogger logger)
         {
-            if (instanceType is null)
-            {
-                throw new ArgumentNullException(nameof(instanceType));
-            }
-            if (logger is null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
+            ArgumentNullException.ThrowIfNull(instanceType);
+            ArgumentNullException.ThrowIfNull(logger);
             Debug.Assert(instanceType != typeof(ILogger));
             instanceType.ThrowIfNotInterface();
 
@@ -124,10 +100,7 @@ namespace Company.iFX.Proxy
 
         public static object Create(Type instanceType)
         {
-            if (instanceType is null)
-            {
-                throw new ArgumentNullException(nameof(instanceType));
-            }
+            ArgumentNullException.ThrowIfNull(instanceType);
             Debug.Assert(instanceType != typeof(ILogger));
             instanceType.ThrowIfNotInterface();
 
