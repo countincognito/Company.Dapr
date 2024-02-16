@@ -1,4 +1,6 @@
-﻿using NATS.Client.Core;
+﻿using Company.iFX.Common;
+using NATS.Client.Core;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Zametek.Utility;
 
@@ -24,6 +26,11 @@ namespace Company.iFX.Nats
             // Retrieve TrackingContext from headers, or add a
             // TrackingContext to headers if they don't already exist.
             NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
+
+            // Last activity for an outgoing call (i.e. Client kind).
+            using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
+                memberName,
+                ActivityKind.Client);
 
             // NATS does not support OpenTracing yet, so we need to correct for that.
             natsHeaders = OpenTracingHelper.ProcessClientHeaders(natsHeaders);

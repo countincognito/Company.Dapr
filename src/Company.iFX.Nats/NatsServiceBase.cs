@@ -99,9 +99,10 @@ namespace Company.iFX.Nats
                 // NATS does not support OpenTracing yet, so we need to correct for that.
                 ActivityContext parentContext = OpenTracingHelper.GetParentContext(natsHeaders);
 
+                // First activity for an incoming call (i.e. Server kind).
                 using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
                     memberName,
-                    ActivityKind.Internal,
+                    ActivityKind.Server,
                     parentContext);
 
                 TrackingContext.NewCurrentIfEmpty();
