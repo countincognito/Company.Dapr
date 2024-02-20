@@ -30,14 +30,17 @@ namespace Company.iFX.Nats
         {
             ArgumentNullException.ThrowIfNull(headers);
 
-            headers.TryGetValue(Constant.ActivityTraceIdName, out StringValues activityTraceId);
-            headers.TryGetValue(Constant.ActivitySpanIdName, out StringValues activitySpanId);
+            if (headers.TryGetValue(Constant.ActivityTraceIdName, out StringValues activityTraceId)
+                && headers.TryGetValue(Constant.ActivitySpanIdName, out StringValues activitySpanId))
+            {
+                return new ActivityContext(
+                    traceId: ActivityTraceId.CreateFromString(activityTraceId.ToString()),
+                    spanId: ActivitySpanId.CreateFromString(activitySpanId.ToString()),
+                    ActivityTraceFlags.Recorded,
+                    isRemote: true);
+            }
 
-            return new ActivityContext(
-                traceId: ActivityTraceId.CreateFromString(activityTraceId.ToString()),
-                spanId: ActivitySpanId.CreateFromString(activitySpanId.ToString()),
-                ActivityTraceFlags.Recorded,
-                isRemote: true);
+            return new ActivityContext();
         }
     }
 }

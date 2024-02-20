@@ -1,6 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using Company.iFX.Common;
 using System.Diagnostics;
+using System.Reflection;
 using Zametek.Utility;
 
 namespace Company.iFX.Proxy
@@ -18,20 +19,25 @@ namespace Company.iFX.Proxy
             ArgumentNullException.ThrowIfNull(proceed);
 
             TrackingContext.NewCurrentIfEmpty();
-            using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(invocation.Method.Name);
+
+            Type serviceType = invocation.TargetType;
+            DiagnosticsConfig.NewCurrentIfEmpty(serviceType);
+            string methodName = invocation.Method.Name;
+
+            using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(methodName);
 
             activity?.SetTag(
                 Constant.TrackingCallChainTag,
                 TrackingContext.Current.CallChainId.ToDashedString());
             activity?.SetTag(
                 Constant.ServiceNamespaceTag,
-                invocation.TargetType?.Namespace);
+                serviceType.Namespace);
             activity?.SetTag(
                 Constant.ServiceTypeTag,
-                invocation.TargetType?.Name);
+                serviceType.Name);
             activity?.SetTag(
                 Constant.ServiceMethodTag,
-                invocation.Method?.Name);
+                methodName);
 
             await proceed(invocation, proceedInfo).ConfigureAwait(false);
         }
@@ -46,20 +52,25 @@ namespace Company.iFX.Proxy
             ArgumentNullException.ThrowIfNull(proceed);
 
             TrackingContext.NewCurrentIfEmpty();
-            using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(invocation.Method.Name);
+
+            Type serviceType = invocation.TargetType;
+            DiagnosticsConfig.NewCurrentIfEmpty(serviceType);
+            string methodName = invocation.Method.Name;
+
+            using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(methodName);
 
             activity?.SetTag(
                 Constant.TrackingCallChainTag,
                 TrackingContext.Current.CallChainId.ToDashedString());
             activity?.SetTag(
                 Constant.ServiceNamespaceTag,
-                invocation.TargetType?.Namespace);
+                serviceType.Namespace);
             activity?.SetTag(
                 Constant.ServiceTypeTag,
-                invocation.TargetType?.Name);
+                serviceType.Name);
             activity?.SetTag(
                 Constant.ServiceMethodTag,
-                invocation.Method?.Name);
+                methodName);
 
             return await proceed(invocation, proceedInfo).ConfigureAwait(false);
         }

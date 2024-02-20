@@ -28,6 +28,8 @@ namespace Company.iFX.Nats
             NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
 
             // Last activity for an outgoing call (i.e. Client kind).
+            DiagnosticsConfig.NewCurrentIfEmpty<TService>();
+
             using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
                 memberName,
                 ActivityKind.Client);

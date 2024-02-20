@@ -52,6 +52,24 @@ namespace Company.iFX.Common
             }
         }
 
+        public static void NewCurrentIfEmpty<T>()
+        {
+            lock (s_LockObject)
+            {
+                NewCurrentIfEmpty(typeof(T));
+            }
+        }
+
+        public static void NewCurrentIfEmpty(Type serviceType)
+        {
+            lock (s_LockObject)
+            {
+                string serviceName = serviceType.FullName ??
+                    throw new ArgumentNullException($@"Unable to get fullname for Type {serviceType.Name}.");
+                NewCurrentIfEmpty(serviceName);
+            }
+        }
+
         public static void NewCurrentIfEmpty(string serviceName)
         {
             lock (s_LockObject)

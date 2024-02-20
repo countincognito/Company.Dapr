@@ -100,6 +100,8 @@ namespace Company.iFX.Nats
                 ActivityContext parentContext = OpenTracingHelper.GetParentContext(natsHeaders);
 
                 // First activity for an incoming call (i.e. Server kind).
+                DiagnosticsConfig.NewCurrentIfEmpty<TService>();
+
                 using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
                     memberName,
                     ActivityKind.Server,
