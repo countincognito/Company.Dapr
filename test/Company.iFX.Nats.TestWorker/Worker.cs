@@ -13,13 +13,12 @@ namespace Company.iFX.Nats.TestWorker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var engine = new RegistrationEngineNatsService();
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-
-                var engine = new RegistrationEngineNatsService();
-
-                await engine.Invoke<IRegistrationEngine>(stoppingToken).ConfigureAwait(false);
+                await engine.SubscribeAllAsync<IRegistrationEngine>(cancellationToken: stoppingToken).ConfigureAwait(false);
             }
         }
     }

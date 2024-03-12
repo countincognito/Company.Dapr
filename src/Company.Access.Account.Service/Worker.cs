@@ -1,5 +1,6 @@
 using Company.Access.Account.Interface;
 using Company.iFX.Configuration;
+using NATS.Client.Core;
 
 namespace Company.Access.Account.Service
 {
@@ -16,14 +17,13 @@ namespace Company.Access.Account.Service
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             string? natsUrl = Configuration.Current.Setting<string>("NATS:URL");
+            NatsOpts natsOpts = natsUrl is null ? NatsOpts.Default : NatsOpts.Default with { Url = natsUrl };
+            var access = new AccountAccessProxy();
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-
-                var access = new AccountAccessProxy(natsUrl);
-
-                await access.Invoke<IAccountAccess>(stoppingToken).ConfigureAwait(false);
+                await access.SubscribeAllAsync<IAccountAccess>(opts: natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
             }
         }
     }
