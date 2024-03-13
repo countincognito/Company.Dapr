@@ -7,7 +7,7 @@ using ProtoBuf.Grpc;
 namespace Company.Access.Account.Service
 {
     public class AccountAccessProxy
-        : NatsServiceBase, IAccountAccess
+        : NatsServiceBase<IAccountAccess>, IAccountAccess
     {
         private readonly IAccountAccess m_Proxy;
 

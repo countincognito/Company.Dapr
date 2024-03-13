@@ -17,7 +17,7 @@ namespace Company.iFX.Nats.TestWorker
             var engine = new RegistrationEngineNatsService();
             string? natsUrl = Environment.GetEnvironmentVariable("NATS_URL") ?? "127.0.0.1:4222";
             NatsOpts natsOpts = natsUrl is null ? NatsOpts.Default : NatsOpts.Default with { Url = natsUrl };
-            await engine.AddServiceEndpointsAsync<IRegistrationEngine>("0.0.1", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
+            await engine.AddServiceEndpointsAsync("0.0.1", "Test service", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
         }
     }
 }

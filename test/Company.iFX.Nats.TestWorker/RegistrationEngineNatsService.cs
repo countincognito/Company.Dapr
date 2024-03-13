@@ -6,7 +6,7 @@ using Zametek.Utility;
 namespace Company.iFX.Nats.TestWorker
 {
     public class RegistrationEngineNatsService
-        : NatsServiceBase, IRegistrationEngine
+        : NatsServiceBase<IRegistrationEngine>, IRegistrationEngine
     {
         #region Private Members
 

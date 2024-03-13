@@ -20,7 +20,7 @@ namespace Company.Access.Account.Service
             var access = new AccountAccessProxy();
             string? natsUrl = Configuration.Current.Setting<string>("NATS:URL");
             NatsOpts natsOpts = natsUrl is null ? NatsOpts.Default : NatsOpts.Default with { Url = natsUrl };
-            await access.AddServiceEndpointsAsync<IAccountAccess>("0.0.1", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
+            await access.AddServiceEndpointsAsync("0.0.1", "Test service", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
         }
     }
 }
