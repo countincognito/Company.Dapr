@@ -1,5 +1,6 @@
 ﻿using Company.iFX.Common;
 using NATS.Client.Core;
+using NATS.Client.Services;
 using ProtoBuf.Grpc;
 using System.Diagnostics;
 using System.Reflection;
@@ -9,7 +10,7 @@ namespace Company.iFX.Nats
 {
     public abstract class NatsServiceBase
     {
-        public async Task SubscribeAllAsync<TService>(
+        public async Task AddSubscriberEndpointsAsync<TService>(
             NatsOpts? opts = null,
             NatsSubOpts? subOpts = null,
             NatsPubOpts? pubOpts = null,
@@ -22,7 +23,7 @@ namespace Company.iFX.Nats
             var taskList = new List<Task>();
 
             MethodInfo[] interfaceMethods = GetType().GetInterfaceMap(serviceType).TargetMethods;
-            MethodInfo subscribeAsyncMethod = typeof(NatsServiceBase).GetMethod(nameof(SubscribeAsync), BindingFlags.Public | BindingFlags.Static)!;
+            MethodInfo subscribeAsyncMethod = typeof(NatsServiceBase).GetMethod(nameof(AddSubscriberEndpointAsync), BindingFlags.Public | BindingFlags.Static)!;
 
             foreach (MethodInfo interfaceMethodInfo in interfaceMethods)
             {
@@ -58,13 +59,13 @@ namespace Company.iFX.Nats
 
             if (taskList.Count == 0)
             {
-                throw new InvalidOperationException($@"No methods to host on type '{typeof(TService).FullName}'.");
+                throw new InvalidOperationException($@"No methods to host as NATS subscriber endpoints on type '{serviceType.FullName}'.");
             }
 
             await Task.WhenAll([.. taskList]).ConfigureAwait(false);
         }
 
-        public static async Task SubscribeAsync<TService, TRequest, TReply>(
+        public static async Task AddSubscriberEndpointAsync<TService, TRequest, TReply>(
             NatsServiceBase targetObject,
             MethodInfo methodInfo,
             NatsOpts? opts = null,
@@ -169,370 +170,162 @@ namespace Company.iFX.Nats
                 $@"Failed to subscribe to member '{methodName}' on type '{serviceType.FullName}' with NATS.");
         }
 
-
-
-
-
-
-
-
-        //     public async Task InvokeAllSubscribers<TService>(CancellationToken cancellationToken) where TService : class
-        //     {
-        //         typeof(TService).ThrowIfNotInterface();
-        //         Debug.Assert(GetType().IsAssignableTo(typeof(TService)));
-
-        //         var taskList = new List<Task>();
-
-        //         MethodInfo[] interfaceMethods = GetType().GetInterfaceMap(typeof(TService)).TargetMethods;
-
-        //         foreach (MethodInfo methodInfo in interfaceMethods)
-        //         {
-        //             ParameterInfo[] parameters = methodInfo.GetParameters();
-
-        //             if (parameters.Length != Constant.NumberOfServiceMethodParameters)
-        //             {
-        //                 throw new InvalidOperationException(
-        //                     $@"Method '{methodInfo.Name}' on type '{typeof(TService).FullName}' must have {Constant.NumberOfServiceMethodParameters} parameters.");
-        //             }
-
-        //             Type secondParameterType = parameters[1].ParameterType;
-        //             Task? methodTask = null;
-
-        //             if (secondParameterType.IsAssignableTo(typeof(CallContext)))
-        //             {
-        //                 methodTask = (Task?)methodInfo.Invoke(this, new object[] { null!, (CallContext)cancellationToken });
-        //             }
-        //             else if (secondParameterType.IsAssignableTo(typeof(CancellationToken)))
-        //             {
-        //                 methodTask = (Task?)methodInfo.Invoke(this, new object[] { null!, cancellationToken });
-        //             }
-
-        //             if (methodTask is not null)
-        //             {
-        //                 taskList.Add(methodTask);
-        //             }
-        //         }
-
-        //         if (taskList.Count == 0)
-        //         {
-        //             throw new InvalidOperationException($@"No methods to host on type '{typeof(TService).FullName}'.");
-        //         }
-
-        //         await Task.WhenAll([.. taskList]).ConfigureAwait(false);
-        //     }
-
-
-        // public static async Task SubscribeTypedAsync<TService, TRequest, TReply>(
-        //     Func<TRequest?, CancellationToken, Task<TReply?>> func,
-        //     NatsOpts? opts = null,
-        //     NatsSubOpts? subOpts = null,
-        //     NatsPubOpts? pubOpts = null,
-        //     [CallerMemberName] string memberName = "",
-        //     CancellationToken cancellationToken = default)
-        //     where TService : class
-        //     where TRequest : class
-        //     where TReply : class
-        // {
-        //     typeof(TService).ThrowIfNotInterface();
-        //     ArgumentNullException.ThrowIfNull(func);
-
-        //     await using var nats = new NatsConnection(opts ?? NatsOpts.Default);
-
-        //     Type ServiceType = typeof(TService);
-
-        //     await foreach (NatsMsg<TRequest> msg in nats
-        //         .SubscribeAsync(
-        //             subject: Addressing.Subject<TService>(memberName),
-        //             queueGroup: Addressing.Subject<TService>(),
-        //             serializer: PolymorphicJsonSerializer.Create<TRequest>(),
-        //             opts: subOpts,
-        //             cancellationToken: cancellationToken)
-        //         .ConfigureAwait(false))
-        //     {
-        //         if (cancellationToken.IsCancellationRequested)
-        //         {
-        //             cancellationToken.ThrowIfCancellationRequested();
-        //         }
-
-        //         // Retrieve TrackingContext from headers, or add a
-        //         // TrackingContext to headers if they don't already exist.
-        //         NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(msg.Headers ?? []);
-
-        //         // NATS does not support OpenTracing yet, so we need to correct for that.
-        //         ActivityContext parentContext = OpenTracingHelper.GetParentContext(natsHeaders);
-
-        //         // First activity for an incoming call (i.e. Server kind).
-        //         DiagnosticsConfig.NewCurrentIfEmpty<TService>();
-
-        //         using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
-        //             memberName,
-        //             ActivityKind.Server,
-        //             parentContext);
-
-        //         TrackingContext.NewCurrentIfEmpty();
-
-        //         activity?.SetTag(
-        //             Constant.TrackingCallChainTag,
-        //             TrackingContext.Current.CallChainId.ToDashedString());
-        //         activity?.SetTag(
-        //             Constant.ServiceNamespaceTag,
-        //             ServiceType.Namespace);
-        //         activity?.SetTag(
-        //             Constant.ServiceTypeTag,
-        //             ServiceType.Name);
-        //         activity?.SetTag(
-        //             Constant.ServiceMethodTag,
-        //             memberName);
-
-        //         TReply? response = await func(msg.Data, cancellationToken);
-
-        //         await msg
-        //             .ReplyAsync(
-        //                 data: response,
-        //                 headers: natsHeaders,
-        //                 serializer: PolymorphicJsonSerializer.Create<TReply?>(),
-        //                 opts: pubOpts,
-        //                 cancellationToken: cancellationToken)
-        //             .ConfigureAwait(false);
-
-        //         if (cancellationToken.IsCancellationRequested)
-        //         {
-        //             cancellationToken.ThrowIfCancellationRequested();
-        //         }
-        //     }
-
-        //     if (cancellationToken.IsCancellationRequested)
-        //     {
-        //         cancellationToken.ThrowIfCancellationRequested();
-        //     }
-
-        //     throw new InvalidOperationException(
-        //         $@"Failed to subscribe to member '{memberName}' on type '{typeof(TService).FullName}' with NATS.");
-        // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // public static async Task<TReply?> AddEndpointAsync<TService, TRequest, TReply>(
-        //     Func<TRequest?, CancellationToken, Task<TReply?>> func,
-        //     NatsOpts? opts = null,
-        //     NatsSubOpts? subOpts = null,
-        //     NatsPubOpts? pubOpts = null,
-        //     NatsHeaders? headers = null,
-        //     [CallerMemberName] string memberName = "",
-        //     CancellationToken cancellationToken = default)
-        //     where TService : class
-        //     where TRequest : class
-        //     where TReply : class
-        // {
-        //     typeof(TService).ThrowIfNotInterface();
-        //     ArgumentNullException.ThrowIfNull(func);
-
-        //     await using var nats = new NatsConnection(opts ?? NatsOpts.Default);
-
-        //     var svc = new NatsSvcContext(nats);
-
-        //     // Retrieve TrackingContext from headers, or add a
-        //     // TrackingContext to headers if they don't already exist.
-        //     NatsHeaders natsHeaders = TrackingContextHelper.ProcessHeaders(headers ?? []);
-
-        //     Type ServiceType = typeof(TService);
-
-
-
-
-
-
-
-
-        //     var service = await svc.AddServiceAsync(new NatsSvcConfig(ServiceType.Name, "0.0.1")
-        //     {
-        //         Description = "Test service"
-        //     }, cancellationToken).ConfigureAwait(false);
-
-
-
-
-        //     await service.AddEndpointAsync(
-        //         Handler,
-        //         subject: Addressing.Subject<TService>(memberName),
-        //         queueGroup: Addressing.Subject<TService>(),
-        //         serializer: PolymorphicJsonSerializer.Create<TRequest>(),
-        //         //opts: subOpts,
-        //         cancellationToken: cancellationToken).ConfigureAwait(false);
-
-
-        //     async ValueTask Handler(NatsSvcMsg<TRequest> msg)
-        //     {
-        //         if (cancellationToken.IsCancellationRequested)
-        //         {
-        //             cancellationToken.ThrowIfCancellationRequested();
-        //         }
-
-
-        //         // Retrieve TrackingContext from headers, or add a
-        //         // TrackingContext to headers if they don't already exist.
-        //         natsHeaders = TrackingContextHelper.ProcessHeaders(msg.Headers ?? []);
-
-        //         // NATS does not support OpenTracing yet, so we need to correct for that.
-        //         ActivityContext parentContext = OpenTracingHelper.GetParentContext(natsHeaders);
-
-        //         // First activity for an incoming call (i.e. Server kind).
-        //         DiagnosticsConfig.NewCurrentIfEmpty<TService>();
-
-        //         using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
-        //             memberName,
-        //             ActivityKind.Server,
-        //             parentContext);
-
-        //         TrackingContext.NewCurrentIfEmpty();
-
-        //         activity?.SetTag(
-        //             Constant.TrackingCallChainTag,
-        //             TrackingContext.Current.CallChainId.ToDashedString());
-        //         activity?.SetTag(
-        //             Constant.ServiceNamespaceTag,
-        //             ServiceType.Namespace);
-        //         activity?.SetTag(
-        //             Constant.ServiceTypeTag,
-        //             ServiceType.Name);
-        //         activity?.SetTag(
-        //             Constant.ServiceMethodTag,
-        //             memberName);
-
-        //         TReply? response = await func(msg.Data, cancellationToken);
-
-        //         await msg
-        //             .ReplyAsync(
-        //                 data: response,
-        //                 headers: natsHeaders,
-        //                 serializer: PolymorphicJsonSerializer.Create<TReply?>(),
-        //                 opts: pubOpts,
-        //                 cancellationToken: cancellationToken)
-        //             .ConfigureAwait(false);
-
-        //         if (cancellationToken.IsCancellationRequested)
-        //         {
-        //             cancellationToken.ThrowIfCancellationRequested();
-        //         }
-        //     }
-
-
-
-
-
-
-        //     //var root = await service.AddGroupAsync("minmax");
-
-        //     // await service.AddEndpointAsync(HandleMin, "min", serializer: NATS.Client.Serializers.Json.NatsJsonSerializer<int[]>.Default);
-        //     // await service.AddEndpointAsync(HandleMax, "max", serializer: NATS.Client.Serializers.Json.NatsJsonSerializer<int[]>.Default);
-
-
-        //     // ValueTask HandleMin(NatsSvcMsg<int[]> msg)
-        //     // {
-        //     //     var min = msg.Data.Min();
-        //     //     return msg.ReplyAsync(min);
-        //     // }
-
-
-        //     // ValueTask HandleMax(NatsSvcMsg<int[]> msg)
-        //     // {
-        //     //     var min = msg.Data.Max();
-        //     //     return msg.ReplyAsync(min);
-        //     // }
-
-
-
-
-        //     // await foreach (NatsMsg<TRequest> msg in nats
-        //     //     .SubscribeAsync(
-        //     //         subject: Addressing.Subject<TService>(memberName),
-        //     //         queueGroup: Addressing.Subject<TService>(),
-        //     //         serializer: PolymorphicJsonSerializer.Create<TRequest>(),
-        //     //         opts: subOpts,
-        //     //         cancellationToken: cancellationToken)
-        //     //     .ConfigureAwait(false))
-        //     // {
-        //     //     if (cancellationToken.IsCancellationRequested)
-        //     //     {
-        //     //         cancellationToken.ThrowIfCancellationRequested();
-        //     //     }
-
-        //     //     // Retrieve TrackingContext from headers, or add a
-        //     //     // TrackingContext to headers if they don't already exist.
-        //     //     natsHeaders = TrackingContextHelper.ProcessHeaders(msg.Headers ?? []);
-
-        //     //     // NATS does not support OpenTracing yet, so we need to correct for that.
-        //     //     ActivityContext parentContext = OpenTracingHelper.GetParentContext(natsHeaders);
-
-        //     //     // First activity for an incoming call (i.e. Server kind).
-        //     //     DiagnosticsConfig.NewCurrentIfEmpty<TService>();
-
-        //     //     using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
-        //     //         memberName,
-        //     //         ActivityKind.Server,
-        //     //         parentContext);
-
-        //     //     TrackingContext.NewCurrentIfEmpty();
-
-        //     //     activity?.SetTag(
-        //     //         Constant.TrackingCallChainTag,
-        //     //         TrackingContext.Current.CallChainId.ToDashedString());
-        //     //     activity?.SetTag(
-        //     //         Constant.ServiceNamespaceTag,
-        //     //         ServiceType.Namespace);
-        //     //     activity?.SetTag(
-        //     //         Constant.ServiceTypeTag,
-        //     //         ServiceType.Name);
-        //     //     activity?.SetTag(
-        //     //         Constant.ServiceMethodTag,
-        //     //         memberName);
-
-        //     //     TReply? response = await func(msg.Data, cancellationToken);
-
-        //     //     await msg
-        //     //         .ReplyAsync(
-        //     //             data: response,
-        //     //             headers: natsHeaders,
-        //     //             serializer: PolymorphicJsonSerializer.Create<TReply?>(),
-        //     //             opts: pubOpts,
-        //     //             cancellationToken: cancellationToken)
-        //     //         .ConfigureAwait(false);
-
-        //     //     if (cancellationToken.IsCancellationRequested)
-        //     //     {
-        //     //         cancellationToken.ThrowIfCancellationRequested();
-        //     //     }
-        //     // }
-
-        //     // if (cancellationToken.IsCancellationRequested)
-        //     // {
-        //     //     cancellationToken.ThrowIfCancellationRequested();
-        //     // }
-
-        //     throw new InvalidOperationException(
-        //         $@"Failed to subscribe to member '{memberName}' on type '{typeof(TService).FullName}' with NATS.");
-        // }
-
+        public async Task AddServiceEndpointsAsync<TService>(
+            string serviceVersion,
+            string serviceDescription,
+            NatsOpts? natsOpts,
+            NatsPubOpts? pubOpts = null,
+            CancellationToken cancellationToken = default) where TService : class
+        {
+            Type serviceType = typeof(TService);
+            serviceType.ThrowIfNotInterface();
+            Debug.Assert(GetType().IsAssignableTo(serviceType));
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(serviceVersion);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(serviceDescription);
+            ArgumentNullException.ThrowIfNull(natsOpts);
+
+            await using var nats = new NatsConnection(natsOpts ?? NatsOpts.Default);
+            var svc = new NatsSvcContext(nats);
+
+            INatsSvcServer service = await svc.AddServiceAsync(new NatsSvcConfig(serviceType.Name, serviceVersion)
+            {
+                Description = serviceDescription
+            }, cancellationToken).ConfigureAwait(false);
+
+            // NatsSvcServer.Group root = await service.AddGroupAsync(
+            //     Addressing.Subject<TService>(),
+            //     cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            var taskList = new List<Task>();
+
+            MethodInfo[] interfaceMethods = GetType().GetInterfaceMap(serviceType).TargetMethods;
+            MethodInfo addEndpointAsyncMethod = typeof(NatsServiceBase).GetMethod(nameof(AddServiceEndpointAsync), BindingFlags.Public | BindingFlags.Static)!;
+
+            foreach (MethodInfo interfaceMethodInfo in interfaceMethods)
+            {
+                string methodName = interfaceMethodInfo.Name;
+                ParameterInfo[] parameters = interfaceMethodInfo.GetParameters();
+
+                if (parameters.Length != Constant.NumberOfServiceMethodParameters)
+                {
+                    throw new InvalidOperationException(
+                        $@"Method '{methodName}' on type '{serviceType.FullName}' must have {Constant.NumberOfServiceMethodParameters} parameters.");
+                }
+
+                Type firstParameterType = parameters[0].ParameterType;
+                Type returnType = interfaceMethodInfo.ReturnType;
+
+                if (returnType.GetGenericTypeDefinition() == typeof(Task<>))
+                {
+                    returnType = returnType.GenericTypeArguments[0]; // Actual return type inside Task.
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        $@"Method '{methodName}' on type '{serviceType.FullName}' must have a generic Task<> as return type.");
+                }
+
+                Type cancellationTokenType = parameters[1].ParameterType;
+
+                MethodInfo addEndpointAsyncGenericMethod = addEndpointAsyncMethod.MakeGenericMethod(serviceType, firstParameterType, returnType);
+                Task? methodTask = (Task?)addEndpointAsyncGenericMethod.Invoke(
+                    this,
+                    [this, interfaceMethodInfo, service, cancellationTokenType, pubOpts, cancellationToken]);
+
+                if (methodTask is not null)
+                {
+                    taskList.Add(methodTask);
+                }
+            }
+
+            if (taskList.Count == 0)
+            {
+                throw new InvalidOperationException($@"No methods to host as NATS service endpoints on type '{serviceType.FullName}'.");
+            }
+
+            await Task.WhenAll([.. taskList]).ConfigureAwait(false);
+
+            // Await indefinitely.
+            await Task.Delay(-1, cancellationToken);
+        }
+
+        public static async Task AddServiceEndpointAsync<TService, TRequest, TReply>(
+            NatsServiceBase targetObject,
+            MethodInfo methodInfo,
+            INatsSvcServer root,
+            Type cancellationTokenType,
+            NatsPubOpts? pubOpts = null,
+            CancellationToken cancellationToken = default)
+            where TService : class
+            where TRequest : class
+            where TReply : class
+        {
+            Type serviceType = typeof(TService);
+            serviceType.ThrowIfNotInterface();
+            ArgumentNullException.ThrowIfNull(targetObject);
+            ArgumentNullException.ThrowIfNull(methodInfo);
+            ArgumentNullException.ThrowIfNull(root);
+            ArgumentNullException.ThrowIfNull(cancellationTokenType);
+
+            string methodName = methodInfo.Name;
+
+            object token = cancellationToken;
+            if (cancellationTokenType.IsAssignableTo(typeof(CallContext)))
+            {
+                token = (CallContext)cancellationToken;
+            }
+
+            async ValueTask Handler(NatsSvcMsg<TRequest> msg)
+            {
+                FieldInfo natsMsgField = typeof(NatsSvcMsg<TRequest>).GetField(@"_msg", BindingFlags.NonPublic | BindingFlags.Instance)!;
+                NatsMsg<TRequest> natsMsg = (NatsMsg<TRequest>)natsMsgField.GetValue(msg)!;
+
+                // Retrieve TrackingContext from headers, or add a
+                // TrackingContext to headers if they don't already exist.
+                NatsHeaders? natsHeaders = TrackingContextHelper.ProcessHeaders(natsMsg.Headers ?? []);
+
+                // NATS does not support OpenTracing yet, so we need to correct for that.
+                ActivityContext parentContext = OpenTracingHelper.GetParentContext(natsHeaders);
+
+                // First activity for an incoming call (i.e. Server kind).
+                DiagnosticsConfig.NewCurrentIfEmpty<TService>();
+
+                using Activity? activity = DiagnosticsConfig.Current.ActivitySource.StartActivity(
+                    methodName,
+                    ActivityKind.Server,
+                    parentContext);
+                TrackingContext.NewCurrentIfEmpty();
+                activity?.SetTag(
+                    Constant.TrackingCallChainTag,
+                    TrackingContext.Current.CallChainId.ToDashedString());
+                activity?.SetTag(
+                    Constant.ServiceNamespaceTag,
+                    serviceType.Namespace);
+                activity?.SetTag(
+                    Constant.ServiceTypeTag,
+                    serviceType.Name);
+                activity?.SetTag(
+                    Constant.ServiceMethodTag,
+                    methodName);
+
+                TReply response = await ((Task<TReply>)methodInfo.Invoke(targetObject, [msg.Data, token])!).ConfigureAwait(false);
+
+                await msg
+                    .ReplyAsync(
+                        data: response,
+                        headers: natsHeaders,
+                        serializer: PolymorphicJsonSerializer.Create<TReply?>(),
+                        opts: pubOpts,
+                        cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
+            await root.AddEndpointAsync(
+                Handler,
+                name: methodName,
+                subject: Addressing.Subject<TService>(methodName),
+                serializer: PolymorphicJsonSerializer.Create<TRequest>(),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
     }
 }

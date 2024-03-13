@@ -1,25 +1,23 @@
 using Company.Engine.Registration.Interface;
+using NATS.Client.Core;
 
 namespace Company.iFX.Nats.TestWorker
 {
     public class Worker : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
+        private readonly ILogger<Worker> _Logger;
 
         public Worker(ILogger<Worker> logger)
         {
-            _logger = logger;
+            _Logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var engine = new RegistrationEngineNatsService();
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await engine.SubscribeAllAsync<IRegistrationEngine>(cancellationToken: stoppingToken).ConfigureAwait(false);
-            }
+            string? natsUrl = Environment.GetEnvironmentVariable("NATS_URL") ?? "127.0.0.1:4222";
+            NatsOpts natsOpts = natsUrl is null ? NatsOpts.Default : NatsOpts.Default with { Url = natsUrl };
+            await engine.AddServiceEndpointsAsync<IRegistrationEngine>("0.0.1", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
         }
     }
 }

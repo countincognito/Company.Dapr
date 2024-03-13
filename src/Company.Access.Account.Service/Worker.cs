@@ -7,24 +7,20 @@ namespace Company.Access.Account.Service
     public class Worker
         : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
+        private readonly ILogger<Worker> _Logger;
 
         public Worker(ILogger<Worker> logger)
         {
-            _logger = logger;
+            _Logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _Logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+            var access = new AccountAccessProxy();
             string? natsUrl = Configuration.Current.Setting<string>("NATS:URL");
             NatsOpts natsOpts = natsUrl is null ? NatsOpts.Default : NatsOpts.Default with { Url = natsUrl };
-            var access = new AccountAccessProxy();
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await access.SubscribeAllAsync<IAccountAccess>(opts: natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
-            }
+            await access.AddServiceEndpointsAsync<IAccountAccess>("0.0.1", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
         }
     }
 }

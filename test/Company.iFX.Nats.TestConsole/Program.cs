@@ -37,21 +37,36 @@ namespace Company.iFX.Nats.TestConsole
 
                 try
                 {
-                    TrackingContext.NewCurrent();
+                    {
+                        TrackingContext.NewCurrent();
+                        Console.WriteLine($@"CallChainId = {TrackingContext.Current.CallChainId}");
+                        var engineMobileResponse = await engine
+                            .RegisterAccountAsync(engineMobileRequest)
+                            .ConfigureAwait(false) as Engine.Registration.Data.Mobile.RegisterResponse;
+                        Console.WriteLine(engineMobileResponse!.Name);
+                        Console.WriteLine(engineMobileResponse!.MobileMessage);
 
-                    Console.WriteLine($@"CallChainId = {TrackingContext.Current.CallChainId}");
+                        var engineWebResponse = await engine
+                            .RegisterAccountAsync(engineWebRequest)
+                            .ConfigureAwait(false) as Engine.Registration.Data.Web.RegisterResponse;
+                        Console.WriteLine(engineWebResponse!.Name);
+                        Console.WriteLine(engineWebResponse!.WebMessage);
+                    }
+                    {
+                        TrackingContext.NewCurrent();
+                        Console.WriteLine($@"CallChainId = {TrackingContext.Current.CallChainId}");
+                        var engineMobileResponse = await engine
+                            .RegisterMemberAsync(engineMobileRequest)
+                            .ConfigureAwait(false) as Engine.Registration.Data.Mobile.RegisterResponse;
+                        Console.WriteLine(engineMobileResponse!.Name);
+                        Console.WriteLine(engineMobileResponse!.MobileMessage);
 
-                    var engineMobileResponse = await engine
-                        .RegisterAccountAsync(engineMobileRequest)
-                        .ConfigureAwait(false) as Engine.Registration.Data.Mobile.RegisterResponse;
-                    Console.WriteLine(engineMobileResponse!.Name);
-                    Console.WriteLine(engineMobileResponse!.MobileMessage);
-
-                    var engineWebResponse = await engine
-                        .RegisterAccountAsync(engineWebRequest)
-                        .ConfigureAwait(false) as Engine.Registration.Data.Web.RegisterResponse;
-                    Console.WriteLine(engineWebResponse!.Name);
-                    Console.WriteLine(engineWebResponse!.WebMessage);
+                        var engineWebResponse = await engine
+                            .RegisterMemberAsync(engineWebRequest)
+                            .ConfigureAwait(false) as Engine.Registration.Data.Web.RegisterResponse;
+                        Console.WriteLine(engineWebResponse!.Name);
+                        Console.WriteLine(engineWebResponse!.WebMessage);
+                    }
                 }
                 catch (Exception ex)
                 {
