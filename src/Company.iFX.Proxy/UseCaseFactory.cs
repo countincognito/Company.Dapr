@@ -25,7 +25,8 @@ namespace Company.iFX.Proxy
             // DESIGN NOTE: Default convention.
             // Evolve your factories to allow consumers to inject a 'contextual' convention.
 
-            typeof(TService).ThrowIfNotInterface();
+            Type serviceType = typeof(TService);
+            serviceType.ThrowIfNotInterface();
             Debug.Assert(callerName is not null);
 
             string? criteriaNamespace = paramBase.GetType().Namespace;
@@ -33,8 +34,8 @@ namespace Company.iFX.Proxy
 
             string useCaseTypeName = $"{criteriaNamespace.Replace(ConventionKeyword.Data, ConventionKeyword.Interface)}.I{ComponentKeyword.UseCases}";
 
-            Type? useCaseInterfaceType = Assembly.GetAssembly(typeof(TService))?.GetType(useCaseTypeName);
-            Debug.Assert(useCaseInterfaceType is not null, $@"Could not find the type {useCaseInterfaceType}");
+            Type? useCaseInterfaceType = Assembly.GetAssembly(serviceType)?.GetType(useCaseTypeName);
+            Debug.Assert(useCaseInterfaceType is not null, $@"Could not find the type {useCaseTypeName}");
             useCaseInterfaceType.ThrowIfNotInterface();
 
             MethodInfo? methodName = useCaseInterfaceType.GetMethod(callerName);
