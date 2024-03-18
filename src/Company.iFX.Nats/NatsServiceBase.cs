@@ -216,6 +216,11 @@ namespace Company.iFX.Nats
 
             // Await indefinitely.
             await Task.Delay(-1, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+            }
         }
 
         public static async Task AddServiceEndpointAsync<TRequest, TReply>(
@@ -263,7 +268,9 @@ namespace Company.iFX.Nats
                     methodName,
                     ActivityKind.Server,
                     parentContext);
+
                 TrackingContext.NewCurrentIfEmpty();
+
                 activity?.SetTag(
                     Constant.TrackingCallChainTag,
                     TrackingContext.Current.CallChainId.ToDashedString());
@@ -301,7 +308,6 @@ namespace Company.iFX.Nats
         {
             ArgumentNullException.ThrowIfNull(methodInfo);
             string methodName = methodInfo.Name;
-
 
             ParameterInfo[] parameters = methodInfo.GetParameters();
 
