@@ -3,8 +3,8 @@ using ProtoBuf;
 
 namespace Company.Manager.Membership.Data
 {
-    [ProtoInclude(11, typeof(Mobile.RegisterResponse))]
-    [ProtoInclude(12, typeof(Web.RegisterResponse))]
+    [ProtoInclude(101, typeof(Mobile.RegisterResponse))]
+    [ProtoInclude(102, typeof(Web.RegisterResponse))]
     [ProtoContract]
     [Serializable]
     public abstract class RegisterResponseBase

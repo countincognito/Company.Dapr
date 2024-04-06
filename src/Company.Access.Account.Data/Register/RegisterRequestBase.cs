@@ -2,8 +2,8 @@
 
 namespace Company.Access.Account.Data
 {
-    [ProtoInclude(11, typeof(Mobile.RegisterRequest))]
-    [ProtoInclude(12, typeof(Web.RegisterRequest))]
+    [ProtoInclude(101, typeof(Mobile.RegisterRequest))]
+    [ProtoInclude(102, typeof(Web.RegisterRequest))]
     [ProtoContract]
     [Serializable]
     public abstract class RegisterRequestBase
