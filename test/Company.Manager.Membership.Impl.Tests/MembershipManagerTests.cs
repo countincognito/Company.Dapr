@@ -1,8 +1,8 @@
 using Company.iFX.Test;
 using Company.Manager.Membership.Interface;
-using FluentAssertions;
 using Moq;
 using ProtoBuf.Grpc;
+using Shouldly;
 
 namespace Company.Manager.Membership.Impl.Tests
 {
@@ -63,11 +63,11 @@ namespace Company.Manager.Membership.Impl.Tests
                         DateOfBirth = ServiceRunner.GenerateRandomDateTime(),
                     },
                     default);
-                response.Should().NotBeNull();
+                response.ShouldNotBeNull();
                 var webResponse = response as Data.Web.RegisterResponse;
-                webResponse.Should().NotBeNull();
-                webResponse!.Name.Should().Be(name);
-                webResponse!.WebMessage.Should().Be(webMessage);
+                webResponse.ShouldNotBeNull();
+                webResponse!.Name.ShouldBe(name);
+                webResponse!.WebMessage.ShouldBe(webMessage);
             });
 
             await m_TestEnvironment.TestService(
@@ -104,11 +104,11 @@ namespace Company.Manager.Membership.Impl.Tests
                         Password = ServiceRunner.GenerateRandomString()
                     },
                     default);
-                response.Should().NotBeNull();
+                response.ShouldNotBeNull();
                 var mobileResponse = response as Data.Mobile.RegisterResponse;
-                mobileResponse.Should().NotBeNull();
-                mobileResponse!.Name.Should().Be(name);
-                mobileResponse!.MobileMessage.Should().Be(mobileMessage);
+                mobileResponse.ShouldNotBeNull();
+                mobileResponse!.Name.ShouldBe(name);
+                mobileResponse!.MobileMessage.ShouldBe(mobileMessage);
             });
 
             await m_TestEnvironment.TestService(

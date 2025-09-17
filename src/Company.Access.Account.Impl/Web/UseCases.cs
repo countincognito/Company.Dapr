@@ -1,11 +1,8 @@
 using Company.Access.Account.Data.Web;
 using Company.Access.Account.Interface.Web;
 using Company.iFX.Proxy;
-using Google.Protobuf.WellKnownTypes;
 using ProtoBuf.Grpc;
 using Serilog;
-using System.Diagnostics;
-using Zametek.Utility;
 using Zametek.Utility.Logging;
 
 namespace Company.Access.Account.Impl.Web

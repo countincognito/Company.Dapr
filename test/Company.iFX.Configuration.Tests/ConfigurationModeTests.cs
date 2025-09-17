@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 
 namespace Company.iFX.Configuration.Tests
 {
@@ -8,7 +8,7 @@ namespace Company.iFX.Configuration.Tests
         public void ConfigurationMode_GivenDefaultConstructor_ThenNotSetBecomesStandard()
         {
             var configMode = new ConfigurationMode();
-            configMode.State.Should().Be(ConfigurationState.Standard);
+            configMode.State.ShouldBe(ConfigurationState.Standard);
         }
 
         [Theory]
@@ -20,7 +20,7 @@ namespace Company.iFX.Configuration.Tests
             ConfigurationState result)
         {
             var configMode = new ConfigurationMode(input);
-            configMode.State.Should().Be(result);
+            configMode.State.ShouldBe(result);
         }
 
         [Theory]
@@ -33,7 +33,7 @@ namespace Company.iFX.Configuration.Tests
         {
             var configMode = new ConfigurationMode(input);
             configMode.ActivateTest();
-            configMode.State.Should().Be(result);
+            configMode.State.ShouldBe(result);
         }
 
         [Theory]
@@ -45,9 +45,9 @@ namespace Company.iFX.Configuration.Tests
             ConfigurationState result)
         {
             var configMode = new ConfigurationMode(input);
-            configMode.State.Should().Be(result);
+            configMode.State.ShouldBe(result);
             configMode.ActivateTest();
-            configMode.State.Should().Be(result);
+            configMode.State.ShouldBe(result);
         }
     }
 }
