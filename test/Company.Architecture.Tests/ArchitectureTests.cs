@@ -1,5 +1,6 @@
 using ArchUnitNET.Domain;
 using ArchUnitNET.Fluent;
+using ArchUnitNET.Fluent.Syntax.Elements.Types;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnit;
 using Company.iFX.Common;
@@ -20,54 +21,54 @@ namespace Company.Architecture.Tests
 
         private static readonly ArchUnitNET.Domain.Architecture s_Architecture;
 
-        private static readonly IObjectProvider<IType> s_ManagerLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_ManagerLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Manager}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Manager}\..+")
             .As($@"{ComponentKeyword.Manager} Layer");
 
-        private static readonly IObjectProvider<IType> s_MembershipManagerLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_MembershipManagerLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Manager}\.{s_Membership}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Manager}\.{s_Membership}\..+")
             .As($@"{s_Membership}{ComponentKeyword.Manager} Layer");
 
-        private static readonly IObjectProvider<IType> s_EngineLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_EngineLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Engine}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Engine}\..+")
             .As($@"{ComponentKeyword.Engine} Layer");
 
-        private static readonly IObjectProvider<IType> s_RegistrationEngineLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_RegistrationEngineLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Engine}\.{s_Registration}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Engine}\.{s_Registration}\..+")
             .As($@"{s_Registration}{ComponentKeyword.Engine} Layer");
 
-        private static readonly IObjectProvider<IType> s_AccessLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_AccessLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Access}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Access}\..+")
             .As($@"{ComponentKeyword.Access} Layer");
 
-        private static readonly IObjectProvider<IType> s_UserAccessLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_UserAccessLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Access}\.{s_User}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Access}\.{s_User}\..+")
             .As($@"{s_User}{ComponentKeyword.Access} Layer");
 
-        private static readonly IObjectProvider<IType> s_UtilityLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_UtilityLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Utility}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Utility}\..+")
             .As($@"{ComponentKeyword.Utility} Layer");
 
-        private static readonly IObjectProvider<IType> s_EncryptionUtilityLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_EncryptionUtilityLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Utility}\.{s_Encryption}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Utility}\.{s_Encryption}\..+")
             .As($@"{s_Encryption}{ComponentKeyword.Utility} Layer");
 
-        private static readonly IObjectProvider<IType> s_CacheUtilityLayer =
+        private static readonly GivenTypesConjunctionWithDescription s_CacheUtilityLayer =
             Types().That()
-            .ResideInNamespace($@"{s_CompanyName}\.{ComponentKeyword.Utility}\.{s_Cache}\..+", true)
+            .ResideInNamespaceMatching($@"{s_CompanyName}\.{ComponentKeyword.Utility}\.{s_Cache}\..+")
             .As($@"{s_Cache}{ComponentKeyword.Utility} Layer");
 
-        //private static readonly IObjectProvider<IType> s_iFXLayer =
+        //private static readonly GivenTypesConjunctionWithDescription s_iFXLayer =
         //    Types().That()
-        //    .ResideInNamespace($@"{s_CompanyName}\.iFX\..+", true)
+        //    .ResideInNamespaceMatching($@"{s_CompanyName}\.iFX\..+")
         //    .As($@"iFX Layer");
 
         static ArchitectureTests()
@@ -95,7 +96,7 @@ namespace Company.Architecture.Tests
                 assemblyList.Add(assembly);
             }
 
-            return assemblyList.ToArray();
+            return [.. assemblyList];
         }
 
         [Fact]
@@ -223,12 +224,12 @@ namespace Company.Architecture.Tests
             IEnumerable<IType> cacheUtilityTypes = s_CacheUtilityLayer.GetObjects(s_Architecture);
             IEnumerable<IType> utilityTypesOtherThanCache = allUtilityTypes.Except(cacheUtilityTypes);
 
-            IArchRule rule1 =
+            TypesShouldConjunctionWithDescription rule1 =
                 Types().That().Are(encryptionUtilityTypes).Should()
                 .NotDependOnAny(utilityTypesOtherThanEncryption)
                 .Because($@"{s_Encryption}{ComponentKeyword.Utility} should not reference another {ComponentKeyword.Utility}.");
 
-            IArchRule rule2 =
+            TypesShouldConjunctionWithDescription rule2 =
                 Types().That().Are(cacheUtilityTypes).Should()
                 .NotDependOnAny(utilityTypesOtherThanCache)
                 .Because($@"{s_Cache}{ComponentKeyword.Utility} should not reference another {ComponentKeyword.Utility}.");

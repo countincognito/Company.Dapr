@@ -1,4 +1,3 @@
-using Company.Access.Account.Interface;
 using Company.iFX.Configuration;
 using NATS.Client.Core;
 
