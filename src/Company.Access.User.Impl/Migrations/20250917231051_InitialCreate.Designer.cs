@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Company.Access.User.Impl.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20230909200003_InitialCreate")]
+    [Migration("20250917231051_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Company.Access.User.Impl.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -31,12 +31,14 @@ namespace Company.Access.User.Impl.Migrations
                         .HasColumnType("text");
 
                     b.Property<byte[]>("EncryptedValue")
+                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<Guid>("SymmetricKeyId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Value")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Name");

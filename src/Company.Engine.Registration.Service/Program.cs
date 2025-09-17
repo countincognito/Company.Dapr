@@ -32,8 +32,9 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company")
 
         services.AddScoped(_ => NatsClient.Create<IAccountAccess>(natsUrl));
 
-        services.AddScoped(_ => TrackingContextDaprClient.Create<IUserAccess>());
-        services.AddTrackingContextGrpcInterceptor();
+        services.AddScoped(_ => NatsClient.Create<IUserAccess>(natsUrl));
+        //services.AddScoped(_ => TrackingContextDaprClient.Create<IUserAccess>());
+        //services.AddTrackingContextGrpcInterceptor();
 
         services.AddCodeFirstGrpc();
         services.AddCodeFirstGrpcReflection();

@@ -1,7 +1,5 @@
-using Company.Access.Account.Impl;
 using Company.Access.Account.Service;
 using Company.iFX.Configuration;
-using Company.iFX.Grpc;
 using Company.iFX.Hosting;
 using Company.iFX.Logging;
 using Company.iFX.Proxy;
@@ -9,9 +7,6 @@ using Company.iFX.Telemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using Polly;
-using ProtoBuf.Grpc.Server;
-using ProtoBuf.Meta;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;

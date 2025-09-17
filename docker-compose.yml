@@ -169,6 +169,7 @@ services:
       - CONNECTIONSTRINGS__POSTGRES_USERS=Server=postgres.image;Port=${POSTGRES_PORT};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Database=Users;Pooling=true;
       - CONNECTIONSTRINGS__SEQ=http://seq.image:${SEQ_API_PORT}
       - CONNECTIONSTRINGS__OTEL=http://otel-collector:4317
+      - NATS__URL=nats://nats:4222
     #networks:
     #  - company-dapr
 

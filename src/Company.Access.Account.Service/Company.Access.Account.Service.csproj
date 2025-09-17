@@ -10,15 +10,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-		<PackageReference Include="Polly" Version="8.6.3" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-		<!-- <PackageReference Include="Zametek.Utility.Logging.AspNetCore" Version="1.2.1" /> -->
+	<PackageReference Include="Polly" Version="8.6.3" />
+	<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+	<!-- <PackageReference Include="Zametek.Utility.Logging.AspNetCore" Version="1.2.1" /> -->
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Company.Access.Account.Impl\Company.Access.Account.Impl.csproj" />
-		<ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
+	<ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
     <ProjectReference Include="..\Company.iFX.Nats\Company.iFX.Nats.csproj" />
   </ItemGroup>
 

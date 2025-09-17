@@ -18,7 +18,4 @@
     <None Include=".dockerignore" />
     <None Include="otel-collector-config.yaml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="dapr\components\" />
-  </ItemGroup>
 </Project>

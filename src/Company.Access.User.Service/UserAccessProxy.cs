@@ -1,12 +1,13 @@
 ﻿using Company.Access.User.Data;
 using Company.Access.User.Interface;
+using Company.iFX.Nats;
 using Company.iFX.Proxy;
 using ProtoBuf.Grpc;
 
 namespace Company.Access.User.Service
 {
     public class UserAccessProxy
-        : IUserAccess
+        : NatsServiceBase<IUserAccess>, IUserAccess
     {
         private readonly IUserAccess m_Proxy;
 

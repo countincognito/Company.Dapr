@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["src/Company.Access.User.Impl/Company.Access.User.Impl.csproj", "src/Company.Access.User.Impl/"]
 COPY ["src/Company.iFX.Dapr/Company.iFX.Dapr.csproj", "src/Company.iFX.Dapr/"]
+COPY ["src/Company.iFX.Nats/Company.iFX.Nats.csproj", "src/Company.iFX.Nats/"]
 COPY ["src/Company.iFX.Hosting/Company.iFX.Hosting.csproj", "src/Company.iFX.Hosting/"]
 COPY ["src/Company.Access.User.Service/Company.Access.User.Service.csproj", "src/Company.Access.User.Service/"]
 RUN dotnet restore "src/Company.Access.User.Service/Company.Access.User.Service.csproj"

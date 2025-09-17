@@ -1,7 +1,7 @@
 using Company.iFX.Configuration;
 using NATS.Client.Core;
 
-namespace Company.Access.Account.Service
+namespace Company.Access.User.Service
 {
     public class Worker
         : BackgroundService
@@ -16,10 +16,10 @@ namespace Company.Access.Account.Service
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _Logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            var access = new AccountAccessProxy();
+            var access = new UserAccessProxy();
             string? natsUrl = Configuration.Current.Setting<string>("NATS:URL");
             NatsOpts natsOpts = natsUrl is null ? NatsOpts.Default : NatsOpts.Default with { Url = natsUrl };
-            await access.AddServiceEndpointsAsync("0.0.1", "Account Access Service", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
+            await access.AddServiceEndpointsAsync("0.0.1", "User Access Service", natsOpts, cancellationToken: stoppingToken).ConfigureAwait(false);
         }
     }
 }

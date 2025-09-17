@@ -101,21 +101,8 @@ var hostBuilder = Hosting.CreateGenericBuilder(args, @"Company", @"Zametek")
 
         services.AddPooledDbContextFactory<UserDbContext>(
             options => options.UseNpgsql(Configuration.Current.Setting<string>("ConnectionStrings:postgres_users")));
-    })
-    .ConfigureWebHostDefaults(webBuilder =>
-    {
-        webBuilder.Configure((ctx, app) =>
-        {
-            app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGrpcService<UserAccessProxy>();
-                endpoints.MapCodeFirstGrpcReflectionService();
-
-                endpoints.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-            });
-        });
+        services.AddHostedService<Worker>();
     });
 
 var app = hostBuilder.Build();

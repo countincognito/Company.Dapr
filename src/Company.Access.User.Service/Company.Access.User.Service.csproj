@@ -10,6 +10,8 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
 		<PackageReference Include="Polly" Version="8.6.3" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
@@ -21,6 +23,7 @@
 		<ProjectReference Include="..\Company.Access.User.Impl\Company.Access.User.Impl.csproj" />
 		<ProjectReference Include="..\Company.iFX.Dapr\Company.iFX.Dapr.csproj" />
 		<ProjectReference Include="..\Company.iFX.Hosting\Company.iFX.Hosting.csproj" />
+		<ProjectReference Include="..\Company.iFX.Nats\Company.iFX.Nats.csproj" />
 		<ProjectReference Include="..\Company.Utility.Cache.Interface\Company.Utility.Cache.Interface.csproj" />
 	</ItemGroup>
 
